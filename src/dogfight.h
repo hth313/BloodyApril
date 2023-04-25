@@ -3,12 +3,22 @@
 
 #include <stdbool.h>
 #include "airplane.h"
+#include "list.h"
 
-#define MAX_AIRPLANE_IN_DOGFIGHT 8
-
-struct dogfight {
-  airplane *plane[2][MAX_AIRPLANE_IN_DOGFIGHT];
-  bool side0_attacker;
-};
+// A dogfight is a separation of a fight between airplanes that takes
+// a maximum number of turns. Airplanes are separated and engage each
+// others until the maxim=um turns are up or some other ending
+// criteria occurs.
+typedef struct dogfight {
+  struct list allied_powers;
+  struct list central_powers;
+  bool allied_attacker;
+  // ^ True if allied side is seen as attacker in dogfight.
+  // The "attacker" role can be either side an may switch during
+  // a dogfight.
+  unsigned round;            // counter
+  bool attacker_disengage;   // overall order
+  bool defender_disengage;   // overall order
+} dogfight;
 
 #endif // __DOGFIGHT_H__
