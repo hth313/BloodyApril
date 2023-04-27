@@ -3,7 +3,7 @@ DEPDIR := .deps
 
 # Common source files
 ASM_SRCS = foo.s
-C_SRCS = main.c
+C_SRCS = main.c altitude.c combat.c
 
 MODEL = --code-model=large --data-model=small
 
