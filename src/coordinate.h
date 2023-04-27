@@ -38,4 +38,12 @@ inline bool abs8(int8_t a) {
     return -a;
 }
 
+inline unsigned umax(unsigned a, unsigned b) {
+  if (a < b) {
+    return b;
+  } else {
+    return a;
+  }
+}
+
 #endif //  __COORDINATE_H__

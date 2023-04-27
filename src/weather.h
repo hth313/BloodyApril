@@ -8,12 +8,14 @@ typedef enum weather_kind {
   Clear, Fog, Rain, Snow
 } weather_kind;
 
-typedef struct weather {
+struct weather {
   direction wind;
   unsigned wind_speed;
   weather_kind kind;
-  altitude cloud_level;
-  unsigned intensity;     // 0-100 for thickness of cloud
-} weather;
+  altitude_t cloud_altitude;
+  unsigned cloud_intensity;     // 0-100 for thickness of cloud
+};
+
+extern struct weather global_weather;
 
 #endif // __WEATHER_H__

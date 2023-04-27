@@ -8,30 +8,31 @@
 #include "pilot.h"
 #include "list.h"
 
-typedef struct airplane_kind {
+struct airplane_kind {
   char const* name;
-  altitude service_ceiling;
-  unsigned speed[ALTITUDES];
-  unsigned climb_ability[ALTITUDES];
+  altitude_t service_ceiling;
+  unsigned speed[ALTITUDE_BANDS];
+  unsigned climb_ability[ALTITUDE_BANDS];
   int token;                        // play token used
   int unit;                         // which unit it belongs to
   unsigned firepower;
   unsigned endurance;
+  unsigned agility;
   uint16_t property;
 #define AIRPLANE_FRONT_GUN    0x0001
 #define AIRPLANE_FRONT_GUNx2  0x0002
 #define AIRPLANE_REAR_GUN     0x0004
-} airplane_kind;
+};
 
 // We have an array of airplane data we can look up in.
-extern airplane_kind airplane_data[];
+extern struct airplane_kind airplane_data[];
 
 // Airplane desribes an actual airplane player
 typedef struct airplane {
   struct node   node;
   int           airplane;
   int           pilot;
-  altitude      altitude;
+  altitude_t    altitude;
   unsigned      rounds_left;
   unsigned      duration;       // number of turns in service
   unsigned      kills;          // number of kills awarded in this mission
@@ -45,11 +46,14 @@ typedef struct airplane {
 #define AIRPLANE_DOWNED               0x0020
 #define AIRPLANE_DISENGAGE            0x0040
 #define AIRPLANE_SPIN                 0x0080
+  uint16_t added_property;
   location position;
   direction heading;
 } airplane;
 
 #define GUN_MASK (AIRPLANE_FRONT_GUN_JAMMED | AIRPLANE_FRONT_GUNx2_JAMMED | AIRPLANE_REAR_GUN_JAMMED)
+#define OUT_MASK (AIRPLANE_ENGINE_FAILURE | AIRPLANE_CRIPPLED | AIRPLANE_DOWNED | AIRPLANE_SPIN)
+#define CAN_BE_ATTACKED_MASK (AIRPLANE_ENGINE_FAILURE | AIRPLANE_DOWNED | AIRPLANE_SPIN)
 
 // Return true if airplane is too damaged to fight
 inline bool damaged(airplane* p) {
