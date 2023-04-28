@@ -8,13 +8,19 @@
 #include "pilot.h"
 #include "list.h"
 
+enum token {
+  TokenAlbatros_D2, TokenAlbatros_D5a
+};
+
+enum unit { Jasta19 };
+
 struct airplane_kind {
   char const* name;
   altitude_t service_ceiling;
   unsigned speed[ALTITUDE_BANDS];
-  unsigned climb_ability[ALTITUDE_BANDS];
-  int token;                        // play token used
-  int unit;                         // which unit it belongs to
+  unsigned climb_ability[ALTITUDE_BANDS]; // ft/round
+  enum token token;                 // play token used
+  enum unit unit;                   // which unit it belongs to
   unsigned firepower;
   unsigned endurance;
   unsigned agility;
@@ -25,7 +31,7 @@ struct airplane_kind {
 };
 
 // We have an array of airplane data we can look up in.
-extern struct airplane_kind airplane_data[];
+extern struct airplane_kind *airplane_data[];
 
 // Airplane desribes an actual airplane player
 typedef struct airplane {
@@ -49,6 +55,12 @@ typedef struct airplane {
   uint16_t added_property;
   location position;
   direction heading;
+  uint16_t move_order;
+#define AIRPLANE_ORDER_CLIMB          0x0001
+#define AIRPLANE_ORDER_DECEND         0x0002
+#define AIRPLANE_ORDER_SPIN_OUT       0x0004
+#define AIRPLANE_TURN_LEFT            0x0008
+#define AIRPLANE_TURN_RIGHT           0x0010
 } airplane;
 
 #define GUN_MASK (AIRPLANE_FRONT_GUN_JAMMED | AIRPLANE_FRONT_GUNx2_JAMMED | AIRPLANE_REAR_GUN_JAMMED)

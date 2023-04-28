@@ -9,7 +9,7 @@
 // a maximum number of turns. Airplanes are separated and engage each
 // others until the maxim=um turns are up or some other ending
 // criteria occurs.
-typedef struct dogfight {
+struct dogfight {
   struct list allied_powers;
   struct list central_powers;
   bool allied_attacker;
@@ -19,6 +19,6 @@ typedef struct dogfight {
   unsigned round;            // counter
   bool attacker_disengage;   // overall order
   bool defender_disengage;   // overall order
-} dogfight;
+};
 
 #endif // __DOGFIGHT_H__
