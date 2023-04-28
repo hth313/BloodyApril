@@ -9,7 +9,7 @@
 #include "list.h"
 
 enum token {
-  TokenAlbatros_D2, TokenAlbatros_D5a
+  TokenAlbatros_D2, TokenAlbatros_D5a, TokenSopwithPup
 };
 
 enum unit { Jasta19 };
@@ -23,7 +23,8 @@ struct airplane_kind {
   enum unit unit;                   // which unit it belongs to
   unsigned firepower;
   unsigned endurance;
-  unsigned agility;
+  unsigned agility;                 // maneuverability
+  unsigned aggression;
   uint16_t property;
 #define AIRPLANE_FRONT_GUN    0x0001
 #define AIRPLANE_FRONT_GUNx2  0x0002
