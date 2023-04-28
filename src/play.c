@@ -34,28 +34,38 @@ bool dogfight(struct dogfight *df) {
 
   }
 
+  bool allied_disengage =
+       (df->attacker_disengage &&  df->allied_attacker)
+    || (df->defender_disengage && !df->allied_attacker);
+  bool central_disengage =
+       (df->attacker_disengage && !df->allied_attacker)
+    || (df->defender_disengage &&  df->allied_attacker);
+
   // 5. If attacker (only) attempts to disengange and defender did not
   // declare disengange, the roles are reversed.
   if (df->attacker_disengage && !df->defender_disengage) {
     df->allied_attacker = !df->allied_attacker;
   }
 
-  struct list *attacker;
-  struct list *defender;
+  struct list *attackers;
+  struct list *defenders;
+  bool defenders_disengage;
   if (df->allied_attacker) {
-    attacker = &df->allied_powers;
-    defender = &df->central_powers;
+    attackers = &df->allied_powers;
+    defenders = &df->central_powers;
+    defenders_disengage = central_disengage;
   } else {
-    attacker = &df->central_powers;
-    defender = &df->allied_powers;
+    attackers = &df->central_powers;
+    defenders = &df->allied_powers;
+    defenders_disengage = allied_disengage;
   }
 
   // 6. Resolve actual combat for this round.
-  resolve_combat(attacker, defender);
+  resolve_combat(attackers, defenders, defenders_disengage);
 
   // 7. If all attackers are damaged, the dogfight is over.
   bool all_damaged = true;
-  for (airplane *p = (airplane*) attacker->head;
+  for (airplane *p = (airplane*) attackers->head;
        p->node.succ != 0;
        p = (airplane*) p->node.succ) {
     if (!damaged(p)) {

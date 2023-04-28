@@ -139,7 +139,8 @@ static void combat(airplane *attacker, struct list *defender, int defenders) {
   }
 }
 
-void resolve_combat(struct list *attacker, struct list *defender) {
+void resolve_combat(struct list *attacker, struct list *defender,
+		    bool defenders_attempted_disengage) {
   // 1. Prepare for fight.
   unsigned int attackers = prepare(attacker);
   unsigned int defenders = prepare(defender);
@@ -156,13 +157,16 @@ void resolve_combat(struct list *attacker, struct list *defender) {
   }
 
   // 3. Traverse defenders, randomly try to engage an attacker.
-  for (airplane *p = (airplane*) defender->head;
-       p->node.succ != 0;
-       p = (airplane*) p->node.succ) {
-    // Can this one attack?
-    if (   (p->property & OUT_MASK) == 0
-        && has_active_defense_gun(p)) {
-      combat(p, attacker, attackers);
+  //    Defenders only attack if they did not try to get away.
+  if (!defenders_attempted_disengage) {
+    for (airplane *p = (airplane*) defender->head;
+	 p->node.succ != 0;
+	 p = (airplane*) p->node.succ) {
+      // Can this one attack?
+      if (   (p->property & OUT_MASK) == 0
+	     && has_active_defense_gun(p)) {
+	combat(p, attacker, attackers);
+      }
     }
   }
 
