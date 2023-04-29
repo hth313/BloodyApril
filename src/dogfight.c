@@ -6,36 +6,9 @@
 #include "dogfight.h"
 #include "ui.h"
 
-struct speeds {
-  unsigned slowest;
-  unsigned fastest;
-  unsigned escape_score;
-};
-
 static void dogfight_reset_orders(struct dogfight *df) {
   df->attacker_disengage = false;
   df->defender_disengage = false;
-}
-
-static struct speeds slowest_speed(struct list *list) {
-  unsigned slowest = 1000;
-  unsigned fastest = 0;
-  unsigned count = 0;
-  unsigned escape_score = 0;
-  for (airplane *p = list->head; p->node.succ != 0;
-       p = (airplane *)p->node.succ) {
-    struct airplane_kind *kind = airplane_data[p->airplane];
-    escape_score += kind->agility + kind->aggression;
-    unsigned speed = kind->speed[altitude_band(p->altitude)];
-    if (speed < slowest) {
-      slowest = speed;
-    }
-    if (speed > fastest) {
-      fastest = speed;
-    }
-    count++;
-  }
-  return (struct speeds) { slowest, fastest, count + escape_score / count };
 }
 
 static bool attempt_disengage(struct list *disengagers,
