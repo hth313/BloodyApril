@@ -12,18 +12,17 @@ enum token {
   TokenAlbatros_D2, TokenAlbatros_D5a, TokenSopwithPup
 };
 
-enum unit { Jasta19 };
-
 struct airplane_kind {
   char const* name;
   altitude_t service_ceiling;
   unsigned speed[ALTITUDE_BANDS];
   unsigned climb_ability[ALTITUDE_BANDS]; // ft/round
-  enum token token;                 // play token used
-  enum unit unit;                   // which unit it belongs to
+  enum token token;                       // play token used
+  void *sprite_data;
+  int unit;                               // which unit it belongs to
   unsigned firepower;
   unsigned endurance;
-  unsigned agility;                 // maneuverability
+  unsigned agility;                       // maneuverability
   unsigned aggression;
   uint16_t property;
 #define AIRPLANE_FRONT_GUN    0x0001
@@ -61,7 +60,8 @@ typedef struct airplane {
 #define AIRPLANE_ORDER_DECEND         0x0002
 #define AIRPLANE_ORDER_SPIN_OUT       0x0004
 #define AIRPLANE_TURN_LEFT            0x0008
-#define AIRPLANE_TURN_RIGHT           0x0010
+#define AIRPLANE_TURN_RIGHT 0x0010
+  unsigned sprite_index;
 } airplane;
 
 #define GUN_MASK (AIRPLANE_FRONT_GUN_JAMMED | AIRPLANE_FRONT_GUNx2_JAMMED | AIRPLANE_REAR_GUN_JAMMED)
@@ -72,6 +72,10 @@ typedef struct airplane {
 inline bool damaged(airplane* p) {
   return (p->property & (AIRPLANE_DOWNED | AIRPLANE_CRIPPLED | AIRPLANE_ENGINE_FAILURE))
           || (p->property & GUN_MASK) == (airplane_data[p->airplane].property & GUN_MASK);
+}
+
+inline struct airplane_kind *airplane_kind(struct airplane) {
+  return airplane_data[p->airplane];
 }
 
 #endif // __AIRPLANE_H__

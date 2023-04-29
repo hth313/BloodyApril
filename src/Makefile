@@ -3,7 +3,10 @@ DEPDIR := .deps
 
 # Common source files
 ASM_SRCS = foo.s
-C_SRCS = main.c airplane.c altitude.c combat.c dogfight.c
+C_SRCS = main.c ai.c airplane.c altitude.c combat.c dogfight.c input.c pilot.c \
+	ui.c unit.c
+
+FOENIX_C_SRCS = foenix.c
 
 MODEL = --code-model=large --data-model=small
 
