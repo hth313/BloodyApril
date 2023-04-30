@@ -1,4 +1,10 @@
+#include <stdint.h>
 #include "airplane.h"
+#include <foenix/vicky.h>
+
+extern uint8_t Albatros_D2_sprite[SPRITE_SIZE];
+extern uint8_t Albatros_D5a_sprite[SPRITE_SIZE];
+extern uint8_t SopwithPup_sprite[SPRITE_SIZE];
 
 // Top speed 170 km/h, time to 3281 feet in 4:30 mins,
 // time to 6562 7 mins, time to 9843 12:30 mins
@@ -8,6 +14,7 @@ struct airplane_kind Albatros_D2 = {
     {170, 162, 149, 128, 0},
     {2100, 1874, 1574, 1274, 0},
     TokenAlbatros_D2,
+    Albatros_D2_sprite,
     6,
     340,
     6,
@@ -20,9 +27,10 @@ struct airplane_kind Albatros_D5a = {
     "Albatros D.Va",
     18700,
     //{ 4.0, 3.8, 3.5, 3.0, 0 },
-    { 186, 177, 163, 140, 0 },
-    { 2360, 2108, 1770, 1432, 0 },
+    {186, 177, 163, 140, 0},
+    {2360, 2108, 1770, 1432, 0},
     TokenAlbatros_D5a,
+    Albatros_D5a_sprite,
     6,
     350,
     6,
@@ -34,9 +42,10 @@ struct airplane_kind Albatros_D5a = {
 struct airplane_kind SopwithPup = {
     "Sopwith Pup",
     17500,
-    { 180, 171, 157, 134, 0 },
-    { 1600, 1400, 1100, 1000, 0 },
+    {180, 171, 157, 134, 0},
+    {1600, 1400, 1100, 1000, 0},
     TokenSopwithPup,
+    SopwithPup_sprite,
     4,
     500,
     8,
@@ -46,4 +55,4 @@ struct airplane_kind SopwithPup = {
 
 struct airplane_kind *airplane_data[] = {
     & Albatros_D2, & Albatros_D5a, & SopwithPup
-}
+};

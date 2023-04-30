@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "airplane.h"
 #include "ai.h"
 #include "list.h"
@@ -7,9 +8,10 @@ struct speeds slowest_speed(struct list *list) {
   unsigned fastest = 0;
   unsigned count = 0;
   unsigned escape_score = 0;
-  for (airplane *p = list->head; p->node.succ != 0;
+  for (airplane *p = (airplane *)&list->head;
+       p->node.succ != 0;
        p = (airplane *)p->node.succ) {
-    if (!p->damaged) {
+    if (!damaged(p)) {
       struct airplane_kind *kind = airplane_data[p->airplane];
       escape_score += kind->agility + kind->aggression;
       unsigned speed = kind->speed[altitude_band(p->altitude)];
@@ -44,7 +46,7 @@ void ai_dogfight_orders(struct dogfight *df) {
       df->defender_disengage = true;
     }
   } else {
-    unsigned limit df->defender_disengage ? 10 : 5;
+    unsigned limit = df->defender_disengage ? 10 : 5;
     if (allied_airspeeds.escape_score > central_airspeeds.escape_score + limit &&
 	(rand() & 1)) {
       df->attacker_disengage = true;

@@ -71,10 +71,10 @@ typedef struct airplane {
 // Return true if airplane is too damaged to fight
 inline bool damaged(airplane* p) {
   return (p->property & (AIRPLANE_DOWNED | AIRPLANE_CRIPPLED | AIRPLANE_ENGINE_FAILURE))
-          || (p->property & GUN_MASK) == (airplane_data[p->airplane].property & GUN_MASK);
+          || (p->property & GUN_MASK) == (airplane_data[p->airplane]->property & GUN_MASK);
 }
 
-inline struct airplane_kind *airplane_kind(struct airplane) {
+inline struct airplane_kind *airplane_kind(struct airplane *p) {
   return airplane_data[p->airplane];
 }
 

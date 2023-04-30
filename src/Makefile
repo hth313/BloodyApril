@@ -2,7 +2,7 @@ VPATH = src
 DEPDIR := .deps
 
 # Common source files
-ASM_SRCS = foo.s
+ASM_SRCS = assets.s
 C_SRCS = main.c ai.c airplane.c altitude.c combat.c dogfight.c input.c pilot.c \
 	ui.c unit.c
 
@@ -30,8 +30,8 @@ obj/%-debug.o: %.s
 	as68k --core=68000 $(MODEL) --debug --list-file=$(@:%.o=%.lst) -o $@ $<
 
 obj/%-debug.o: %.c $(DEPDIR)/%-debug.d | $(DEPDIR)
-	@cc68k --core=68000 $(MODEL) --always-inline -Imodule/Calypsi-m68k-Foenix/include --debug --dependencies -MQ$@ >$(DEPDIR)/$*-debug.d $<
-	cc68k --core=68000 $(MODEL) --always-inline -Imodule/Calypsi-m68k-Foenix/include --debug --list-file=$(@:%.o=%.lst) -o $@ $<
+	@cc68k --core=68000 $(MODEL) --target=Foenix --always-inline -Imodule/Calypsi-m68k-Foenix/include --debug --dependencies -MQ$@ >$(DEPDIR)/$*-debug.d $<
+	cc68k --core=68000 $(MODEL) --target=Foenix --always-inline -Imodule/Calypsi-m68k-Foenix/include --debug --list-file=$(@:%.o=%.lst) -o $@ $<
 
 bloody-april.elf: $(OBJS_DEBUG)
 	ln68k --debug -o $@ $^ a2560u+.scm --list-file=bloody-april-debug.lst --semi-hosted --rtattr cstartup=Foenix_user --rtattr stubs=foenix $(LNFLAGS)

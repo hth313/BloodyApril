@@ -25,7 +25,7 @@ static void update_damage(struct list* list) {
 
 static bool has_active_attack_gun(airplane *p) {
   if (p->rounds_left) {
-    uint16_t base_property = airplane_data[p->airplane].property;
+    uint16_t base_property = airplane_data[p->airplane]->property;
     if (  (base_property & AIRPLANE_FRONT_GUN)
         && (p->property & AIRPLANE_FRONT_GUN_JAMMED) == 0) {
       return true;
@@ -82,14 +82,14 @@ static void combat(airplane *attacker, struct list *defender, int defenders) {
     unsigned base_maneuver_chance = 50;
     unsigned chances = umax(4, i);
 
-    struct pilot *attacker_pilot = &pilot_data[attacker->pilot];
-    struct airplane_kind *attacker_kind = &airplane_data[attacker->airplane];
+    struct pilot *attacker_pilot = pilot_data[attacker->pilot];
+    struct airplane_kind *attacker_kind = airplane_data[attacker->airplane];
 
     while (chances > 0 && attacker->rounds_left && (attacker->added_property & GUN_MASK) == 0) {
       // Maneuver for an opponent
       struct airplane *defender = target[rand() % i];
-      struct pilot *defender_pilot = &pilot_data[defender->pilot];
-      struct airplane_kind *defender_kind = &airplane_data[defender->airplane];
+      struct pilot *defender_pilot = pilot_data[defender->pilot];
+      struct airplane_kind *defender_kind = airplane_data[defender->airplane];
       unsigned maneuver_chance = base_maneuver_chance
         + (defender_pilot->strength - attacker_pilot->strength) * 4
         + (attacker_kind->agility - defender_kind->agility) * 2;
