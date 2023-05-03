@@ -46,4 +46,12 @@ inline unsigned umax(unsigned a, unsigned b) {
   }
 }
 
+inline unsigned umin(unsigned a, unsigned b) {
+  if (a < b) {
+    return a;
+  } else {
+    return b;
+  }
+}
+
 #endif //  __COORDINATE_H__
