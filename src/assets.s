@@ -1,17 +1,16 @@
 
+sprite:	      .macro sym, sprite_file
               .section vram,data
-              .public SopwithPup_sprite
-
               .align  256
-              .public albatros_D2_sprite
-albatros_D2_sprite:
-	      .incbin "assets/Albatros-trial.raw"
+              .public sym
+sym:	      .incbin sprite_file
 
-	      .public albatros_D5a_sprite
-albatros_D5a_sprite:
-
-SopwithPup_sprite:
+	      sprite  SopwithPup_sprite, "assets/Pup.raw"
+	      sprite  SopwithTriplane_sprite, "assets/Triplane.raw"
+	      sprite  Albatros_D5a_J3_sprite, "assets/Albatros-D5a-J3.raw"
+	      sprite  Albatros_D2_sprite, "assets/Alatros-D2.raw"
+	      sprite  Albatros_D2_sprite_red_baron, "assets/Albatros-D2-Red-Baron.raw"
 
               .section palette1,data
               .public palette
-palette:      .incbin "assets/Albatros-trial.raw.pal"
+palette:      .incbin "assets/BloodyAprilSprites.pal"
