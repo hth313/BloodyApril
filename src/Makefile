@@ -14,6 +14,7 @@ LNFLAGS = --copy-initialize vram  --copy-initialize palette1 \
 	--rtattr printf=reduced \
 	 --stack-size=2000 --target=Foenix
 
+CFLAGS = -Wno-invalid-source-encoding --always-inline
 
 # Object files
 OBJS = $(ASM_SRCS:%.s=obj/%.o) $(C_SRCS:%.c=obj/%.o)
@@ -30,8 +31,8 @@ obj/%-debug.o: %.s
 	as68k --core=68000 $(MODEL) --debug --list-file=$(@:%.o=%.lst) -o $@ $<
 
 obj/%-debug.o: %.c $(DEPDIR)/%-debug.d | $(DEPDIR)
-	@cc68k --core=68000 $(MODEL) --target=Foenix --always-inline -Imodule/Calypsi-m68k-Foenix/include --debug --dependencies -MQ$@ >$(DEPDIR)/$*-debug.d $<
-	cc68k --core=68000 $(MODEL) --target=Foenix --always-inline -Imodule/Calypsi-m68k-Foenix/include --debug --list-file=$(@:%.o=%.lst) -o $@ $<
+	@cc68k --core=68000 $(MODEL) --target=Foenix $(CFLAGS) -Imodule/Calypsi-m68k-Foenix/include --debug --dependencies -MQ$@ >$(DEPDIR)/$*-debug.d $<
+	cc68k --core=68000 $(MODEL) --target=Foenix $(CFLAGS) -Imodule/Calypsi-m68k-Foenix/include --debug --list-file=$(@:%.o=%.lst) -o $@ $<
 
 bloody-april.elf: $(OBJS_DEBUG)
 	ln68k --debug -o $@ $^ a2560u+.scm --list-file=bloody-april-debug.lst --semi-hosted --rtattr cstartup=Foenix_user --rtattr stubs=foenix $(LNFLAGS)
