@@ -13,7 +13,7 @@ struct weather {
   unsigned wind_speed;
   weather_kind kind;
   altitude_t cloud_base;
-  altitude_t clout_top;
+  altitude_t cloud_top;
   unsigned cloud_intensity;     // 0-100 for thickness of cloud
 };
 

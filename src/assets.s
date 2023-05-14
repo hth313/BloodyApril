@@ -2,8 +2,9 @@
 sprite:	      .macro sym, sprite_file
               .section vram,data
               .align  256
-              .public sym
-sym:	      .incbin sprite_file
+              .public \sym
+\sym:	      .incbin "\sprite_file"
+	      .endm
 
 	      sprite  SopwithPup_sprite, "assets/Pup.raw"
 	      sprite  SopwithTriplane_sprite, "assets/Triplane.raw"

@@ -2,9 +2,10 @@
 #include "airplane.h"
 #include <foenix/vicky.h>
 
-extern uint8_t Albatros_D2_sprite[SPRITE_SIZE];
-extern uint8_t Albatros_D5a_sprite[SPRITE_SIZE];
-extern uint8_t SopwithPup_sprite[SPRITE_SIZE];
+extern __far uint8_t Albatros_D2_sprite[SPRITE_SIZE];
+extern __far uint8_t Albatros_D5a_J3_sprite[SPRITE_SIZE];
+extern __far uint8_t SopwithPup_sprite[SPRITE_SIZE];
+extern __far uint8_t Albatros_D5a_J3_sprite[SPRITE_SIZE];
 
 // Top speed 170 km/h, time to 3281 feet in 4:30 mins,
 // time to 6562 7 mins, time to 9843 12:30 mins

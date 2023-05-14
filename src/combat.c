@@ -49,8 +49,10 @@ static bool altitude_in_range(airplane *attacker, airplane *defender) {
   enum altitude_band defender_band = altitude_band(defender->altitude);
   if (attacker_band == defender_band || attacker_band - 1 == defender_band) {
     // Height in range, check for clouds
-    if (   global_weather.cloud_altitude == attacker_band
-        && global_weather.cloud_altitude == defender_band) {
+    if (global_weather.cloud_base < attacker->altitude &&
+        attacker->altitude < global_weather.cloud_top &&
+        global_weather.cloud_base < defender->altitude &&
+	defender->altitude < global_weather.cloud_top) {
       if (global_weather.cloud_intensity < 20) {
         return true;
       }
