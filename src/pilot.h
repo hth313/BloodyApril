@@ -12,6 +12,6 @@ struct pilot {
 };
 
 // We have an array of airplane data we can look up in.
-extern struct pilot *pilot_data[];
+extern const struct pilot *pilot_data[];
 
 #endif // __PILOT_H__

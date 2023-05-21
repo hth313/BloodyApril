@@ -26,7 +26,7 @@ struct pilot arthur_rahn = {
   "Arthur Rahn", Jasta19, 2, 0, 1
 };
 
-struct pilot *pilot_data[] = {
+const struct pilot *pilot_data[] = {
     &walter_boening, &erich_hahn, &franz_brandt, &walther_gottisch,
     &hans_pippart, &arthur_rahn,
 };

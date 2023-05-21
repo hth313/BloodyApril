@@ -31,7 +31,7 @@ struct airplane_kind {
 };
 
 // We have an array of airplane data we can look up in.
-extern struct airplane_kind *airplane_data[];
+extern const struct airplane_kind *airplane_data[];
 
 // Airplane desribes an actual airplane player
 typedef struct airplane {
