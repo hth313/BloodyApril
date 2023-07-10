@@ -6,6 +6,20 @@
 #include "dogfight.h"
 #include "ui.h"
 
+// Allocate a new dogfight dynamically. The caller should link the created
+// node into actors of the sector it occurs in.
+struct dogfight *new_dogfight(struct list *allied_powers, struct list *central_powers,
+                              bool allied_attacker) {
+  struct dogfight *p = safe_malloc(sizeof(struct dogfight));
+  p = {
+      .allied_powers = allied,
+      .central_powers = central_powers,
+      .allied_attacker = allied_attacker,
+      .round = 0,
+  };
+  return p;
+}
+
 static void dogfight_reset_orders(struct dogfight *df) {
   df->attacker_disengage = false;
   df->defender_disengage = false;

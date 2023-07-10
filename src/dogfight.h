@@ -2,6 +2,7 @@
 #define __DOGFIGHT_H__
 
 #include <stdbool.h>
+#include "actor.h"
 #include "airplane.h"
 #include "list.h"
 
@@ -10,6 +11,7 @@
 // others until the maxim=um turns are up or some other ending
 // criteria occurs.
 struct dogfight {
+  struct typed_node node;
   struct list allied_powers;
   struct list central_powers;
   bool allied_attacker;
@@ -21,4 +23,9 @@ struct dogfight {
   bool defender_disengage;   // overall order
 };
 
+// **********************************************************************
+
+extern bool dogfight(struct dogfight *df);
+extern struct dogfight *new_dogfight(struct list *allied_powers, struct list *central_powers,
+				     bool allied_attacker);
 #endif // __DOGFIGHT_H__

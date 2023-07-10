@@ -1,7 +1,7 @@
 #ifndef __PILOT_H__
 #define __PILOT_H__
 
-#include "unit.h"
+#include "squadron.h"
 
 struct pilot {
   char const *name;

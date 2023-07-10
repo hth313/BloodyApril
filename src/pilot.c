@@ -1,6 +1,6 @@
 // -*- coding: iso-latin-1 -*-
 #include "pilot.h"
-#include "unit.h"
+#include "squadron.h"
 
 struct pilot walter_boening = {
   "Walter Böning", Jasta19, 2, 0, 1
