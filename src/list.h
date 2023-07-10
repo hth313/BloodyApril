@@ -6,6 +6,21 @@ struct node {
     struct node *pred;
 };
 
+enum node_kind {
+  Flight.     // A flight is a group of airplanes moving together
+  Dogfight,   // A dogfight keeps track of participants and corresponding action
+  Ballon,     // Observation ballon
+  GroundUnit  // Some ground uint, may be capable of fire on airplanes
+};
+
+// A typed node is like a node but carries an identity to allow
+// different things to be linked into it.
+struct typed_node {
+  struct node *ty_succ;
+  struct node *ty_pred;
+  enum node_kind kind;
+};
+
 struct list {
    struct node *head;
    struct node *tail;
