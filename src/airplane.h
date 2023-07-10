@@ -6,6 +6,7 @@
 #include "altitude.h"
 #include "coordinate.h"
 #include "pilot.h"
+#include "squadron.h"
 #include "list.h"
 
 enum token {
@@ -38,6 +39,7 @@ typedef struct airplane {
   struct node   node;
   int           airplane;
   int           pilot;
+  struct squadron *squadron;
   altitude_t    altitude;
   unsigned      rounds_left;
   unsigned      duration;       // number of turns in service
@@ -53,14 +55,6 @@ typedef struct airplane {
 #define AIRPLANE_DISENGAGE            0x0040
 #define AIRPLANE_SPIN                 0x0080
   uint16_t added_property;
-  location position;
-  direction heading;
-  uint16_t move_order;
-#define AIRPLANE_ORDER_CLIMB          0x0001
-#define AIRPLANE_ORDER_DECEND         0x0002
-#define AIRPLANE_ORDER_SPIN_OUT       0x0004
-#define AIRPLANE_TURN_LEFT            0x0008
-#define AIRPLANE_TURN_RIGHT 0x0010
   unsigned sprite_index;
 } airplane;
 
