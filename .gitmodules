@@ -1,0 +1,3 @@
+[submodule "module/hashmap"]
+	path = module/hashmap
+	url = https://github.com/hth313/hashmap.c
