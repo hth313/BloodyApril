@@ -1,10 +1,10 @@
-VPATH = src:../module/hashmap
+VPATH = .:scenario:../module/hashmap
 DEPDIR := .deps
 
 # Common source files
 ASM_SRCS = assets.s
 C_SRCS = main.c ai.c actor.c ai.c airplane.c altitude.c combat.c dogfight.c \
-        flight.c inlines.c input.c pilot.c squadron.c \
+        flight.c inlines.c input.c pilot.c scenario.c squadron.c \
 	ui.c unit.c weather.c
 
 FOENIX_C_SRCS = foenix.c

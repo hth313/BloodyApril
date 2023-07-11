@@ -28,6 +28,6 @@ struct scenarios {
 
 // **********************************************************************
 
-struct scenarios *initialize_scenarios(void);
+extern struct scenarios *initialize_scenarios(void);
 
 #endif // __SCENARIO_H__
