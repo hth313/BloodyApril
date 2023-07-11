@@ -27,5 +27,6 @@ struct scenarios {
 // **********************************************************************
 
 extern struct scenarios *initialize_scenarios(void);
+extern struct scenario *select_a_game(struct scenarios*);
 
 #endif // __SCENARIO_H__
