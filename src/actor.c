@@ -3,7 +3,7 @@
 #include "list.h"
 #include "memory.h"
 
-struct list *add_actor(all_actors *map, coordinate pos, struct node_kind *node) {
+struct list *add_actor(actorsmap *map, coordinate pos, struct typed_node *node) {
   struct actors *p = hashmap_get(map, &coordinate);
   if (!p) {
     p = safe_malloc(sizeof(struct actors));
