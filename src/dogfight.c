@@ -1,9 +1,13 @@
 #include <stdlib.h>
+#include "actor."
 #include "ai.h"
 #include "airplane.h"
 #include "altitude.h"
 #include "combat.h"
 #include "dogfight.h"
+#include "flight.h"
+#include "list.h"
+#include "playstate.h"
 #include "ui.h"
 
 // Allocate a new dogfight dynamically. The caller should link the created
@@ -18,6 +22,25 @@ struct dogfight *new_dogfight(struct list *allied_powers, struct list *central_p
       .round = 0,
   };
   return p;
+}
+
+// Downed flights are moved to downed list, the flight is moved to the
+// play state, if flight became empty it is dropped.
+static void move_downed(struct playstate *ps, struct list *flights) {
+  struct flight *flight;
+  struct flight *next;
+  foreach_node_safe(flights, flight, next) {
+    if (!prune_downed(ps, flight)) {
+      order_insert(&ps->flights, &flight->node);
+    }
+  }
+}
+
+void drop_dogfight(struct playstate *ps, struct dogfight *df) {
+  move_downed(ps, &df->allied_powers);
+  move_downed(ps, &df->central_powers);
+  unlink_actor(&ps->actors, df->pos, df);
+  free(df);
 }
 
 static void dogfight_reset_orders(struct dogfight *df) {

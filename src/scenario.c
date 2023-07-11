@@ -4,11 +4,11 @@
 #include <time.h>
 
 struct scenario basic_dogfight = {
-    .description = "Try a dogfight, your flight has engaged some opponents.\n"
-                   "You (the allied) are attacked by some opponents.\n"
-                   "Participants from a squadron and an opposing Jasta are "
+    .title = "Try a dogfight";
+    .description = "Try a separate dogfight where your allied flight engage some opponents.\n"
+                   "The participants from a squadron and an opposing Jasta are "
                    "randomly selected.\n",
-    .start = { .tm_year = 1917, .tm_mon = 3, .tm_hour = 12 },
+    .start = { .tm_year = 17, .tm_mon = 3, .tm_mday = 10, .tm_hour = 12, .tm_wday = 2 },
     .setup = basic_dogfight_setup,
     .playturn = playturn_dogfight_only,
     .summarize = summarize_dogfight_only

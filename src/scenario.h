@@ -4,21 +4,19 @@
 #include <stdbool.h>
 #include <time.h>
 #include "list.h"
-#include "playstate.h"
+#include "playfield.h"
 
+// Forward declations
 struct playstate;
-
-typedef void (*fptr_setup)(struct playstate *);
-typedef bool (*fptr_playturn)(struct playstate *);
-typedef void (*fptr_summarize)(struct playstate *);
 
 struct scenario {
   struct node node;
   const char *description;  // Long desciptive text of the scenario
   struct tm start;          // Start date and time
-  fptr_setup setup;         // Set up the playstate
-  fptr_playturn playturn;   // Execute a single playturn, false to
-  fptr_summarize summarize; // Summarize the outcome of the game.
+  struct playfield *playfield; // Information about the playfield (map) being played
+  void (*setup)(struct playstate*); // Set up the playstate
+  bool (*playturn)(struct playstate *);
+  void (*summarize)(struct playstate *);
 };
 
 struct scenarios {

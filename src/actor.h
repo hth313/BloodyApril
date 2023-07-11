@@ -39,6 +39,8 @@ typedef struct hashmap actorsmap;
 // Add an actor at a given sector. The list of all actors in this sector
 // is returned and can be inspected to see if there are something that
 // prevented it from happening, in that case the caller can unlink it again.
-extern struct list *add_actor(actorsmap *map, coordinate pos, struct typed_node *node);
-
+extern struct list *add_actor(actorsmap *map, coordinate pos,
+                              struct typed_node *node);
+extern void unlink_actor(actorsmap *map, coordinate pos,
+			 struct typed_node *node);
 #endif // __ACTOR_H__

@@ -8,14 +8,22 @@
 // (lose track of each others).
 
 #include <stdlib.h>
+#include "airplane.h"
 #include "flight.h"
 #include "list.h"
+#include "memory.h"
+#include "playstate.h"
+
+// A sequence number, mainly to ensure the order in a list is kept consistent
+// even when a node is removed and later added again.
+static int sequence;
 
 // Create a new flight. This will initialize most fields except for
 // that it should be immediately linked into its owning list.
-flight *new_flight(location* position, direction heading) {
-  flight *p = safe_malloc(sizeof(flight));
-  p->typed_node.node_kind = Flight;
+struct flight *new_flight(location* position, direction heading) {
+  struct flight *p = (struct flight*) safe_malloc(sizeof(struct flight));
+  p->typed_node.kind = Flight;
+  p->typed_node.prio = sequence++;
   init_list(&p->airplanes);
   p->position = position;
   p->heading = heading;
@@ -27,4 +35,25 @@ flight *new_flight(location* position, direction heading) {
 void drop_flight(flight *p) {
   remove_node(&flight.typed_node);
   free(p);
+}
+
+bool prune_downed(struct playstate *ps, struct flight *flight) {
+  airplane *p;
+  struct airplane *next;
+  foreach_node_safe(&flight->airplanes, p, next) {
+    if ((p->property & AIRPLANE_DOWNED)) {
+      remove_node( (struct node*) p);
+      if (flight->allied) {
+	add_tail(&ps->downed_allied, (struct node*) p);
+      } else {
+	add_tail(&ps->downed_central, (struct node*) p);
+      }
+    }
+  }
+  if (empty_list(&flight->airplanes)) {
+    drop_flight(flight);
+    return true;   // all dropped
+  } else {
+    return false;
+  }
 }

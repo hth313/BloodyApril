@@ -16,9 +16,10 @@ enum node_kind {
 // A typed node is like a node but carries an identity to allow
 // different things to be linked into it.
 struct typed_node {
-  struct node *ty_succ;
-  struct node *ty_pred;
+  struct node *succ;
+  struct node *pred;
   enum node_kind kind;
+  int order;
 };
 
 struct list {
@@ -27,10 +28,24 @@ struct list {
    struct node *tailpred;
 };
 
+#define foreach_node(list, node) for (node = (void*)((list)->head);                 \
+                                      ((struct node*)(node))->succ;                 \
+                                      node = (void*)(((struct node*)(node))->succ)) \
+
+#define foreach_node_safe(list, current, next)            \
+  for (current = (void *)((list)->head);                  \
+      (next = (void *)((struct node*)(current))->succ);   \
+      current = (void *)next)                             \
+
+
 inline void init_list(struct list *list) {
   list->head = (struct node*) &list->tail;
   list->tailpred = (struct node*) &list->head;
   list->tail = 0;
+}
+
+inline bool empty_list(struct list *list) {
+  return list->tailpred == (struct node *)list;
 }
 
 inline void add_head(struct list *list, struct node *node) {
@@ -55,5 +70,18 @@ inline void remove_node(struct node *node) {
   pred->succ = next;
   next->pred = pred;
 }
+
+inline void order_insert(struct list *list, struct typed_node *node) {
+  struct typed_node *next;
+  foreach_node(list, next) {
+    if (next->order > node->order)
+      break;
+  }
+  node->pred = next->pred;
+  node->succ = next;
+  next->succ = node;
+  next->pred->succ = node;
+}
+
 
 #endif // __LIST_H__

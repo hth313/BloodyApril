@@ -6,6 +6,8 @@
 #include "airplane.h"
 #include "list.h"
 
+struct playstate;
+
 // A dogfight is a separation of a fight between airplanes that takes
 // a maximum number of turns. Airplanes are separated and engage each
 // others until the maxim=um turns are up or some other ending
@@ -26,6 +28,8 @@ struct dogfight {
 // **********************************************************************
 
 extern bool dogfight(struct dogfight *df);
-extern struct dogfight *new_dogfight(struct list *allied_powers, struct list *central_powers,
-				     bool allied_attacker);
+extern struct dogfight *new_dogfight(struct list *allied_powers,
+                                     struct list *central_powers,
+                                     bool allied_attacker);
+extern void drop_dogfight(struct playstate*, struct dogfight*);
 #endif // __DOGFIGHT_H__

@@ -14,3 +14,14 @@ struct list *add_actor(actorsmap *map, coordinate pos, struct typed_node *node) 
   add_tail(&p->actors, node);
   return &p->actors;
 }
+
+void unlink_actor(actorsmap *map, coordinate pos, struct typed_node *node) {
+  struct actors *p = hashmap_get(map, &coordinate);
+  if (p != NULL) {
+    remove_node(node);
+    if (empty_list(&p->actors)) {
+      hashmap_delete(p);
+      free(p);
+    }
+  }
+}
