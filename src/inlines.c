@@ -1,3 +1,6 @@
+#include "airplane.h"
+#include "list.h"
+
 // list.h
 extern void add_head(struct list *list, struct node *node);
 extern void add_tail(struct list *list, struct node *node);

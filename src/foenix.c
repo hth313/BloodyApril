@@ -2,6 +2,7 @@
 #include "dogfight.h"
 #include "ui.h"
 #include <foenix/vicky.h>
+#include <mcp/syscalls.h>
 
 #define Screen 0
 
@@ -28,7 +29,7 @@ static void draw_airplane_column(struct list *list, unsigned column) {
   for (airplane *p = (airplane *)list->head; p->node.succ != 0;
        p = (airplane *)p->node.succ) {
     struct airplane_kind *k = airplane_kind(p);
-    struct sprite *sprite = Sprite[p->sprite_index];
+    volatile struct sprite *sprite = &Sprite[p->sprite_index];
     sprite->x = 50;
     sprite->y = 50 + row * 20;
     sprite->control = (sprite->control & 0xff) | SPRITE_ADDY_LOW(k->sprite_data) | 1;
