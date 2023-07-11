@@ -4,6 +4,7 @@
 #include "altitude.h"
 #include "coordinate.h"
 #include "list.h"
+#include "hashmap.h"
 
 enum actor_kind {
   Ballon,       // Obseravtion ballon
