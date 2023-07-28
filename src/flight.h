@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include "coordinate.h"
 #include "list.h"
+#include "actor_visual.h"
 
 struct playstate;
 
@@ -15,6 +16,7 @@ struct playstate;
 struct flight {
   struct typed_node node;  // Part of a linked list of dogfight or actor at location
   struct list airplanes;   // Airplanes in this flight
+  struct actor_visual visual;
   location position;
   direction heading;
   bool allied;

@@ -20,7 +20,7 @@ static int sequence;
 
 // Create a new flight. This will initialize most fields except for
 // that it should be immediately linked into its owning list.
-struct flight *new_flight(location* position, direction heading) {
+struct flight *new_flight(location* position, direction heading, struct sprite *sprite) {
   struct flight *p = (struct flight*) safe_malloc(sizeof(struct flight));
   p->typed_node.kind = Flight;
   p->typed_node.prio = sequence++;
@@ -28,12 +28,16 @@ struct flight *new_flight(location* position, direction heading) {
   p->position = position;
   p->heading = heading;
   p->move_order = MOVE_ORDER_LEVEL;
+  init_visual(&p->visual, position, sprite);
+  p->visual.actor_kind = Flight;
+  p->visual.flight = p;
   return p;
 }
 
 // Unlink a flight from its owning list and recycle its storage.
 void drop_flight(flight *p) {
-  remove_node(&flight.typed_node);
+  remove_node(&flight.node);
+  remove_node(&flight.visual.node)
   free(p);
 }
 

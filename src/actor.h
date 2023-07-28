@@ -17,6 +17,8 @@ enum actor_kind {
   Infanrty,
   Cavalry,
   MachineGun,
+  Flight,
+  Aerodrome,
 };
 
 // Ballons are mainly for observation. They can be targets to down in scenarios.

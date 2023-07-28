@@ -4,6 +4,7 @@
 #include "coordinate.h"
 #include "list.h"
 #include "location.h"
+#include "actor_visual.h"
 
 // An aerodrome is a place where airplanes are stored, takes off from
 // and can land at. They have a fixed location and identity in the map
@@ -11,7 +12,8 @@
 // Airplanes on the ground are either kept in a flights (group of airplanes)
 // plus a flat list of airplanes that may be added to a flight.
 typedef struct aerodrome {
-  struct node node;           // Belongs to a list of existing aerodromes
+  struct node node; // Belongs to a list of existing aerodromes
+  struct actor_visual visual;
   const char *name;           // Name of the aerodrome
   coordinate pos;             // The sector of this aerodrome
   bool allied;                // Set if this aerodrom belongs to the allied side.
