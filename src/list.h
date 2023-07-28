@@ -83,5 +83,8 @@ inline void order_insert(struct list *list, struct typed_node *node) {
   next->pred->succ = node;
 }
 
+// **********************************************************************
+
+extern void remove_node_with_interrupts_blocked(struct node *node);
 
 #endif // __LIST_H__

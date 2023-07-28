@@ -37,7 +37,7 @@ struct flight *new_flight(location* position, direction heading, struct sprite *
 // Unlink a flight from its owning list and recycle its storage.
 void drop_flight(flight *p) {
   remove_node(&flight.node);
-  remove_node(&flight.visual.node)
+  remove_node_with_interrupts_blocked(&flight.visual.node)
   free(p);
 }
 
