@@ -22,4 +22,8 @@ typedef struct aerodrome {
   struct list squadron;       // The squadrons stationed at this aerodrome
 } aerodrome;
 
+// **********************************************************************
+
+extern void create_aerodromes();
+
 #endif // __AERODROME_H__
