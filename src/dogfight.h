@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include "actor.h"
+#include "actor_visual.h"
 #include "airplane.h"
 #include "list.h"
 
@@ -14,6 +15,7 @@ struct playstate;
 // criteria occurs.
 struct dogfight {
   struct typed_node node;
+  struct actor_visual visual;
   struct list allied_powers;
   struct list central_powers;
   bool allied_attacker;

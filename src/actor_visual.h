@@ -3,10 +3,19 @@
 
 #include <foenix/sprite.h>
 #include "actor.h"
+#include "dogfight.h"
 #include "list.h"
 
 struct aerodrome;
+struct archie;
+struct artillery;
+struct ballon;
+struct cavalry;
+struct dogfight;
+struct flaming_onion;
 struct flight;
+struct infantry;
+struct machine_gun;
 
 struct actor_visual {
   struct node node;     // sorted on show_y
@@ -19,7 +28,15 @@ struct actor_visual {
   enum actor_kind actor_kind;
   union {
     struct aerodrome *aerodrome;
+    struct archie *archie;
+    struct artillery *artillery;
+    struct ballon *ballon;
+    struct cavalry *cavalry;
+    struct dogfight *dogfight;
+    struct flaming_onion *flaming_onion;
     struct flight *flight;
+    struct infantry *infantry;
+    struct machine_gun *machine_gun;
   };
 };
 

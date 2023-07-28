@@ -21,6 +21,10 @@ struct dogfight *new_dogfight(struct list *allied_powers, struct list *central_p
       .allied_attacker = allied_attacker,
       .round = 0,
   };
+  init_visual(&p->visual, position, sprite);
+  p->visual.actor_kind = DogFight;
+  p->visual.dogfight = p;
+
   return p;
 }
 
