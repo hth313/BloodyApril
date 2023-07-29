@@ -12,6 +12,9 @@ static uint16_t offset_x;
 static uint16_t offset_y;
 static struct actor_visual *head_actor;
 static struct actor_visual *next_actor;
+static unsigned scan_line;
+
+#define SCAN_LINE_MARGIN (SPRITE_HEIGHT >> 1)
 
 static bool is_visible(struct actor_visual *p) {
   return p->y > offset_y;
@@ -28,14 +31,20 @@ static void assign_sprite(unsigned index, struct actor_visual *p) {
 
 static void enable_sol(void) {
   if (head_actor->succ) {
-    unsigned line = head_actor->y - offset_y + SPRITE_HEIGHT;
+    unsigned line = next_actor->pred->y - SCAN_LINE_MARGIN;
+    unsigned minimum_skip = scan_line + SCAN_LINE_MARGIN * 2;
+    if (line < minimum_skip) {
+      line = minimum_skip;
+    }
     vicky.line_interrupt[0].control = 1 | (line << 4);
+    scan_line = line;
   }
 }
 
 __attribute__((interrupt)) void sof_handler(void) {
   InterruptController.pending.vicky = INT_VICKY_SOF;  // acknowledge
   vicky.line_interrupt[0].control = 0;                // no sol interrupt
+  scan_line = 0;
   unsigned next_sprite = SPRITE_COUNT - 1;
   next_actor = (struct actor_visual *)visuals.head;
 
@@ -92,7 +101,7 @@ __attribute__((interrupt)) void sof_handler(void) {
 __attribute__((interrupt)) void sol_handler(void) {
   InterruptController.pending.vicky = INT_VICKY_SOL;  // acknowledge
   while (head_actor->succ && next_actor->succ) {
-    if (line >= head_actor->y - offset_y + SPRITE_HEIGHT) {
+    if (scan_line >= head_actor->y - offset_y + SPRITE_HEIGHT) {
       // We can reuse this one
       unsigned index = head_actor->sprite_index;
       head_actor = head_actor->next;
