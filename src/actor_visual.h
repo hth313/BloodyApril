@@ -43,7 +43,8 @@ struct actor_visual {
 
 // **********************************************************************
 
-extern void init_visual(struct actor_visual *, location *, struct sprite *);
-
+extern void init_visual(struct actor_visual *, location, struct sprite *);
+extern void install_interrupt_handlers(void);
+extern void restore_interrupt_handlers(void);
 
 #endif // __ACTOR_VISUAL_H__

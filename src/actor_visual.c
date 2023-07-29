@@ -1,5 +1,6 @@
 #include "actor_visual.h"
 #include <foenix/vicky.h>
+#include <mcp/interrupt.h>
 
 // This list holds the elements in sort order. As objects move elements
 // are pushed in that direction in the list to keep them in reasonable
@@ -104,4 +105,32 @@ __attribute__((interrupt)) void sol_handler(void) {
   if (next_actor->succ) {
     enable_sol();
   }
+}
+
+static p_int_handler old_sof_handler;
+static p_int_handler old_sol_handler;
+
+void install_interrupt_handlers(void) {
+  old_sof_handler = sys_int_register(INT_SOF_A, sof_handler);
+  old_sol_handler = sys_int_register(INT_SOL_A, sol_handler);
+}
+
+void restore_interrupt_handlers(void) {
+  sys_int_register(INT_SOF_A, old_sof_handler);
+  sys_int_register(INT_SOL_A, old_sol_handler);
+}
+
+static bool y_pred(struct actor_visual *current_node, struct actor_visual *next_node,
+            struct actor_visual *new_node) {
+  returnr next_node->y >= new_node->y;
+}
+
+static void insert_actor(struct actor_visual *p) {
+  visuals.predicate_insert(&visuals, &p->node, y_pred);
+}
+
+void init_visual(struct actor_visual *p, location loc, struct sprite *sprite) {
+  location_to_pixel_pos(loc, &p->x, &p->y);
+  p->sprite = *sprite;
+  atomically(insert_actor, p);
 }
