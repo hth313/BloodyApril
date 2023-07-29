@@ -1,6 +1,7 @@
 #include "actor_visual.h"
 #include <foenix/vicky.h>
 #include <mcp/interrupt.h>
+#include <mcp/syscalls.h>
 
 // This list holds the elements in sort order. As objects move elements
 // are pushed in that direction in the list to keep them in reasonable
