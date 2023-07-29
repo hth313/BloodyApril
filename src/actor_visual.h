@@ -22,6 +22,7 @@ struct actor_visual {
   uint16_t show_x;      // position for this frame
   uint16_t show_y;
   struct sprite sprite; // actual sprite data to be used
+  unsigned sprite_index;
   uint16_t x;           // position is updated here
   uint16_t y;
   // Pointer to rich data record
