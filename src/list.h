@@ -71,6 +71,13 @@ inline void remove_node(struct node *node) {
   next->pred = pred;
 }
 
+inline insert_after(struct node *before, struct node *new_node) {
+  new_node->pred = before;
+  new_node->succ = before->succ;
+  before->succ->pred = new_node;
+  before->succ = new_node;
+}
+
 inline void order_insert(struct list *list, struct typed_node *node) {
   struct typed_node *next;
   foreach_node(list, next) {
@@ -81,6 +88,20 @@ inline void order_insert(struct list *list, struct typed_node *node) {
   node->succ = next;
   next->succ = node;
   next->pred->succ = node;
+}
+
+bool (*pred_t)(struct node *current_node, struct node *next_node,
+	       struct node *new_node);
+
+inline void predicate_insert(struct list *list, struct typed_node *node, pred_t pred) {
+  struct node *current;
+  foreach_node(list, current) {
+    if (current->succ->succ && pred(current, current->succ, node)) {
+      insert_after(current, node);
+      return;
+    }
+  }
+  add_tail(list, node);
 }
 
 // **********************************************************************
