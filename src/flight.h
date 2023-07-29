@@ -8,6 +8,11 @@
 
 struct playstate;
 
+enum detection {
+    Undetected, Detected, VisuallySighted,
+    DetectedPreviouslyVisuallySighted
+};
+
 // A flight is a group of airplanes flying together. It may suffice to show one
 // airplane (the top one) with some indicator that there are more.
 // All airplanes in a flight is seen as a single unit with the same
@@ -26,7 +31,8 @@ struct flight {
 #define MOVE_ORDER_DECEND         0x0002
 #define MOVE_ORDER_SPIN_OUT       0x0004
 #define MOVE_ORDER_TURN_LEFT      0x0008
-#define MOVE_ORDER_TURN_RIGHT     0x0010
+#define MOVE_ORDER_TURN_RIGHT 0x0010
+  enum detection detection;
 };
 
 // **********************************************************************

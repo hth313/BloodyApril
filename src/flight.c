@@ -28,6 +28,7 @@ struct flight *new_flight(location* position, direction heading, struct sprite *
   p->position = position;
   p->heading = heading;
   p->move_order = MOVE_ORDER_LEVEL;
+  p->detection = Undetected;
   init_visual(&p->visual, position, sprite);
   p->visual.actor_kind = Flight;
   p->visual.flight = p;
