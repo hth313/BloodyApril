@@ -10,6 +10,7 @@
 struct playstate {
   struct list flights;            // Active flights in the air
   actorsmap actors;               // Other actors, such as ground unites or ballons
+  struct list map_visuals;        // Main list of map visuals.
   struct list aerodromes;         // List of all aerodromes
   struct scenario *scenario;      // The active scenario, or NULL
   struct list accomplished;       // List of accomplished objectives, or state objects
@@ -20,5 +21,9 @@ struct playstate {
   struct list downed_allied;      // Downed allied airplanes
   struct list downed_central;     // Downed central powers airplanes
 };
+
+// **********************************************************************
+
+struct playstate *active_playstate;
 
 #endif // __PLAYSTATE_H__

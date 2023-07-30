@@ -1,7 +1,8 @@
 // -*- coding: iso-latin-1 -*-
 #include "aerodrome.h"
-#include "actor_sprite.h"
+#include "actor_visual.h"
 #include "coordinate.h"
+#include "playstate.h"
 #include <stdbool.h>
 #include <foenix/vicky.h>
 
@@ -53,10 +54,11 @@ struct sprite central_aerodrome;
 static void initialize(struct aerodrome *aerodrome, char *name, bool allied, coordinate pos) {
   aerodrome->name = name;
   aerodrome->pos = pos;
-  init_list(&aerodrome->fights);
+  init_list(&aerodrome->flights);
   init_list(&aerodrome->airplanes);
   init_list(&aerodrome->squadron);
-  init_visual(&aerodrome->visual, pos, allied ? &allied_aerodrome : central_aerodrome);
+  add_visual(&active_playstate->map_visuals, &aerodrome->visual, pos,
+             allied ? &allied_aerodrome : &central_aerodrome);
 }
 
 void create_aerodromes() {

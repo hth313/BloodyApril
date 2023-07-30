@@ -18,6 +18,7 @@ struct dogfight {
   struct actor_visual visual;
   struct list allied_powers;
   struct list central_powers;
+  struct list visuals;
   bool allied_attacker;
   // ^ True if allied side is seen as attacker in dogfight.
   // The "attacker" role can be either side an may switch during

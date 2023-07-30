@@ -2,12 +2,15 @@
 #include <foenix/vicky.h>
 #include <mcp/interrupt.h>
 #include <mcp/syscalls.h>
+#include <stdint.h>
 
 // This list holds the elements in sort order. As objects move elements
 // are pushed in that direction in the list to keep them in reasonable
 // sort order. In reality, as we expect there are a decent amount of
 // sprites the order does not need to be perfect, trickling should suffice.
-static struct list visuals;
+// Note that this list can either be map items or a list of dogfight
+// particpants, it is meant to point to the list that is shown in the display.
+static struct list *visuals;
 
 static uint16_t offset_x;
 static uint16_t offset_y;
@@ -47,15 +50,15 @@ __attribute__((interrupt)) void sof_handler(void) {
   vicky.line_interrupt[0].control = 0;                // no sol interrupt
   scan_line = 0;
   unsigned next_sprite = SPRITE_COUNT - 1;
-  next_actor = (struct actor_visual *)visuals.head;
+  next_actor = (struct actor_visual *)visuals->head;
 
-  if (!empty_list(&visuals)) {
+  if (!empty_list(visuals)) {
     // Update positions and allow actors to trickle position in the list.
     unsigned y = next_actor->y;
 
     struct actor_visual *current;
     struct actor_visual *next;
-    foreach_node_safe(&visuals, current, next) {
+    foreach_node_safe(visuals, current, next) {
       current->show_x = current->x;
       current->show_y = current->y;
       if (current->show_y < y) {
@@ -132,15 +135,24 @@ void restore_interrupt_handlers(void) {
 
 static bool y_pred(struct actor_visual *current_node, struct actor_visual *next_node,
             struct actor_visual *new_node) {
-  returnr next_node->y >= new_node->y;
+  return next_node->y >= new_node->y;
 }
 
-static void insert_actor(struct actor_visual *p) {
-  visuals.predicate_insert(&visuals, &p->node, y_pred);
+static void insert_actor(struct list *visuals, struct actor_visual *p) {
+  predicate_insert(visuals, &p->node, y_pred);
 }
 
-void init_visual(struct actor_visual *p, location loc, struct sprite *sprite) {
-  location_to_pixel_pos(loc, &p->x, &p->y);
+void add_visual(struct list *visuals, struct actor_visual *p, location loc,
+                struct sprite *sprite) {
+  uint16_t x, y;
+  location_to_pixel_pos(loc, &x, &y);
+  add_visual_xy(visuals, p, x, y, sprite);
+}
+
+void add_visual_xy(struct list *visuals, struct actor_visual *p, uint16_t x,
+                   uint16_t y, struct sprite *sprite) {
+  p->x = x;
+  p->y = y;
   p->sprite = *sprite;
   atomically(insert_actor, p);
 }

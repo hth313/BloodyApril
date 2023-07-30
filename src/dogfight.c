@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include "actor."
+#include "actor_visual.h"
 #include "ai.h"
 #include "airplane.h"
 #include "altitude.h"
@@ -9,6 +10,21 @@
 #include "list.h"
 #include "playstate.h"
 #include "ui.h"
+
+#define MARGIN 4
+
+static void add_visuals(struct dogfight *p, struct list *flights, bool allied) {
+  struct flight *flight;
+  uint16_t x = allied ? 70 : 400;
+  uint16_t y = 50;
+  foreach_node(flights_powers, flight) {
+    struct airplane *plane;
+    foreach_node(&flight->airplanes, plane) {
+      add_visual(&p->visual, &plane->visual, x, y, airplane_kind(plane)->sprite);
+      y += SPRITE_HEIGHT + margin;
+    }
+  }
+}
 
 // Allocate a new dogfight dynamically. The caller should link the created
 // node into actors of the sector it occurs in.
@@ -21,9 +37,13 @@ struct dogfight *new_dogfight(struct list *allied_powers, struct list *central_p
       .allied_attacker = allied_attacker,
       .round = 0,
   };
-  init_visual(&p->visual, position, sprite);
+  add_visual(&active_playstate->map_visuals, &p->visual, position, sprite);
   p->visual.actor_kind = DogFight;
   p->visual.dogfight = p;
+
+  init_list(&p->visuals);
+  add_visuals(p, allied_powers, true);
+  add_visuals(p, central_powers, false);
 
   return p;
 }

@@ -3,6 +3,8 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <foenix/vicky.h>
+#include "actor.h"
 #include "altitude.h"
 #include "coordinate.h"
 #include "pilot.h"
@@ -19,7 +21,7 @@ struct airplane_kind {
   unsigned speed[ALTITUDE_BANDS];
   unsigned climb_ability[ALTITUDE_BANDS]; // ft/round
   enum token token;                       // play token used
-  void *sprite_data;
+  struct sprite sprite;
   int unit;                               // which unit it belongs to
   unsigned firepower;
   unsigned endurance;
@@ -40,6 +42,7 @@ typedef struct airplane {
   int           airplane;
   int           pilot;
   struct squadron *squadron;
+  struct actor_visual visual;   // Used in dogfight displays
   altitude_t    altitude;
   unsigned      rounds_left;
   unsigned      duration;       // number of turns in service
