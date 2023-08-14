@@ -1,10 +1,11 @@
 #include <stdbool.h>
 #include <stime.h>
+#include "playstate.h"
 #include "scenario.h"
 
 // This could be smaller, and month transition are not properly handled at the
 // moment. However, converting it to time_t will will drag in a lot of library
-// code that want to avoid.
+// code that I want to avoid.
 static void step_time(struct playstate *state) {
   state->current_time.tm_min += 2;
   if (state->current_time.tm_min >= 60) {
@@ -38,14 +39,14 @@ static void play(struct playstate *state) {
 void main(void) {
   // Initialize game system.
   struct scenarios *scenarios = initialize_scenarios();
-  struct playstate state;
+  struct playstate *state = new_playstate();
 
   while (true) {
     intro();
     state.scenario = select_a_game(scenarios);
     if (state.scenario) {
-      scenario->setup(&state);
-      play(&state);
+      scenario->setup(state);
+      play(state);
     }
   }
 }

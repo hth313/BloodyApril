@@ -5,7 +5,7 @@ DEPDIR := .deps
 ASM_SRCS = assets.s
 C_SRCS = main.c ai.c actor.c actor_visual.c aerodrome.c ai.c airplane.c altitude.c \
         combat.c dogfight.c \
-        flight.c inlines.c input.c list.c pilot.c scenario.c squadron.c \
+        flight.c inlines.c input.c list.c pilot.c playstate.c scenario.c squadron.c \
 	ui.c unit.c weather.c
 
 FOENIX_C_SRCS = foenix.c

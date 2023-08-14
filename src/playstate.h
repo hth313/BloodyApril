@@ -25,5 +25,6 @@ struct playstate {
 // **********************************************************************
 
 struct playstate *active_playstate;
+extern struct playstate *new_playstate(void);
 
 #endif // __PLAYSTATE_H__
