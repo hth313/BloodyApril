@@ -77,10 +77,11 @@ struct actors_pos {
 };
 
 // Actors are hashed based on their coordinate.
-typedef struct hashmap actorsmap;
+typedef struct hashmap *actorsmap;
 
 // **********************************************************************
 
+extern actorsmap new_actorsmap(void);
 extern void new_ballon(coordinate pos, enum altitude_band altitude, bool allied);
 extern void new_flaming_onion(coordinate pos, bool allied);
 extern void new_artillery(coordinate pos, bool allied);
@@ -92,8 +93,8 @@ extern void new_archie(coordinate pos, uint16_t strength, bool allied);
 // Add an actor at a given sector. The list of all actors in this sector
 // is returned and can be inspected to see if there are something that
 // prevented it from happening, in that case the caller can unlink it again.
-extern struct list *add_actor(actorsmap *map, coordinate pos,
+extern struct list *add_actor(actorsmap map, coordinate pos,
                               struct typed_node *node);
-extern void unlink_actor(actorsmap *map, coordinate pos,
+extern void unlink_actor(actorsmap map, coordinate pos,
 			 struct typed_node *node);
 #endif // __ACTOR_H__
