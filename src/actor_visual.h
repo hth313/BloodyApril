@@ -1,9 +1,8 @@
 #ifndef __ACTOR_VISUAL_H__
 #define __ACTOR_VISUAL_H__
 
-#include <foenix/sprite.h>
-#include "actor.h"
-#include "dogfight.h"
+#include <foenix/vicky.h>
+#include "coordinate.h"
 #include "list.h"
 
 struct aerodrome;
@@ -16,6 +15,21 @@ struct flaming_onion;
 struct flight;
 struct infantry;
 struct machine_gun;
+
+enum actor_kind {
+  Ballon,       // Obseravtion ballon
+  FlamingOnion, // Concentration of such
+  DogFight,     // An active dogfight
+  Artillery,
+  LightArchie,
+  MediumArchie,
+  HeavyArchie,
+  Infanrty,
+  Cavalry,
+  MachineGun,
+  Flight,
+  Aerodrome,
+};
 
 struct actor_visual {
   struct node node;     // sorted on show_y

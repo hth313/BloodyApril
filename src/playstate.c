@@ -16,4 +16,4 @@ struct playstate *new_playstate(void) {
   init_list(&state->downed_allied);
   init_list(&state->downed_central);
   return state;
-)
+}

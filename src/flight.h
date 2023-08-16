@@ -19,7 +19,7 @@ enum detection {
 // location and heading. Individual airplanes in a flight may exist at different
 // altitudes, especially during combat situations.
 struct flight {
-  struct typed_node node;  // Part of a linked list of dogfight or actor at location
+  struct ordered_node node;  // Part of a linked list of dogfight or actor at location
   struct list airplanes;   // Airplanes in this flight
   struct actor_visual visual;
   location position;
@@ -37,8 +37,9 @@ struct flight {
 
 // **********************************************************************
 
-extern flight *new_flight(location *position, direction heading);
-extern void drop_flight(flight *p);
+extern struct flight *new_flight(location position, direction heading,
+				 struct sprite *sprite);
+extern void drop_flight(struct flight *p);
 extern bool prune_downed(struct playstate *ps, struct flight *flight);
 
 #endif // __FLIGHT_H__

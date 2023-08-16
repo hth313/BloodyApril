@@ -21,8 +21,7 @@ struct airplane_kind {
   unsigned speed[ALTITUDE_BANDS];
   unsigned climb_ability[ALTITUDE_BANDS]; // ft/round
   enum token token;                       // play token used
-  struct sprite sprite;
-  int unit;                               // which unit it belongs to
+  struct sprite *sprite;
   unsigned firepower;
   unsigned endurance;
   unsigned agility;                       // maneuverability
@@ -71,7 +70,7 @@ inline bool damaged(airplane* p) {
           || (p->property & GUN_MASK) == (airplane_data[p->airplane]->property & GUN_MASK);
 }
 
-inline struct airplane_kind *airplane_kind(struct airplane *p) {
+inline const struct airplane_kind *airplane_kind(struct airplane *p) {
   return airplane_data[p->airplane];
 }
 

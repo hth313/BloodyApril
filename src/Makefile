@@ -33,8 +33,8 @@ obj/%-debug.o: %.s
 	as68k --core=68000 $(MODEL) --debug --list-file=$(@:%.o=%.lst) -o $@ $<
 
 obj/%-debug.o: %.c $(DEPDIR)/%-debug.d | $(DEPDIR)
-	@cc68k --core=68000 $(MODEL) --target=Foenix $(CFLAGS) -Imodule/Calypsi-m68k-Foenix/include --debug --dependencies -MQ$@ >$(DEPDIR)/$*-debug.d $<
-	cc68k --core=68000 $(MODEL) --target=Foenix $(CFLAGS) -Imodule/Calypsi-m68k-Foenix/include --debug --list-file=$(@:%.o=%.lst) -o $@ $<
+	@cc68k --core=68000 $(MODEL) --target=Foenix $(CFLAGS) -D__FOENIX_A2560_REGISTER_SIZE__=16 -I../module/hashmap --debug --dependencies -MQ$@ >$(DEPDIR)/$*-debug.d $<
+	cc68k --core=68000 $(MODEL) --target=Foenix $(CFLAGS) -D__FOENIX_A2560_REGISTER_SIZE__=16 -I../module/hashmap --debug --list-file=$(@:%.o=%.lst) -o $@ $<
 
 bloody-april.elf: $(OBJS_DEBUG)
 	ln68k --debug -o $@ $^ a2560u+.scm --list-file=bloody-april-debug.lst --semi-hosted --rtattr cstartup=Foenix_user --rtattr stubs=foenix $(LNFLAGS)

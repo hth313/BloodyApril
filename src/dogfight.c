@@ -1,5 +1,6 @@
 #include <stdlib.h>
-#include "actor."
+#include <foenix/vicky.h>
+#include "actor.h"
 #include "actor_visual.h"
 #include "ai.h"
 #include "airplane.h"
@@ -8,8 +9,12 @@
 #include "dogfight.h"
 #include "flight.h"
 #include "list.h"
+#include "memory.h"
 #include "playstate.h"
 #include "ui.h"
+
+extern struct sprite right_facing_dogfight_sprite;
+extern struct sprite left_facing_dogfight_sprite;
 
 #define MARGIN 4
 
@@ -17,27 +22,32 @@ static void add_visuals(struct dogfight *p, struct list *flights, bool allied) {
   struct flight *flight;
   uint16_t x = allied ? 70 : 400;
   uint16_t y = 50;
-  foreach_node(flights_powers, flight) {
+  foreach_node(flights, flight) {
     struct airplane *plane;
     foreach_node(&flight->airplanes, plane) {
-      add_visual(&p->visual, &plane->visual, x, y, airplane_kind(plane)->sprite);
-      y += SPRITE_HEIGHT + margin;
+      add_visual_xy(&p->visuals, &plane->visual, x, y, airplane_kind(plane)->sprite);
+      y += SPRITE_HEIGHT + MARGIN;
     }
   }
 }
 
 // Allocate a new dogfight dynamically. The caller should link the created
 // node into actors of the sector it occurs in.
-struct dogfight *new_dogfight(struct list *allied_powers, struct list *central_powers,
+struct dogfight *new_dogfight(location pos, struct list *allied_powers,
+                              struct list *central_powers,
                               bool allied_attacker) {
   struct dogfight *p = safe_malloc(sizeof(struct dogfight));
-  p = {
-      .allied_powers = allied,
-      .central_powers = central_powers,
-      .allied_attacker = allied_attacker,
-      .round = 0,
+  *p = (struct dogfight) {
+	  .allied_attacker = allied_attacker,
+	  .round = 0,
   };
-  add_visual(&active_playstate->map_visuals, &p->visual, position, sprite);
+  move_members(&p->allied_powers, allied_powers);
+  move_members(&p->central_powers, central_powers);
+
+  struct sprite *sprite =
+    allied_attacker ? &right_facing_dogfight_sprite : &left_facing_dogfight_sprite;
+
+  add_visual(&active_playstate->map_visuals, &p->visual, pos, sprite);
   p->visual.actor_kind = DogFight;
   p->visual.dogfight = p;
 
@@ -63,7 +73,7 @@ static void move_downed(struct playstate *ps, struct list *flights) {
 void drop_dogfight(struct playstate *ps, struct dogfight *df) {
   move_downed(ps, &df->allied_powers);
   move_downed(ps, &df->central_powers);
-  unlink_actor(&ps->actors, df->pos, df);
+  unlink_actor(ps->actors, df->pos, &df->node);
   free(df);
 }
 

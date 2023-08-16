@@ -1,4 +1,5 @@
 #include "actor_visual.h"
+#include <foenix/interrupt.h>
 #include <foenix/vicky.h>
 #include <mcp/interrupt.h>
 #include <mcp/syscalls.h>
@@ -25,29 +26,30 @@ static bool is_visible(struct actor_visual *p) {
 }
 
 static void assign_sprite(unsigned index, struct actor_visual *p) {
-  struct sprite *sprite = &Sprite[next_sprite];
-  sprite.control = next_actor->sprite.control;
-  sprite.addy_high = next_actor->sprite.addy_high;
-  sprite.x = next_actor->show_x - offset_x;
-  sprite.y = next_actor->show_y - offset_y;
+  volatile struct sprite *sprite = &Sprite[index];
+  sprite->control = next_actor->sprite.control;
+  sprite->addy_high = next_actor->sprite.addy_high;
+  sprite->x = next_actor->show_x - offset_x;
+  sprite->y = next_actor->show_y - offset_y;
   next_actor->sprite_index = index;
 }
 
 static void enable_sol(void) {
-  if (head_actor->succ) {
-    unsigned line = next_actor->pred->y - SCAN_LINE_MARGIN;
+  if (head_actor->node.succ) {
+    struct actor_visual *pred = (struct actor_visual*) next_actor->node.pred;
+    unsigned line = pred->y - SCAN_LINE_MARGIN;
     unsigned minimum_skip = scan_line + SCAN_LINE_MARGIN * 2;
     if (line < minimum_skip) {
       line = minimum_skip;
     }
-    vicky.line_interrupt[0].control = 1 | (line << 4);
+    Vicky.line_interrupt[0].control = 1 | (line << 4);
     scan_line = line;
   }
 }
 
 __attribute__((interrupt)) void sof_handler(void) {
   InterruptController.pending.vicky = INT_VICKY_SOF;  // acknowledge
-  vicky.line_interrupt[0].control = 0;                // no sol interrupt
+  Vicky.line_interrupt[0].control = 0;                // no sol interrupt
   scan_line = 0;
   unsigned next_sprite = SPRITE_COUNT - 1;
   next_actor = (struct actor_visual *)visuals->head;
@@ -63,26 +65,28 @@ __attribute__((interrupt)) void sof_handler(void) {
       current->show_y = current->y;
       if (current->show_y < y) {
         // Move the node back one step
-	struct node *pred = current->pred;
-        remove_node(current);
+	struct node *pred = current->node.pred;
+        remove_node((struct node*)current);
 	insert_before(pred, current);
       } else if (next->y < y) {
         // Move the current node forward
-        remove_node(current);
-	insert_after(next, current);
+        remove_node(&current->node);
+	insert_after(&next->node, &current->node);
       }
       y = current->show_y;
     }
 
     // Skip over initial sprites that are not visible, then allocate sprites
     // until we have no more or we run out of actors.
-    while (next_actor->succ) {
+    unsigned count = SPRITE_COUNT;
+    while (next_actor->node.succ) {
       if (is_visible(next_actor)) {
-        if (next_sprite == first_active_sprite) {
+        if (count == 0) {
           enable_sol();
 	  break;
 	}
-	next_sprite++;
+        next_sprite++;
+	count--;
 	if (next_sprite == SPRITE_COUNT) {
 	  next_sprite = 0;
         }
@@ -92,7 +96,7 @@ __attribute__((interrupt)) void sof_handler(void) {
           head_actor = next_actor;
 	}
       }
-      next_actor = next_actor->succ;
+      next_actor = (struct actor_visual *) next_actor->node.succ;
     }
   }
 
@@ -104,18 +108,18 @@ __attribute__((interrupt)) void sof_handler(void) {
 
 __attribute__((interrupt)) void sol_handler(void) {
   InterruptController.pending.vicky = INT_VICKY_SOL;  // acknowledge
-  while (head_actor->succ && next_actor->succ) {
+  while (head_actor->node.succ && next_actor->node.succ) {
     if (scan_line >= head_actor->y - offset_y + SPRITE_HEIGHT) {
       // We can reuse this one
       unsigned index = head_actor->sprite_index;
-      head_actor = head_actor->next;
+      head_actor = (struct actor_visual *) head_actor->node.succ;
       assign_sprite(index, next_actor);
-      next_actor = next_actor->succ;
+      next_actor = (struct actor_visual *) next_actor->node.succ;
     } else {
       break;
     }
   }
-  if (next_actor->succ) {
+  if (next_actor->node.succ) {
     enable_sol();
   }
 }
@@ -133,8 +137,12 @@ void restore_interrupt_handlers(void) {
   sys_int_register(INT_SOL_A, old_sol_handler);
 }
 
-static bool y_pred(struct actor_visual *current_node, struct actor_visual *next_node,
-            struct actor_visual *new_node) {
+static bool y_pred(struct node *current_node,
+                   struct node *next,
+                   struct node *new_item) {
+  struct actor_visual *next_node = (struct actor_visual *) next;
+  struct actor_visual *new_node = (struct actor_visual *) new_item;
+
   return next_node->y >= new_node->y;
 }
 
@@ -154,5 +162,6 @@ void add_visual_xy(struct list *visuals, struct actor_visual *p, uint16_t x,
   p->x = x;
   p->y = y;
   p->sprite = *sprite;
-  atomically(insert_actor, p);
+  //  atomically(insert_actor, p);
+  insert_actor(visuals, p);
 }

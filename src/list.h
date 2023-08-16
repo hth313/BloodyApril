@@ -1,24 +1,19 @@
 #ifndef __LIST_H__
 #define __LIST_H__
 
-struct node {
-    struct node *succ;
-    struct node *pred;
-};
+#include <stdbool.h>
 
-enum node_kind {
-  Flight.     // A flight is a group of airplanes moving together
-  Dogfight,   // A dogfight keeps track of participants and corresponding action
-  Ballon,     // Observation ballon
-  GroundUnit  // Some ground uint, may be capable of fire on airplanes
+enum actor_kind;
+
+struct node {
+  struct node *succ;
+  struct node *pred;
 };
 
 // A typed node is like a node but carries an identity to allow
 // different things to be linked into it.
-struct typed_node {
-  struct node *succ;
-  struct node *pred;
-  enum node_kind kind;
+struct ordered_node {
+  struct node node;
   int order;
 };
 
@@ -28,14 +23,14 @@ struct list {
    struct node *tailpred;
 };
 
-#define foreach_node(list, node) for (node = (void*)((list)->head);                 \
-                                      ((struct node*)(node))->succ;                 \
-                                      node = (void*)(((struct node*)(node))->succ)) \
+#define foreach_node(list, item) for (item = (void*)((list)->head);                 \
+                                      ((struct node*)(item))->succ;                 \
+                                      item = (void*)(((struct node*)(item))->succ))
 
 #define foreach_node_safe(list, current, next)            \
   for (current = (void *)((list)->head);                  \
       (next = (void *)((struct node*)(current))->succ);   \
-      current = (void *)next)                             \
+      current = (void *)next)
 
 
 inline void init_list(struct list *list) {
@@ -71,37 +66,51 @@ inline void remove_node(struct node *node) {
   next->pred = pred;
 }
 
-inline insert_after(struct node *before, struct node *new_node) {
+inline void insert_after(struct node *before, struct node *new_node) {
   new_node->pred = before;
   new_node->succ = before->succ;
   before->succ->pred = new_node;
   before->succ = new_node;
 }
 
-inline void order_insert(struct list *list, struct typed_node *node) {
-  struct typed_node *next;
+inline void order_insert(struct list *list, struct ordered_node *node) {
+  struct ordered_node *next;
   foreach_node(list, next) {
     if (next->order > node->order)
       break;
   }
-  node->pred = next->pred;
-  node->succ = next;
-  next->succ = node;
-  next->pred->succ = node;
+  node->node.pred = next->node.pred;
+  node->node.succ = &next->node;
+  next->node.succ = &node->node;
+  next->node.pred->succ = &node->node;
 }
 
-bool (*pred_t)(struct node *current_node, struct node *next_node,
-	       struct node *new_node);
+typedef bool (*pred_t)(struct node *current_node, struct node *next_node,
+		       struct node *new_node);
 
-inline void predicate_insert(struct list *list, struct typed_node *node, pred_t pred) {
+inline void predicate_insert(struct list *list, struct node *node, pred_t pred) {
   struct node *current;
   foreach_node(list, current) {
-    if (current->succ->succ && pred(current, current->succ, node)) {
-      insert_after(current, node);
+    if (current->succ->succ && pred(current, current->succ, (struct node*) node)) {
+      insert_after(current, (struct node*) node);
       return;
     }
   }
-  add_tail(list, node);
+  add_tail(list, (struct node*) node);
+}
+
+inline void move_members(struct list *to, struct list *from) {
+  if (empty_list(from)) {
+    init_list(to);
+  } else {
+    struct node *first = from->head;
+    struct node *last = from->tailpred;
+    to->head = first;
+    to->tailpred = last;
+    to->tail = 0;
+    first->pred = (struct node*)to;
+    last->succ = (struct node*) &to->tail;
+  }
 }
 
 // **********************************************************************

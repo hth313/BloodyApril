@@ -11,6 +11,7 @@ struct playstate;
 
 struct scenario {
   struct node node;
+  const char *title;
   const char *description;  // Long desciptive text of the scenario
   struct tm start;          // Start date and time
   struct playfield *playfield; // Information about the playfield (map) being played

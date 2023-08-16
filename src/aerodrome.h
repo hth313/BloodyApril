@@ -3,7 +3,6 @@
 
 #include "coordinate.h"
 #include "list.h"
-#include "location.h"
 #include "actor_visual.h"
 
 // An aerodrome is a place where airplanes are stored, takes off from

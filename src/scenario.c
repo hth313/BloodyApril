@@ -1,10 +1,10 @@
 #include "memory.h"
 #include "scenario.h"
-#include "scenario/dogfight.h"
+#include "scenario/scenario_dogfight.h"
 #include <time.h>
 
-struct scenario basic_dogfight = {
-    .title = "Try a dogfight";
+struct scenario basic_dogfight = (struct scenario) {
+    .title = "Try a dogfight",
     .description = "Try a separate dogfight where your allied flight engage some opponents.\n"
                    "The participants from a squadron and an opposing Jasta are "
                    "randomly selected.\n",
@@ -12,7 +12,7 @@ struct scenario basic_dogfight = {
     .setup = basic_dogfight_setup,
     .playturn = playturn_dogfight_only,
     .summarize = summarize_dogfight_only
-}
+};
 
 
 struct scenarios *initialize_scenarios(void) {

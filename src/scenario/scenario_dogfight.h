@@ -2,7 +2,7 @@
 #define __SCENARIO_DOGFIGHT_H__
 
 #include <stdbool.h>
-#include "scenario.h"
+#include "../scenario.h"
 
 // **********************************************************************
 

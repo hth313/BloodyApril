@@ -84,14 +84,14 @@ static void combat(airplane *attacker, struct list *defender, int defenders) {
     unsigned base_maneuver_chance = 50;
     unsigned chances = umax(4, i);
 
-    struct pilot *attacker_pilot = pilot_data[attacker->pilot];
-    struct airplane_kind *attacker_kind = airplane_data[attacker->airplane];
+    const struct pilot *attacker_pilot = pilot_data[attacker->pilot];
+    const struct airplane_kind *attacker_kind = airplane_data[attacker->airplane];
 
     while (chances > 0 && attacker->rounds_left && (attacker->added_property & GUN_MASK) == 0) {
       // Maneuver for an opponent
       struct airplane *defender = target[rand() % i];
-      struct pilot *defender_pilot = pilot_data[defender->pilot];
-      struct airplane_kind *defender_kind = airplane_data[defender->airplane];
+      const struct pilot *defender_pilot = pilot_data[defender->pilot];
+      const struct airplane_kind *defender_kind = airplane_data[defender->airplane];
       unsigned maneuver_chance = base_maneuver_chance
         + (defender_pilot->strength - attacker_pilot->strength) * 4
         + (attacker_kind->agility - defender_kind->agility) * 2;

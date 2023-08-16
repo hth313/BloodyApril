@@ -5,7 +5,7 @@
 
 struct pilot {
   char const *name;
-  enum unit_id unit;
+  enum squadron_ident squadron;
   unsigned strength;
   unsigned duration;
   unsigned kills;

@@ -51,72 +51,74 @@ struct aerodrome Vert_Galand;
 struct sprite allied_aerodrome;
 struct sprite central_aerodrome;
 
-static void initialize(struct aerodrome *aerodrome, char *name, bool allied, coordinate pos) {
+static void initialize(struct aerodrome *aerodrome, char *name, bool allied,
+                       coordinate pos) {
   aerodrome->name = name;
   aerodrome->pos = pos;
   init_list(&aerodrome->flights);
   init_list(&aerodrome->airplanes);
   init_list(&aerodrome->squadron);
-  add_visual(&active_playstate->map_visuals, &aerodrome->visual, pos,
+  add_visual(&active_playstate->map_visuals, &aerodrome->visual,
+             coordinate_to_location(pos),
              allied ? &allied_aerodrome : &central_aerodrome);
 }
 
 void create_aerodromes() {
-  allied_aerodrome = {
+  allied_aerodrome = (struct sprite) {
     .enable = true,
     .lut = 0,
     .depth = 1,
     .collision_enable = false,
-    .addy_low = SPRITE_ADDY_LOW(&allied_aerodrome_sprite_data);
-    .addy_high = SPRITE_ADDY_HIGH(&allied_aerodrome_sprite_data);
+    .addy_low = SPRITE_ADDY_LOW(&allied_aerodrome_sprite_data),
+    .addy_high = SPRITE_ADDY_HIGH(&allied_aerodrome_sprite_data)
   };
-  central_aerodrome = {
+  central_aerodrome = (struct sprite) {
     .enable = true,
     .lut = 0,
     .depth = 1,
     .collision_enable = false,
-    .addy_low = SPRITE_ADDY_LOW(&central_aerodrome_sprite_data);
-    .addy_high = SPRITE_ADDY_HIGH(&central_aerodrome_sprite_data);
+    .addy_low = SPRITE_ADDY_LOW(&central_aerodrome_sprite_data),
+    .addy_high = SPRITE_ADDY_HIGH(&central_aerodrome_sprite_data)
   };
 
   // Central power aerodromes
-  initialize(&Abacon, "Abacon", false);
-  initialize(&Bersee, "Bersée", false);
-  initialize(&Boistrancourt, "Boistrancourt", false);
-  initialize(&Cantin, "Cantin", false);
-  initialize(&Corbehem, "Corbehem", false);
-  initialize(&Cuincy, "Cuincy", false);
-  initialize(&Emerchicourt, "Émerchicourt", false);
-  initialize(&Epinoy, "Épinoy", false);
-  initialize(&Eswars, "Eswars", false);
-  initialize(&Faumont, "Faumont", false);
-  initialize(&Gonnelieu, "Gonnelieu", false);
-  initialize(&Guesnain, "Guesnain", false);
-  initialize(&LaBrayelle, "La Brayelle", false);
-  initialize(&Phalempin, "Phalempin", false);
-  initialize(&Pont_a_Marcq, "Pont-à-Marcq", false);
-  initialize(&Pronville, "Pronville", false);
-  initialize(&Proville, "Proville", false);
-  initialize(&Provin, "Provin", false);
-  initialize(&Roucourt, "Roucourt", false);
-  initialize(&Villers_au_Tetre, "Villers-au-Tetre", false);
+  initialize(&Abacon, "Abacon", false, (coordinate) {0});
+  initialize(&Bersee, "Bersée", false, (coordinate) {0});
+  initialize(&Boistrancourt, "Boistrancourt", false, (coordinate) {0});
+  initialize(&Cantin, "Cantin", false, (coordinate) {0});
+  initialize(&Corbehem, "Corbehem", false, (coordinate) {0});
+  initialize(&Cuincy, "Cuincy", false, (coordinate) {0});
+  initialize(&Emerchicourt, "Émerchicourt", false, (coordinate) {0});
+  initialize(&Epinoy, "Épinoy", false, (coordinate) {0});
+  initialize(&Eswars, "Eswars", false, (coordinate) {0});
+  initialize(&Faumont, "Faumont", false, (coordinate) {0});
+  initialize(&Gonnelieu, "Gonnelieu", false, (coordinate) {0});
+  initialize(&Guesnain, "Guesnain", false, (coordinate) {0});
+  initialize(&LaBrayelle, "La Brayelle", false, (coordinate) {0});
+  initialize(&Phalempin, "Phalempin", false, (coordinate) {0});
+  initialize(&Pont_a_Marcq, "Pont-à-Marcq", false, (coordinate) {0});
+  initialize(&Pronville, "Pronville", false, (coordinate) {0});
+  initialize(&Proville, "Proville", false, (coordinate) {0});
+  initialize(&Provin, "Provin", false, (coordinate) {0});
+  initialize(&Roucourt, "Roucourt", false, (coordinate) {0});
+  initialize(&Villers_au_Tetre, "Villers-au-Tetre", false, (coordinate) {0});
 
   // Allied aerodromes
-  initialize(&Auchel, "Auchel", true);
-  initialize(&Avesnes_le_Comte, "Avesnes-le-Comte", true);
-  initialize(&Bellevue, "Bellevue", true);
-  initialize(&Bruay, "Bruay", true);
-  initialize(&Chocques, "Chocques", true);
-  initialize(&Fienvillers, "Fienvillers", true);
-  initialize(&Fienvilliers, "Fienvilliers", true);
-  initialize(&Filescamp, "Filescamp", true);
-  initialize(&Hesdigneul, "Hesdigneul", true);
-  initialize(&LeHameau, "Le Hameau", true);
-  initialize(&Lealvillers, "Léalvillers", true);
-  initialize(&Lozingham, "Lozingham", true);
-  initialize(&Marieux, "Marieux", true);
-  initialize(&Savy, Savy, true);
-  initialize(&Soncamp, "Soncamp", true);
-  initialize(&Treizennes, "Treizennes", true);
-  initialize(&Vert_Galand, "Vert Galand", true);
+  initialize(&Auchel, "Auchel", true, (coordinate) {0});
+  initialize(&Avesnes_le_Comte, "Avesnes-le-Comte", true, (coordinate) {0});
+  initialize(&Bellevue, "Bellevue", true, (coordinate) {0});
+  initialize(&Bruay, "Bruay", true, (coordinate) {0});
+  initialize(&Chocques, "Chocques", true, (coordinate) {0});
+  initialize(&Fienvillers, "Fienvillers", true, (coordinate) {0});
+  initialize(&Fienvilliers, "Fienvilliers", true, (coordinate) {0});
+  initialize(&Filescamp, "Filescamp", true, (coordinate) {0});
+  initialize(&Hesdigneul, "Hesdigneul", true, (coordinate) {0});
+  initialize(&LeHameau, "Le Hameau", true, (coordinate) {0});
+  initialize(&Lealvillers, "Léalvillers", true, (coordinate) {0});
+  initialize(&Lozingham, "Lozingham", true, (coordinate) {0});
+  initialize(&Marieux, "Marieux", true, (coordinate) {0});
+  initialize(&Savy, "Savy", true, (coordinate) {0});
+  initialize(&Soncamp, "Soncamp", true, (coordinate) {0});
+  initialize(&Treizennes, "Treizennes", true, (coordinate) {0});
+  initialize(&Vert_Galand, "Vert Galand", true, (coordinate) {0});
 }

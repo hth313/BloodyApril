@@ -12,7 +12,7 @@ struct speeds slowest_speed(struct list *list) {
        p->node.succ != 0;
        p = (airplane *)p->node.succ) {
     if (!damaged(p)) {
-      struct airplane_kind *kind = airplane_data[p->airplane];
+      const struct airplane_kind *kind = airplane_data[p->airplane];
       escape_score += kind->agility + kind->aggression;
       unsigned speed = kind->speed[altitude_band(p->altitude)];
       if (speed < slowest) {

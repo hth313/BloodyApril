@@ -1,9 +1,16 @@
+#define VRAM_OFFSET 0x00c00000
 
 sprite:	      .macro sym, sprite_file
+	      .align  2
+              .public \sym
+\sym:	      .byte   .byte0 (sprite_data$ - VRAM_OFFSET)
+	      .byte   1		    ; control byte
+	      .word   .word1 (sprite_data$ - VRAM_OFFSET)
+	      .word   0,0
               .section vram,data
               .align  256
-              .public \sym
-\sym:	      .incbin "\sprite_file"
+sprite_data$: .incbin "\sprite_file"
+	      .section near,data
 	      .endm
 
 	      sprite  SopwithPup_sprite, "assets/Pup.raw"

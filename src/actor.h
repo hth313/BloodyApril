@@ -7,19 +7,9 @@
 #include "list.h"
 #include "hashmap.h"
 
-enum actor_kind {
-  Ballon,       // Obseravtion ballon
-  FlamingOnion, // Concentration of such
-  DogFight,     // An active dogfight
-  Artillery,
-  LightArchie,
-  MediumArchie,
-  HeavyArchie,
-  Infanrty,
-  Cavalry,
-  MachineGun,
-  Flight,
-  Aerodrome,
+struct typed_node {
+  struct node node;
+  enum actor_kind kind;
 };
 
 // Ballons are mainly for observation. They can be targets to down in scenarios.
@@ -56,7 +46,7 @@ struct infantry {
   uint16_t strength;
 };
 
-struct cavalry; {
+struct cavalry {
   struct typed_node node;
   struct actor_visual visual;
   bool allied;

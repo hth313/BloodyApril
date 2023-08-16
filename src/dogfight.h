@@ -26,12 +26,14 @@ struct dogfight {
   unsigned round;            // counter
   bool attacker_disengage;   // overall order
   bool defender_disengage;   // overall order
+  coordinate pos;            // map position
 };
 
 // **********************************************************************
 
 extern bool dogfight(struct dogfight *df);
-extern struct dogfight *new_dogfight(struct list *allied_powers,
+extern struct dogfight *new_dogfight(location pos,
+                                     struct list *allied_powers,
                                      struct list *central_powers,
                                      bool allied_attacker);
 extern void drop_dogfight(struct playstate*, struct dogfight*);
