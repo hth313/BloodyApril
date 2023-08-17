@@ -20,7 +20,7 @@ struct scenarios *initialize_scenarios(void) {
   init_list(&p->trainer_scenarios);
   init_list(&p->normal_scenarios);
 
-  add_tail(&p->trainer_scenarios.basic_dogfight);
+  add_tail(&p->trainer_scenarios, &basic_dogfight.node);
 
   return p;
 }
