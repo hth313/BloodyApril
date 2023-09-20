@@ -7,7 +7,6 @@
 struct playstate *new_playstate(void) {
   struct playstate *state =
       (struct playstate *) safe_malloc(sizeof(struct playstate));
-  init_list(&state->flights);
   state->actors = new_actorsmap();
   init_list(&state->map_visuals);
   init_list(&state->aerodromes);
