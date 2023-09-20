@@ -23,6 +23,7 @@ static int sequence;
 // that it should be immediately linked into its owning list.
 struct flight *new_flight(location position, direction heading, struct sprite *sprite) {
   struct flight *p = (struct flight*) safe_malloc(sizeof(struct flight));
+  p->node.kind = Flight;
   p->node.order = sequence++;
   init_list(&p->airplanes);
   p->position = position;

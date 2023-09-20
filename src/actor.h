@@ -7,11 +7,6 @@
 #include "list.h"
 #include "hashmap.h"
 
-struct typed_node {
-  struct node node;
-  enum actor_kind kind;
-};
-
 // Ballons are mainly for observation. They can be targets to down in scenarios.
 struct ballon {
   struct typed_node node;

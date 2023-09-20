@@ -16,10 +16,10 @@ struct flight;
 struct infantry;
 struct machine_gun;
 
+// The order used here is intended to matter, higher numbers should
+// be displayed above those with lower number.
 enum actor_kind {
-  Ballon,       // Obseravtion ballon
-  FlamingOnion, // Concentration of such
-  DogFight,     // An active dogfight
+  Aerodrome,
   Artillery,
   LightArchie,
   MediumArchie,
@@ -27,8 +27,10 @@ enum actor_kind {
   Infanrty,
   Cavalry,
   MachineGun,
+  Ballon,       // Obseravtion ballon
+  FlamingOnion, // Concentration of such
+  DogFight,     // An active dogfight
   Flight,
-  Aerodrome,
 };
 
 struct actor_visual {

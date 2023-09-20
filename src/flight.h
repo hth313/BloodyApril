@@ -19,7 +19,10 @@ enum detection {
 // location and heading. Individual airplanes in a flight may exist at different
 // altitudes, especially during combat situations.
 struct flight {
-  struct ordered_node node;  // Part of a linked list of dogfight or actor at location
+  // When on the ground part of a list owned by an aerodrome.
+  // When airborne, owned by a a map location (struct actors_pos).
+  // When engaged in a dogfight, owned by the xx_powers list of the dogfight.
+  struct typed_node node;
   struct list airplanes;   // Airplanes in this flight
   struct actor_visual visual;
   location position;

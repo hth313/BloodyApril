@@ -10,10 +10,14 @@ struct node {
   struct node *pred;
 };
 
-// A typed node is like a node but carries an identity to allow
-// different things to be linked into it.
-struct ordered_node {
+enum actor_kind;
+
+// A typed node serves to both give a type and priority of the node.
+// The priority is used to give a consistent ordering when displaying
+// units on the same location (stacking order).
+struct typed_node {
   struct node node;
+  enum actor_kind kind;
   int order;
 };
 
@@ -73,10 +77,12 @@ inline void insert_after(struct node *before, struct node *new_node) {
   before->succ = new_node;
 }
 
-inline void order_insert(struct list *list, struct ordered_node *node) {
-  struct ordered_node *next;
+inline void order_insert(struct list *list, struct typed_node *node) {
+  struct typed_node *next;
   foreach_node(list, next) {
-    if (next->order > node->order)
+    if (next->kind > node->kind)
+      break;
+    if (next->kind == node->kind && next->order > node->order)
       break;
   }
   node->node.pred = next->node.pred;
