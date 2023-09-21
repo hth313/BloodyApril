@@ -73,9 +73,8 @@ static void move_downed(struct playstate *ps, struct list *flights) {
 void drop_dogfight(struct playstate *ps, struct dogfight *df) {
   move_downed(ps, &df->allied_powers);
   move_downed(ps, &df->central_powers);
-  remove_node((struct node*) &df->visual);
   remove_node(&df->node.node);
-  free(df);
+  add_tail(&ps->free_memory, &df->node.node);
 }
 
 static void dogfight_reset_orders(struct dogfight *df) {

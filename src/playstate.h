@@ -13,6 +13,7 @@ struct playstate {
   struct list aerodromes;         // List of all aerodromes
   struct list flights;            // Fligths in motion
   struct list dogfights;          // Active dogfights
+  struct list free_memory;        // List of memory to be recycled
   struct scenario *scenario;      // The active scenario, or NULL
   struct list accomplished;       // List of accomplished objectives, or state objects
                                   // related to it (partial accomplishments)
@@ -27,5 +28,6 @@ struct playstate {
 
 struct playstate *active_playstate;
 extern struct playstate *new_playstate(void);
+extern void recycle_memory(struct playstate *ps);
 
 #endif // __PLAYSTATE_H__

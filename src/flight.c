@@ -37,10 +37,9 @@ struct flight *new_flight(location position, direction heading, struct sprite *s
 }
 
 // Unlink a flight from its owning list and recycle its storage.
-void drop_flight(struct flight *p) {
+void drop_flight(struct playstate *ps, struct flight *p) {
   remove_node(&p->node.node);
-  remove_node_with_interrupts_blocked((struct node*) &p->visual.node);
-  free(p);
+  add_tail(&ps->free_memory, &p->node.node);
 }
 
 bool prune_downed(struct playstate *ps, struct flight *flight) {
@@ -57,7 +56,7 @@ bool prune_downed(struct playstate *ps, struct flight *flight) {
     }
   }
   if (empty_list(&flight->airplanes)) {
-    drop_flight(flight);
+    drop_flight(ps, flight);
     return true;   // all dropped
   } else {
     return false;
