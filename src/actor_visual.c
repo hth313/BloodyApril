@@ -18,6 +18,7 @@ static uint16_t offset_y;
 static struct actor_visual *head_actor;
 static struct actor_visual *next_actor;
 static unsigned scan_line;
+static unsigned image_index;  // used for blinking/animated sprites
 
 #define SCAN_LINE_MARGIN (SPRITE_HEIGHT >> 1)
 
@@ -27,10 +28,10 @@ static bool is_visible(struct actor_visual *p) {
 
 static void assign_sprite(unsigned index, struct actor_visual *p) {
   volatile struct sprite *sprite = &Sprite[index];
-  sprite->control = next_actor->sprite.control;
-  sprite->addy_high = next_actor->sprite.addy_high;
-  sprite->x = next_actor->show_x - offset_x;
-  sprite->y = next_actor->show_y - offset_y;
+  sprite->control = next_actor->sprite_info.control[image_index];
+  sprite->addy_high = next_actor->sprite_info.addy[image_index];
+  sprite->x = next_actor->show_x + next_actor->staggered - offset_x;
+  sprite->y = next_actor->show_y + next_actor->staggered - offset_y;
   next_actor->sprite_index = index;
 }
 
@@ -143,25 +144,56 @@ static bool y_pred(struct node *current_node,
   struct actor_visual *next_node = (struct actor_visual *) next;
   struct actor_visual *new_node = (struct actor_visual *) new_item;
 
+  if (next_node->y == new_node->y) {
+    // Same vertical location, use node priority (ignore x location)
+    if (next_node.node.kind == new_node.node.kind) {
+      return next_node.node.order >= new_node.node.order;
+    } else {
+      return next_node.node.kind >= new_node.node.kind;
+    }
+  }
+
   return next_node->y >= new_node->y;
+}
+
+// After adjust the visual list, examine nodes before and after to see if
+// they have the same location, in the case stagger them.
+static void adjust_stagger(struct actor_visual *p) {
+  struct actor_visual *pred = (struct actor_visual *)p->node.pred;
+  // Recursively step back to the first node at this location
+  if (pred->pred != 0 && pred->show_y == p->show_y &&
+      pred->show_x == p->show_x) {
+    adjust_stagger(pred);
+  } else {
+    unsigned staggered = 0;
+    struct actor_visual *next;
+    while ((next = p->succ) && next->succ && p->show_y == next->show_y &&
+           p->show_x == next->show_x) {
+      p->staggered = staggered;
+      staggered += 4;
+      p = next;
+    }
+  }
 }
 
 static void insert_actor(struct list *visuals, struct actor_visual *p) {
   predicate_insert(visuals, &p->node, y_pred);
+  adjust_stagger(p);
 }
 
 void add_visual(struct list *visuals, struct actor_visual *p, location loc,
-                struct sprite *sprite) {
+                struct sprite_info *sprite_info) {
   uint16_t x, y;
   location_to_pixel_pos(loc, &x, &y);
-  add_visual_xy(visuals, p, x, y, sprite);
+  add_visual_xy(visuals, p, x, y, sprite_info);
 }
 
 void add_visual_xy(struct list *visuals, struct actor_visual *p, uint16_t x,
-                   uint16_t y, struct sprite *sprite) {
+                   uint16_t y, struct sprite_info *sprite_info) {
   p->x = x;
   p->y = y;
-  p->sprite = *sprite;
+  p->sprite = sprite_info;
+  p->sprite = sprite_info;
   //  atomically(insert_actor, p);
   insert_actor(visuals, p);
 }
