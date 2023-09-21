@@ -28,16 +28,16 @@ static bool is_visible(struct actor_visual *p) {
 
 static void assign_sprite(unsigned index, struct actor_visual *p) {
   volatile struct sprite *sprite = &Sprite[index];
-  sprite->control = next_actor->sprite_info.control[image_index];
-  sprite->addy_high = next_actor->sprite_info.addy[image_index];
+  sprite->control = next_actor->sprite[image_index].control;
+  sprite->addy_high = next_actor->sprite[image_index].addy_high;
   sprite->x = next_actor->show_x + next_actor->staggered - offset_x;
   sprite->y = next_actor->show_y + next_actor->staggered - offset_y;
   next_actor->sprite_index = index;
 }
 
 static void enable_sol(void) {
-  if (head_actor->node.succ) {
-    struct actor_visual *pred = (struct actor_visual*) next_actor->node.pred;
+  if (head_actor->node.node.succ) {
+    struct actor_visual *pred = (struct actor_visual*) next_actor->node.node.pred;
     unsigned line = pred->y - SCAN_LINE_MARGIN;
     unsigned minimum_skip = scan_line + SCAN_LINE_MARGIN * 2;
     if (line < minimum_skip) {
@@ -66,13 +66,13 @@ __attribute__((interrupt)) void sof_handler(void) {
       current->show_y = current->y;
       if (current->show_y < y) {
         // Move the node back one step
-	struct node *pred = current->node.pred;
+	struct node *pred = current->node.node.pred;
         remove_node((struct node*)current);
 	insert_before(pred, current);
       } else if (next->y < y) {
         // Move the current node forward
-        remove_node(&current->node);
-	insert_after(&next->node, &current->node);
+        remove_node(&current->node.node);
+	insert_after(&next->node.node, &current->node.node);
       }
       y = current->show_y;
     }
@@ -80,7 +80,7 @@ __attribute__((interrupt)) void sof_handler(void) {
     // Skip over initial sprites that are not visible, then allocate sprites
     // until we have no more or we run out of actors.
     unsigned count = SPRITE_COUNT;
-    while (next_actor->node.succ) {
+    while (next_actor->node.node.succ) {
       if (is_visible(next_actor)) {
         if (count == 0) {
           enable_sol();
@@ -97,7 +97,7 @@ __attribute__((interrupt)) void sof_handler(void) {
           head_actor = next_actor;
 	}
       }
-      next_actor = (struct actor_visual *) next_actor->node.succ;
+      next_actor = (struct actor_visual *) next_actor->node.node.succ;
     }
   }
 
@@ -109,18 +109,18 @@ __attribute__((interrupt)) void sof_handler(void) {
 
 __attribute__((interrupt)) void sol_handler(void) {
   InterruptController.pending.vicky = INT_VICKY_SOL;  // acknowledge
-  while (head_actor->node.succ && next_actor->node.succ) {
+  while (head_actor->node.node.succ && next_actor->node.node.succ) {
     if (scan_line >= head_actor->y - offset_y + SPRITE_HEIGHT) {
       // We can reuse this one
       unsigned index = head_actor->sprite_index;
-      head_actor = (struct actor_visual *) head_actor->node.succ;
+      head_actor = (struct actor_visual *) head_actor->node.node.succ;
       assign_sprite(index, next_actor);
-      next_actor = (struct actor_visual *) next_actor->node.succ;
+      next_actor = (struct actor_visual *) next_actor->node.node.succ;
     } else {
       break;
     }
   }
-  if (next_actor->node.succ) {
+  if (next_actor->node.node.succ) {
     enable_sol();
   }
 }
@@ -146,10 +146,10 @@ static bool y_pred(struct node *current_node,
 
   if (next_node->y == new_node->y) {
     // Same vertical location, use node priority (ignore x location)
-    if (next_node.node.kind == new_node.node.kind) {
-      return next_node.node.order >= new_node.node.order;
+    if (next_node->node.kind == new_node->node.kind) {
+      return next_node->node.order >= new_node->node.order;
     } else {
-      return next_node.node.kind >= new_node.node.kind;
+      return next_node->node.kind >= new_node->node.kind;
     }
   }
 
@@ -159,15 +159,17 @@ static bool y_pred(struct node *current_node,
 // After adjust the visual list, examine nodes before and after to see if
 // they have the same location, in the case stagger them.
 static void adjust_stagger(struct actor_visual *p) {
-  struct actor_visual *pred = (struct actor_visual *)p->node.pred;
+  struct actor_visual *pred = (struct actor_visual *)p->node.node.pred;
   // Recursively step back to the first node at this location
-  if (pred->pred != 0 && pred->show_y == p->show_y &&
+  if (pred->node.node.pred != 0 && pred->show_y == p->show_y &&
       pred->show_x == p->show_x) {
     adjust_stagger(pred);
   } else {
     unsigned staggered = 0;
     struct actor_visual *next;
-    while ((next = p->succ) && next->succ && p->show_y == next->show_y &&
+    while ((next = (struct actor_visual *)p->node.node.succ) &&
+           next->node.node.succ &&
+           p->show_y == next->show_y &&
            p->show_x == next->show_x) {
       p->staggered = staggered;
       staggered += 4;
@@ -177,23 +179,22 @@ static void adjust_stagger(struct actor_visual *p) {
 }
 
 static void insert_actor(struct list *visuals, struct actor_visual *p) {
-  predicate_insert(visuals, &p->node, y_pred);
+  predicate_insert(visuals, &p->node.node, y_pred);
   adjust_stagger(p);
 }
 
 void add_visual(struct list *visuals, struct actor_visual *p, location loc,
-                struct sprite_info *sprite_info) {
+                struct sprite *sprite) {
   uint16_t x, y;
   location_to_pixel_pos(loc, &x, &y);
-  add_visual_xy(visuals, p, x, y, sprite_info);
+  add_visual_xy(visuals, p, x, y, sprite);
 }
 
 void add_visual_xy(struct list *visuals, struct actor_visual *p, uint16_t x,
-                   uint16_t y, struct sprite_info *sprite_info) {
+                   uint16_t y, struct sprite *sprite) {
   p->x = x;
   p->y = y;
-  p->sprite = sprite_info;
-  p->sprite = sprite_info;
+  p->sprite[0] = *sprite;
   //  atomically(insert_actor, p);
   insert_actor(visuals, p);
 }

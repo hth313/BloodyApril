@@ -11,6 +11,8 @@ struct playstate {
   actorsmap actors;               // Other actors, such as ground unites or ballons
   struct list map_visuals;        // Main list of map visuals.
   struct list aerodromes;         // List of all aerodromes
+  struct list flights;            // Fligths in motion
+  struct list dogfights;          // Active dogfights
   struct scenario *scenario;      // The active scenario, or NULL
   struct list accomplished;       // List of accomplished objectives, or state objects
                                   // related to it (partial accomplishments)

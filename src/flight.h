@@ -20,7 +20,8 @@ enum detection {
 // altitudes, especially during combat situations.
 struct flight {
   // When on the ground part of a list owned by an aerodrome.
-  // When airborne, owned by a a map location (struct actors_pos).
+  // When airborne, it is owned by a list in playstate, this in part because
+  // flights move frequently, but also that they may be placed between hexes.
   // When engaged in a dogfight, owned by the xx_powers list of the dogfight.
   struct typed_node node;
   struct list airplanes;   // Airplanes in this flight

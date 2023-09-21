@@ -2,6 +2,7 @@
 #define __LIST_H__
 
 #include <stdbool.h>
+#include "actor_kind.h"
 
 enum actor_kind;
 

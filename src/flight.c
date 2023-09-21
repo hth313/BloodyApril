@@ -31,7 +31,7 @@ struct flight *new_flight(location position, direction heading, struct sprite *s
   p->move_order = MOVE_ORDER_LEVEL;
   p->detection = Undetected;
   add_visual(&active_playstate->map_visuals, &p->visual, position, sprite);
-  p->visual.actor_kind = Flight;
+  p->visual.node.kind = Flight;
   p->visual.flight = p;
   return p;
 }
@@ -39,7 +39,7 @@ struct flight *new_flight(location position, direction heading, struct sprite *s
 // Unlink a flight from its owning list and recycle its storage.
 void drop_flight(struct flight *p) {
   remove_node(&p->node.node);
-  remove_node_with_interrupts_blocked(&p->visual.node);
+  remove_node_with_interrupts_blocked((struct node*) &p->visual.node);
   free(p);
 }
 

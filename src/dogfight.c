@@ -48,7 +48,7 @@ struct dogfight *new_dogfight(location pos, struct list *allied_powers,
     allied_attacker ? &right_facing_dogfight_sprite : &left_facing_dogfight_sprite;
 
   add_visual(&active_playstate->map_visuals, &p->visual, pos, sprite);
-  p->visual.actor_kind = DogFight;
+  p->visual.node.kind = DogFight;
   p->visual.dogfight = p;
 
   init_list(&p->visuals);
@@ -65,7 +65,7 @@ static void move_downed(struct playstate *ps, struct list *flights) {
   struct flight *next;
   foreach_node_safe(flights, flight, next) {
     if (!prune_downed(ps, flight)) {
-      order_insert(&ps->flights, &flight->node);
+      add_tail(&ps->flights, &flight->node.node);
     }
   }
 }
@@ -73,7 +73,8 @@ static void move_downed(struct playstate *ps, struct list *flights) {
 void drop_dogfight(struct playstate *ps, struct dogfight *df) {
   move_downed(ps, &df->allied_powers);
   move_downed(ps, &df->central_powers);
-  unlink_actor(ps->actors, df->pos, &df->node);
+  remove_node((struct node*) &df->visual);
+  remove_node(&df->node.node);
   free(df);
 }
 
