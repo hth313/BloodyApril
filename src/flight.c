@@ -21,16 +21,16 @@ static int sequence;
 
 // Create a new flight. This will initialize most fields except for
 // that it should be immediately linked into its owning list.
-struct flight *new_flight(location position, direction heading, struct sprite *sprite) {
+struct flight *new_flight(location loc, direction heading, struct sprite *sprite) {
   struct flight *p = (struct flight*) safe_malloc(sizeof(struct flight));
   p->node.kind = Flight;
   p->node.order = sequence++;
   init_list(&p->airplanes);
-  p->position = position;
+  p->loc = loc;
   p->heading = heading;
   p->move_order = MOVE_ORDER_LEVEL;
   p->detection = Undetected;
-  add_visual(&active_playstate->map_visuals, &p->visual, position, sprite);
+  add_visual_loc(&p->visual, loc, sprite);
   p->visual.node.kind = Flight;
   p->visual.flight = p;
   return p;

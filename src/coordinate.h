@@ -57,6 +57,7 @@ inline unsigned umin(unsigned a, unsigned b) {
 // **********************************************************************
 
 extern void location_to_pixel_pos(location loc, uint16_t *x, uint16_t *y);
+extern void coordinate_to_pixel_pos(coordinate pos, uint16_t *x, uint16_t *y);
 
 inline location coordinate_to_location(coordinate pos) {
   return (location) { .main = pos, .secondary = pos };

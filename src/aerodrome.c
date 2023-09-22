@@ -58,9 +58,9 @@ static void initialize(struct aerodrome *aerodrome, char *name, bool allied,
   init_list(&aerodrome->flights);
   init_list(&aerodrome->airplanes);
   init_list(&aerodrome->squadron);
-  add_visual(&active_playstate->map_visuals, &aerodrome->visual,
-             coordinate_to_location(pos),
+  add_visual_coord(&aerodrome->visual, pos,
              allied ? &allied_aerodrome : &central_aerodrome);
+  add_actor(active_playstate->actors, pos, &aerodrome->node);
 }
 
 void create_aerodromes() {

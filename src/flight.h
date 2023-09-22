@@ -26,7 +26,7 @@ struct flight {
   struct typed_node node;
   struct list airplanes;   // Airplanes in this flight
   struct actor_visual visual;
-  location position;
+  location loc;
   direction heading;
   bool allied;
   uint16_t move_order;
@@ -43,7 +43,7 @@ struct flight {
 
 extern struct flight *new_flight(location position, direction heading,
 				 struct sprite *sprite);
-extern void drop_flight(struct flight *p);
+extern void drop_flight(struct playstate *ps, struct flight *p);
 extern bool prune_downed(struct playstate *ps, struct flight *flight);
 
 #endif // __FLIGHT_H__

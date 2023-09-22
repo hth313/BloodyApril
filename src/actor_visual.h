@@ -16,6 +16,7 @@ struct flaming_onion;
 struct flight;
 struct infantry;
 struct machine_gun;
+struct playstate;
 
 struct actor_visual {
   // Actors are sorted on y position and when occupying the same position
@@ -46,9 +47,11 @@ struct actor_visual {
 
 // **********************************************************************
 
-extern void add_visual(struct list *visual, struct actor_visual *, location, struct sprite *);
-extern void add_visual_xy(struct list *visual, struct actor_visual *, uint16_t x, uint16_t y, struct sprite *);
+extern void add_visual_loc(struct actor_visual *, location, struct sprite *);
+extern void add_visual_coord(struct actor_visual *, coordinate, struct sprite *);
+extern void add_visual_xy(struct actor_visual *, uint16_t x, uint16_t y, struct sprite *);
 extern void install_interrupt_handlers(void);
 extern void restore_interrupt_handlers(void);
+extern void rebuild_actor_visual_list(struct playstate *ps);
 
 #endif // __ACTOR_VISUAL_H__

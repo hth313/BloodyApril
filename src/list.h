@@ -32,7 +32,7 @@ struct list {
                                       ((struct node*)(item))->succ;                 \
                                       item = (void*)(((struct node*)(item))->succ))
 
-#define foreach_node_safe5(list, current, next)            \
+#define foreach_node_safe(list, current, next)            \
   for (current = (void *)((list)->head);                  \
       (next = (void *)((struct node*)(current))->succ);   \
       current = (void *)next)

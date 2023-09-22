@@ -1,9 +1,15 @@
 #include "actor_visual.h"
+#include "dogfight.h"
+#include "flight.h"
+#include "list.h"
+#include "playstate.h"
+#include "scenario.h"
 #include <foenix/interrupt.h>
 #include <foenix/vicky.h>
 #include <mcp/interrupt.h>
 #include <mcp/syscalls.h>
 #include <stdint.h>
+#include <signal.h>
 
 // This list holds the elements in sort order. As objects move elements
 // are pushed in that direction in the list to keep them in reasonable
@@ -11,7 +17,7 @@
 // sprites the order does not need to be perfect, trickling should suffice.
 // Note that this list can either be map items or a list of dogfight
 // particpants, it is meant to point to the list that is shown in the display.
-static struct list *visuals;
+static struct list actor_visuals;
 
 static uint16_t offset_x;
 static uint16_t offset_y;
@@ -19,6 +25,11 @@ static struct actor_visual *head_actor;
 static struct actor_visual *next_actor;
 static unsigned scan_line;
 static unsigned image_index;  // used for blinking/animated sprites
+
+// This flag is set when the main loop is waiting for the
+// sof_handler to rebuild the actor list. The sof_handler
+// acknowledge it by clearing it.
+static sig_atomic_t rebuild_actor_visuals;
 
 #define SCAN_LINE_MARGIN (SPRITE_HEIGHT >> 1)
 
@@ -48,20 +59,95 @@ static void enable_sol(void) {
   }
 }
 
+static bool y_pred(struct node *current_node,
+                   struct node *next,
+                   struct node *new_item) {
+  struct actor_visual *next_node = (struct actor_visual *) next;
+  struct actor_visual *new_node = (struct actor_visual *) new_item;
+
+  if (next_node->y == new_node->y) {
+    // Same vertical location, use node priority (ignore x location)
+    if (next_node->node.kind == new_node->node.kind) {
+      return next_node->node.order >= new_node->node.order;
+    } else {
+      return next_node->node.kind >= new_node->node.kind;
+    }
+  }
+
+  return next_node->y >= new_node->y;
+}
+
+// After adjust the visual list, examine nodes before and after to see if
+// they have the same location, in the case stagger them.
+static void adjust_stagger(struct actor_visual *p) {
+  struct actor_visual *pred = (struct actor_visual *)p->node.node.pred;
+  // Recursively step back to the first node at this location
+  if (pred->node.node.pred != 0 && pred->show_y == p->show_y &&
+      pred->show_x == p->show_x) {
+    adjust_stagger(pred);
+  } else {
+    unsigned staggered = 0;
+    struct actor_visual *next;
+    while ((next = (struct actor_visual *)p->node.node.succ) &&
+           next->node.node.succ &&
+           p->show_y == next->show_y &&
+           p->show_x == next->show_x) {
+      p->staggered = staggered;
+      staggered += 4;
+      p = next;
+    }
+  }
+}
+
+static void insert_actor(struct actor_visual *p) {
+  predicate_insert(&actor_visuals, &p->node.node, y_pred);
+  adjust_stagger(p);
+}
+
 __attribute__((interrupt)) void sof_handler(void) {
-  InterruptController.pending.vicky = INT_VICKY_SOF;  // acknowledge
-  Vicky.line_interrupt[0].control = 0;                // no sol interrupt
+  // acknowledge interrupt
+  InterruptController.pending.vicky = INT_VICKY_SOF;
+
+  // no sol interrupt
+  Vicky.line_interrupt[0].control = 0;
+
+  if (rebuild_actor_visuals) {
+    rebuild_actor_visuals = 0; // acknowledge
+    init_list(&actor_visuals); // clear list
+
+    // TODO: add actors from map
+
+    // Add flights
+    struct flight *flight;
+    foreach_node(&active_playstate->flights, flight) {
+      insert_actor(&flight->visual);
+    }
+
+    // Add dogfights
+    struct dogfight *dogfight;
+    foreach_node(&active_playstate->dogfights, dogfight) {
+      insert_actor(&dogfight->visual);
+    }
+  }
+
   scan_line = 0;
   unsigned next_sprite = SPRITE_COUNT - 1;
-  next_actor = (struct actor_visual *)visuals->head;
+  next_actor = (struct actor_visual *)actor_visuals.head;
 
-  if (!empty_list(visuals)) {
+  if (!empty_list(&actor_visuals)) {
+
+  // The follow code attempts to readjust list if actors
+  // were moved. This is not needed if we regenerate the map.
+  // Keep the code for now in case the way of laying them
+  // out does not work, then this can be considered again.
+
+#if 0
     // Update positions and allow actors to trickle position in the list.
     unsigned y = next_actor->y;
 
     struct actor_visual *current;
     struct actor_visual *next;
-    foreach_node_safe(visuals, current, next) {
+    foreach_node_safe(&actor_visuals, current, next) {
       current->show_x = current->x;
       current->show_y = current->y;
       if (current->show_y < y) {
@@ -76,6 +162,7 @@ __attribute__((interrupt)) void sof_handler(void) {
       }
       y = current->show_y;
     }
+#endif
 
     // Skip over initial sprites that are not visible, then allocate sprites
     // until we have no more or we run out of actors.
@@ -129,6 +216,7 @@ static p_int_handler old_sof_handler;
 static p_int_handler old_sol_handler;
 
 void install_interrupt_handlers(void) {
+  init_list(&actor_visuals);
   old_sof_handler = sys_int_register(INT_SOF_A, sof_handler);
   old_sol_handler = sys_int_register(INT_SOL_A, sol_handler);
 }
@@ -138,63 +226,34 @@ void restore_interrupt_handlers(void) {
   sys_int_register(INT_SOL_A, old_sol_handler);
 }
 
-static bool y_pred(struct node *current_node,
-                   struct node *next,
-                   struct node *new_item) {
-  struct actor_visual *next_node = (struct actor_visual *) next;
-  struct actor_visual *new_node = (struct actor_visual *) new_item;
-
-  if (next_node->y == new_node->y) {
-    // Same vertical location, use node priority (ignore x location)
-    if (next_node->node.kind == new_node->node.kind) {
-      return next_node->node.order >= new_node->node.order;
-    } else {
-      return next_node->node.kind >= new_node->node.kind;
-    }
-  }
-
-  return next_node->y >= new_node->y;
-}
-
-// After adjust the visual list, examine nodes before and after to see if
-// they have the same location, in the case stagger them.
-static void adjust_stagger(struct actor_visual *p) {
-  struct actor_visual *pred = (struct actor_visual *)p->node.node.pred;
-  // Recursively step back to the first node at this location
-  if (pred->node.node.pred != 0 && pred->show_y == p->show_y &&
-      pred->show_x == p->show_x) {
-    adjust_stagger(pred);
-  } else {
-    unsigned staggered = 0;
-    struct actor_visual *next;
-    while ((next = (struct actor_visual *)p->node.node.succ) &&
-           next->node.node.succ &&
-           p->show_y == next->show_y &&
-           p->show_x == next->show_x) {
-      p->staggered = staggered;
-      staggered += 4;
-      p = next;
-    }
-  }
-}
-
-static void insert_actor(struct list *visuals, struct actor_visual *p) {
-  predicate_insert(visuals, &p->node.node, y_pred);
-  adjust_stagger(p);
-}
-
-void add_visual(struct list *visuals, struct actor_visual *p, location loc,
+void add_visual_loc(struct actor_visual *p, location loc,
                 struct sprite *sprite) {
   uint16_t x, y;
   location_to_pixel_pos(loc, &x, &y);
-  add_visual_xy(visuals, p, x, y, sprite);
+  add_visual_xy(p, x, y, sprite);
 }
 
-void add_visual_xy(struct list *visuals, struct actor_visual *p, uint16_t x,
+void add_visual_coord(struct actor_visual *p, coordinate loc,
+                struct sprite *sprite) {
+  uint16_t x, y;
+  coordinate_to_pixel_pos(loc, &x, &y);
+  add_visual_xy(p, x, y, sprite);
+}
+
+void add_visual_xy(struct actor_visual *p, uint16_t x,
                    uint16_t y, struct sprite *sprite) {
   p->x = x;
   p->y = y;
   p->sprite[0] = *sprite;
-  //  atomically(insert_actor, p);
-  insert_actor(visuals, p);
+}
+
+// Inform interrupt to rebuild the display list of actors.
+// Will wait until the interrupt has reinitialized the list which should
+// take at most one frame (1/50 - 1/70) of a second.
+// At this point we can reclaim memory waiting to be freed.
+void rebuild_actor_visual_list(struct playstate *ps) {
+  rebuild_actor_visuals = 1;
+  while (rebuild_actor_visuals)
+    ;
+  recycle_memory(ps);
 }

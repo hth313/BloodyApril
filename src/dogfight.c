@@ -25,7 +25,7 @@ static void add_visuals(struct dogfight *p, struct list *flights, bool allied) {
   foreach_node(flights, flight) {
     struct airplane *plane;
     foreach_node(&flight->airplanes, plane) {
-      add_visual_xy(&p->visuals, &plane->visual, x, y, airplane_kind(plane)->sprite);
+      add_visual_xy(&plane->visual, x, y, airplane_kind(plane)->sprite);
       y += SPRITE_HEIGHT + MARGIN;
     }
   }
@@ -33,7 +33,7 @@ static void add_visuals(struct dogfight *p, struct list *flights, bool allied) {
 
 // Allocate a new dogfight dynamically. The caller should link the created
 // node into actors of the sector it occurs in.
-struct dogfight *new_dogfight(location pos, struct list *allied_powers,
+struct dogfight *new_dogfight(location loc, struct list *allied_powers,
                               struct list *central_powers,
                               bool allied_attacker) {
   struct dogfight *p = safe_malloc(sizeof(struct dogfight));
@@ -47,7 +47,7 @@ struct dogfight *new_dogfight(location pos, struct list *allied_powers,
   struct sprite *sprite =
     allied_attacker ? &right_facing_dogfight_sprite : &left_facing_dogfight_sprite;
 
-  add_visual(&active_playstate->map_visuals, &p->visual, pos, sprite);
+  add_visual_loc(&p->visual, loc, sprite);
   p->visual.node.kind = DogFight;
   p->visual.dogfight = p;
 

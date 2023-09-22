@@ -9,7 +9,6 @@
 // turn count etc.
 struct playstate {
   actorsmap actors;               // Other actors, such as ground unites or ballons
-  struct list map_visuals;        // Main list of map visuals.
   struct list aerodromes;         // List of all aerodromes
   struct list flights;            // Fligths in motion
   struct list dogfights;          // Active dogfights
