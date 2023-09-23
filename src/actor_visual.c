@@ -236,15 +236,15 @@ void restore_interrupt_handlers(void) {
 
 void add_visual_loc(struct actor_visual *p, location loc,
                 struct sprite *sprite) {
-  uint16_t x, y;
-  location_to_pixel_pos(loc, &x, &y);
+  uint16_t x = loc_pixel_x(loc);
+  uint16_t y = loc_pixel_y(loc);
   add_visual_xy(p, x, y, sprite);
 }
 
-void add_visual_coord(struct actor_visual *p, coordinate loc,
+void add_visual_coord(struct actor_visual *p, coordinate coord,
                 struct sprite *sprite) {
-  uint16_t x, y;
-  coordinate_to_pixel_pos(loc, &x, &y);
+  uint16_t x = pixel_x(coord);
+  uint16_t y = pixel_y(coord);
   add_visual_xy(p, x, y, sprite);
 }
 

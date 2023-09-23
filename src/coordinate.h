@@ -31,6 +31,46 @@ inline bool on_hex(location loc) {
   return loc.main.qr == loc.secondary.qr;
 }
 
+// X,Y coordinates start at 0,0 in upper left corner.
+// An actor hex location is 32x32 pixels, which is made up by four 16x16 tiles.
+// We lay out hexes as such:
+//
+// OOBB              row 0
+// OOBB              row 0
+//  DDXX             row 1
+//  DDXX             row 1
+//
+// Note that odd rows are shifted 16 pixes right compared to even rows.
+//
+// OO   is  q,r ->  0,0   (row 0)
+// OO
+//
+// BB   is  q,r ->  1,0   (row 0)
+// BB
+//
+// DD   is q,r  ->  0,1   (row 1)
+// DD
+//
+// Reference: https://www.redblobgames.com/grids/hexagons/#coordinates
+
+// Coordinate to pixel positions
+inline uint16_t pixel_x(coordinate c) {
+  return c.q * 32 + (c.r & 1) * 16;
+}
+
+inline uint16_t pixel_y(coordinate c) {
+  return c.r * 32;
+}
+
+// Location to pixel position
+inline uint16_t loc_pixel_x(location loc) {
+  return (pixel_x(loc.main) + pixel_x(loc.secondary)) >> 1;
+}
+
+inline uint16_t loc_pixel_y(location loc) {
+  return (pixel_y(loc.main) + pixel_y(loc.secondary)) >> 1;
+}
+
 inline bool abs8(int8_t a) {
   if (a >= 0)
     return a;
@@ -55,9 +95,6 @@ inline unsigned umin(unsigned a, unsigned b) {
 }
 
 // **********************************************************************
-
-extern void location_to_pixel_pos(location loc, uint16_t *x, uint16_t *y);
-extern void coordinate_to_pixel_pos(coordinate pos, uint16_t *x, uint16_t *y);
 
 inline location coordinate_to_location(coordinate pos) {
   return (location) { .main = pos, .secondary = pos };
