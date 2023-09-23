@@ -7,6 +7,13 @@
 #include "list.h"
 #include "hashmap.h"
 
+// A generic actor can be used when we do not care about which actor
+// it is. It provides the two first elements that are always the same.
+struct generic_actor {
+  struct typed_node node;
+  struct actor_visual visual;
+};
+
 // Ballons are mainly for observation. They can be targets to down in scenarios.
 struct ballon {
   struct typed_node node;
@@ -81,5 +88,6 @@ extern void new_archie(coordinate pos, uint16_t strength, bool allied);
 extern struct list *add_actor(actorsmap map, coordinate pos,
                               struct typed_node *node);
 extern void unlink_actor(actorsmap map, coordinate pos,
-			 struct typed_node *node);
+                         struct typed_node *node);
+
 #endif // __ACTOR_H__

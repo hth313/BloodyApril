@@ -1,4 +1,5 @@
 #include "actor_visual.h"
+#include "actor.h"
 #include "dogfight.h"
 #include "flight.h"
 #include "list.h"
@@ -104,6 +105,12 @@ static void insert_actor(struct actor_visual *p) {
   adjust_stagger(p);
 }
 
+static bool insert_actors(struct actors_pos *p, void *data) {
+  struct generic_actor *actor;
+  foreach_node(&p->actors, actor) { insert_actor(actor); }
+  return true;
+}
+
 __attribute__((interrupt)) void sof_handler(void) {
   // acknowledge interrupt
   InterruptController.pending.vicky = INT_VICKY_SOF;
@@ -115,7 +122,8 @@ __attribute__((interrupt)) void sof_handler(void) {
     rebuild_actor_visuals = 0; // acknowledge
     init_list(&actor_visuals); // clear list
 
-    // TODO: add actors from map
+    // Add actors from map
+    hashmap_scan(active_playstate->actors, insert_actors, 0);
 
     // Add flights
     struct flight *flight;
