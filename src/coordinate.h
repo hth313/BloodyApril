@@ -4,9 +4,15 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-typedef enum direction {
+// Hex directions.
+typedef enum hex_direction {
   NortWest, West, SouthWest, SouthEast, East, NorthEast
 } direction;
+
+// Clock direction (this is what flight do, 0-11.
+typedef uint_fast8_t clock_direction;
+
+typedef enum turn { Left, Right } turn;
 
 // Use axial coordinates, which are cube coordinates storing two of the
 // three dimensions. The size may be somewhat limited here at the moment
@@ -99,5 +105,7 @@ inline unsigned umin(unsigned a, unsigned b) {
 inline location coordinate_to_location(coordinate pos) {
   return (location) { .main = pos, .secondary = pos };
 }
+
+extern location move(location loc, clock_direction heading);
 
 #endif //  __COORDINATE_H__

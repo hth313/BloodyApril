@@ -27,7 +27,7 @@ struct flight {
   struct list airplanes;   // Airplanes in this flight
   struct actor_visual visual;
   location loc;
-  direction heading;
+  clock_direction heading;
   bool allied;
   uint16_t move_order;
 #define MOVE_ORDER_LEVEL          0x0000
