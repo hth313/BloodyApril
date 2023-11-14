@@ -2,6 +2,7 @@
 #define __FLIGHT_H__
 
 #include <stdbool.h>
+#include "altitude.h"
 #include "coordinate.h"
 #include "list.h"
 #include "actor_visual.h"
@@ -27,7 +28,12 @@ struct flight {
   struct list airplanes;   // Airplanes in this flight
   struct actor_visual visual;
   location loc;
+  int16_t fraction;        // tenths of a hex movement kept or borrowed
+  altitude_t desired_altitude;
   clock_direction heading;
+  uint8_t free_turn;
+  uint8_t max_turn;
+  bool movement_marked;   // set when scattered out of combat, costs one MP to remove
   bool allied;
   uint16_t move_order;
 #define MOVE_ORDER_LEVEL          0x0000

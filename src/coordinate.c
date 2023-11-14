@@ -5,10 +5,12 @@ extern uint16_t pixel_x(coordinate c);
 extern uint16_t pixel_y(coordinate c);
 extern uint16_t loc_pixel_x(location loc);
 extern uint16_t loc_pixel_y(location loc);
-extern bool abs8(int8_t a);
+extern uint8_t abs8(int8_t a);
 extern unsigned umax(unsigned a, unsigned b);
 extern unsigned umin(unsigned a, unsigned b);
 extern location coordinate_to_location(coordinate pos);
+extern coordinate neighbor(coordinate coord, enum hex_direction direction);
+inline distance(coordinate a, coordinate b);
 
 // Move a flight in given direction
 location move(location loc, clock_direction heading) {
@@ -100,3 +102,12 @@ location move(location loc, clock_direction heading) {
   }
   return loc;
 }
+
+coordinate direction_vector[6] = {
+    {0x01ff}, // NorthEast  q +1, r -1
+    {0x0100}, // East       q +1, r  0
+    {0x0001}, // SouthEast  q  0, r +1
+    {0xff01}, // SouthWest  q -1, r +1
+    {0xff00}, // West       q -1, r  0
+    {0x00ff}, // NorthWest  q  0, r -1
+};

@@ -48,7 +48,14 @@ inline bool empty_list(struct list *list) {
   return list->tailpred == (struct node *)list;
 }
 
-inline void add_head(struct list *list, struct node *node) {
+inline unsigned list_length(string list *list) {
+  unsigned len = 0;
+  struct node *item;
+  foreach_node(list, item) { len++; }
+  return len;
+}
+
+  inline void add_head(struct list *list, struct node *node) {
   struct node *next = list->head;
   list->head = node;
   node->succ = next;

@@ -7,6 +7,7 @@
 #include "actor.h"
 #include "altitude.h"
 #include "coordinate.h"
+#include "distance.h"
 #include "pilot.h"
 #include "squadron.h"
 #include "list.h"
@@ -18,7 +19,7 @@ enum token {
 struct airplane_kind {
   char const* name;
   altitude_t service_ceiling;
-  unsigned speed[ALTITUDE_BANDS];
+  distance_t speed[ALTITUDE_BANDS];
   unsigned climb_ability[ALTITUDE_BANDS]; // ft/round
   enum token token;                       // play token used
   struct sprite *sprite;
