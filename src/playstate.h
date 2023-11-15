@@ -8,7 +8,7 @@
 // The playstate keeps track of the map, the game actors, the scenario, time, play
 // turn count etc.
 struct playstate {
-  actorsmap actors;               // Other actors, such as ground unites or ballons
+  struct map_state map_state;     // The map as shown
   struct list aerodromes;         // List of all aerodromes
   struct list flights;            // Fligths in motion
   struct list dogfights;          // Active dogfights

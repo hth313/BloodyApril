@@ -105,10 +105,21 @@ static void insert_actor(struct actor_visual *p) {
   adjust_stagger(p);
 }
 
-static bool insert_actors(struct actors_pos *p, void *data) {
-  struct generic_actor *actor;
-  foreach_node(&p->actors, actor) { insert_actor(actor); }
-  return true;
+static void insert_actors(struct playstate *playstate) {
+  unsigned start_q = playstate->map_state.visible_top_left.q;
+  unsigned max_q = start_q + playstate->map_state.visible_bottom_right.q;
+  unsigned start_r = playstate->map_state.visible_top_left.r;
+  unsigned max_r = start_r + playstate->map_state.visible_bottom_right.r;
+
+  for (unsigned q = start_q; q < max_q; q++) {
+    for (unsigned r = start_r; r < max_r; r++) {
+      struct sector *p = sector_data[q][r].actors;
+      if (p != 0) {
+	struct actor_visual *item;
+        foreach_node(p, item) { insert_actor(item); }
+      }
+    }
+  }
 }
 
 __attribute__((interrupt)) void sof_handler(void) {
@@ -123,7 +134,7 @@ __attribute__((interrupt)) void sof_handler(void) {
     init_list(&actor_visuals); // clear list
 
     // Add actors from map
-    hashmap_scan(active_playstate->actors, insert_actors, 0);
+    insert_actors(active_playstate);
 
     // Add flights
     struct flight *flight;

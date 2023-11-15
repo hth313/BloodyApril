@@ -2,6 +2,7 @@
 #define __MAP_H__
 
 #include "coordinate.h"
+#include <stdint.h>
 
 enum terrain {
   Lake, Forest, Field, Mountain, Swamp, River
@@ -22,16 +23,15 @@ struct sector {
   struct {
     uint8_t spotting_range : 4;  // distance to closest spotter on group 0-15 (0-5 actully used)
     uint8_t terrain : 3;         // classification of nature terrain
-    uint8_t enemooy_terrain : 1;   // sector is enemy held
+    uint8_t enemy_terrain : 1;   // sector is enemy held
   };
+  struct list *actors;           // actors in this sector (not including flights)
 };
 
-// Placement of units are done by placing them in a hashmap keyed on two sectors.
-// Normally one would put a unit in a sector, but here we allow a unit to be
-// either inside a sector or occupy the border between two sectors.
-// Thus, a unit can be in two sectors at a given point, or one.
-// hashmap ..
-
+struct map_state {
+  coordinate visible_top_left;   // upper top left sector shown, potentially partial
+  coordinate visible_bottom_right;
+};
 
 // **********************************************************************
 
@@ -40,6 +40,15 @@ struct sector {
 
 // Static sector data.
 extern struct sector sector_data[Q_SIZE][R_SIZE];
+
+#define SECTOR_ACTOR_CACHE_SIZE 8
+
+extern struct list *hex_actor_list_cache[SECTOR_ACTOR_CACHE_SIZE];
+extern unsigned hex_actor_list_cache_count;
+extern bool overflowed_hex_actor_left;
+
+
+// **********************************************************************
 
 extern void clear_sectors(void);
 

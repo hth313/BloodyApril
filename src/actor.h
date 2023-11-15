@@ -5,7 +5,6 @@
 #include "altitude.h"
 #include "coordinate.h"
 #include "list.h"
-#include "hashmap.h"
 
 // A generic actor can be used when we do not care about which actor
 // it is. It provides the two first elements that are always the same.
@@ -68,12 +67,8 @@ struct actors_pos {
   struct list actors;
 };
 
-// Actors are hashed based on their coordinate.
-typedef struct hashmap *actorsmap;
-
 // **********************************************************************
 
-extern actorsmap new_actorsmap(void);
 extern void new_ballon(coordinate pos, enum altitude_band altitude, bool allied);
 extern void new_flaming_onion(coordinate pos, bool allied);
 extern void new_artillery(coordinate pos, bool allied);
