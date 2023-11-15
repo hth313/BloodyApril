@@ -6,6 +6,7 @@
 #include <stdlib.h>
 
 struct sector sector_data[Q_SIZE][R_SIZE];
+unsigned q_actor_count[Q_SIZE];
 struct list *hex_actor_list_cache[SECTOR_ACTOR_CACHE_SIZE];
 unsigned hex_actor_list_cache_count;
 bool overflowed_hex_actor_left;
@@ -15,7 +16,7 @@ void clear_sectors(void) {
 }
 
 // Call this whenever an actor is unlinked from a hex.
-void vacated_hex(coordinate coord) {
+void vacate_sector(coordinate coord) {
   if (empty_list(sector_data[coord.q][coord.r].actors)) {
     for (unsigned i = 0; i < SECTOR_ACTOR_CACHE_SIZE; i++) {
       if (hex_actor_list_cache[i] == 0) {

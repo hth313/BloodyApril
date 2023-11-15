@@ -40,6 +40,8 @@ struct map_state {
 
 // Static sector data.
 extern struct sector sector_data[Q_SIZE][R_SIZE];
+extern unsigned q_actor_count[Q_SIZE];
+
 
 #define SECTOR_ACTOR_CACHE_SIZE 8
 
@@ -51,6 +53,8 @@ extern bool overflowed_hex_actor_left;
 // **********************************************************************
 
 extern void clear_sectors(void);
+extern void vacate_sector(coordinate coord);
+extern struct list *alloc_actor_list(void);
 
 inline void add_sector_attribute(uint_fast8_t q, uint_fast8_t r,
                                  enum terrain_attribute attr) {

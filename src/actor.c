@@ -1,26 +1,25 @@
 #include "actor.h"
 #include "list.h"
-#include "memory.h"
+#include "map.h"
 
-struct list *add_actor(actorsmap map, coordinate pos, struct typed_node *tnode) {
-  struct actors_pos *p = hashmap_get(map, &pos);
-  if (!p) {
-    p = safe_malloc(sizeof(struct actors_pos));
-    p->pos = pos;
-    init_list(&p->actors);
-    hashmap_set(map, p);
+struct list *add_actor(coordinate pos, struct actor_visual *actor_visual) {
+  struct list *list = sector_data[pos.q][pos.r].actors;
+  if (list == 0) {
+    list = alloc_actor_list();
+    init_list(list);
+    sector_data[pos.q][pos.r].actors = list;
   }
-  add_tail(&p->actors, &tnode->node);
-  return &p->actors;
+  add_tail(list, &actor_visual->node);
+  q_actor_count[pos.q]++;
+  return list;
 }
 
-void unlink_actor(actorsmap map, coordinate pos, struct typed_node *tnode) {
-  struct actors_pos *p = hashmap_get(map, &pos);
-  if (p != NULL) {
-    remove_node(&tnode->node);
-    if (empty_list(&p->actors)) {
-      hashmap_delete(map, p);
-      free(p);
-    }
+void unlink_actor(coordinate pos, struct actor_visual *actor_visual) {
+  remove_node(&actor_visual->node);
+  struct list *list = sector_data[pos.q][pos.r].actors;
+  if (empty_list(list)) {
+    vacate_sector(pos);
+    sector_data[pos.q][pos.r].actors = 0;
   }
+  q_actor_count[pos.q]--;
 }

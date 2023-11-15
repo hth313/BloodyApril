@@ -112,6 +112,7 @@ static void insert_actors(struct playstate *playstate) {
   unsigned max_r = start_r + playstate->map_state.visible_bottom_right.r;
 
   for (unsigned q = start_q; q < max_q; q++) {
+    if (q_actor_count[q] == 0) continue;
     for (unsigned r = start_r; r < max_r; r++) {
       struct sector *p = sector_data[q][r].actors;
       if (p != 0) {

@@ -60,7 +60,7 @@ static void initialize(struct aerodrome *aerodrome, char *name, bool allied,
   init_list(&aerodrome->squadron);
   add_visual_coord(&aerodrome->visual, pos,
              allied ? &allied_aerodrome : &central_aerodrome);
-  add_actor(active_playstate->actors, pos, &aerodrome->node);
+  add_actor(pos, &aerodrome->visual);
 }
 
 void create_aerodromes() {
