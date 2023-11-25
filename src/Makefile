@@ -1,4 +1,4 @@
-VPATH = .:scenario
+VPATH = .:scenario:a2560
 DEPDIR := .deps
 
 # Common source files
