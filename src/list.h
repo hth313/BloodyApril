@@ -48,7 +48,7 @@ inline bool empty_list(struct list *list) {
   return list->tailpred == (struct node *)list;
 }
 
-inline unsigned list_length(string list *list) {
+inline unsigned list_length(struct list *list) {
   unsigned len = 0;
   struct node *item;
   foreach_node(list, item) { len++; }

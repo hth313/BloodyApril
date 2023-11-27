@@ -8,6 +8,12 @@ enum terrain {
   Lake, Forest, Field, Mountain, Swamp, River
 };
 
+// Sector types contains attributes to describe properties
+// of the sector.
+// The Enemy flag is set when the sector is some specific sector
+// type where the presence of enemy makes sense. Water may typically
+// not have this bit set.
+
 enum terrain_attribute {
   Bridge = 1,
   Railway = 2,
@@ -16,10 +22,11 @@ enum terrain_attribute {
   Village = 16,
   Airfield = 32,
   Trench = 64,
+  Enemy = 0x8000
 };
 
 struct sector {
-  uint8_t terrain_attributes;
+  enum terrain_attribute terrain_attributes;
   struct {
     uint8_t spotting_range : 4;  // distance to closest spotter on group 0-15 (0-5 actully used)
     uint8_t terrain : 3;         // classification of nature terrain
@@ -41,7 +48,6 @@ struct map_state {
 // Static sector data.
 extern struct sector sector_data[Q_SIZE][R_SIZE];
 extern unsigned q_actor_count[Q_SIZE];
-
 
 #define SECTOR_ACTOR_CACHE_SIZE 8
 
@@ -69,13 +75,13 @@ inline void add_sector_attributes(coordinate *cs, enum terrain_attribute attr) {
   }
 }
 
-inline void set_sector_terrain(uint_fast8_t q, uint_fast8_t r, enum terrain terrain) {
-  sector_data[q][r].terrain |= terrain;
+inline void set_sector_attribute(uint_fast8_t q, uint_fast8_t r, enum terrain terrain) {
+  sector_data[q][r].terrain = terrain;
 }
 
 inline void set_sector_terrains(coordinate *cs, enum terrain terrain) {
   while (cs->qr != CoordinateEndMarker) {
-    set_sector_terrain(cs->q, cs->r, terrain);
+    set_sector_attribute(cs->q, cs->r, terrain);
     cs++;
   }
 }

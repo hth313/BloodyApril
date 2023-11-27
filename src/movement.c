@@ -1,7 +1,9 @@
-
+#include <stdint.h>
+#include "airplane.h"
+#include "flight.h"
 
 uint8_t allowed_turn(struct flight *flight, struct airplane *airplane) {
-  struct airplane_kind *kind = airplane_kind(airplane);
+  struct airplane_kind const *kind = airplane_kind(airplane);
   if (scale_distance_to_hex(kind->speed[airplane->altitude]) >= 5) {
     return 2;
   } else {
@@ -17,7 +19,7 @@ void enter_location(struct flight *flight, location loc) {
   // Restore turn ability, the "worst" airplane in the flight decides the limit.
   uint8_t free_turn = 12;
   uint8_t max_turn = 12;
-  struct node *airplane;
+  struct airplane *airplane;
   foreach_node(&flight->airplanes, airplane) {
     uint8_t turn = allowed_turn(flight, airplane);
     if (turn < free_turn)

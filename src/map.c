@@ -3,7 +3,7 @@
 #include "list.h"
 #include "memory.h"
 #include <stdint.h>
-#include <stdlib.h>
+#include <string.h>
 
 struct sector sector_data[Q_SIZE][R_SIZE];
 unsigned q_actor_count[Q_SIZE];

@@ -9,6 +9,7 @@ enum altitude_band {
 typedef unsigned int altitude_t;
 
 #define ALTITUDE_BANDS (VeryHigh + 1)
+#define MAX_ALTITUDE   0xffff
 
 extern enum altitude_band altitude_band(altitude_t);
 

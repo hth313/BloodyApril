@@ -114,7 +114,7 @@ static void insert_actors(struct playstate *playstate) {
   for (unsigned q = start_q; q < max_q; q++) {
     if (q_actor_count[q] == 0) continue;
     for (unsigned r = start_r; r < max_r; r++) {
-      struct sector *p = sector_data[q][r].actors;
+      struct list *p = sector_data[q][r].actors;
       if (p != 0) {
 	struct actor_visual *item;
         foreach_node(p, item) { insert_actor(item); }

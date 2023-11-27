@@ -13,15 +13,15 @@ sprite_data$: .incbin "\sprite_file"
               .section near,data
               .endm
 
-              sprite  SopwithPup_sprite, "../assets/Pup.raw"
-              sprite  SopwithTriplane_sprite, "../assets/Triplane.raw"
-              sprite  Albatros_D5a_J3_sprite, "../assets/Albatros-D5a-J3.raw"
-              sprite  Albatros_D2_sprite, "../assets/Alatros-D2.raw"
-              sprite  Albatros_D2_sprite_red_baron, "../assets/Albatros-D2-Red-Baron.raw"
+              sprite  SopwithPup_sprite, "assets/Pup.raw"
+              sprite  SopwithTriplane_sprite, "assets/Triplane.raw"
+              sprite  Albatros_D5a_J3_sprite, "assets/Albatros-D5a-J3.raw"
+              sprite  Albatros_D2_sprite, "assets/Alatros-D2.raw"
+              sprite  Albatros_D2_sprite_red_baron, "assets/Albatros-D2-Red-Baron.raw"
 
               .section palette1,data
               .public palette
-palette:      .incbin "../assets/BloodyAprilSprites.pal"
+palette:      .incbin "assets/BloodyAprilSprites.pal"
 
 // ----------------------------------------------------------------------
 // Tile maps
@@ -29,8 +29,9 @@ palette:      .incbin "../assets/BloodyAprilSprites.pal"
 tiles:        .macro  tiles
               .section vram,data
               .public \tiles_index, \tiles_tiles
-\tiles_index: .incbin "../../assets/\tiles.index"
-\tiles_tiles: .incbin "../../assets/\tiles.tiledata"
+\tiles_index: .incbin "../assets/\tiles.index"
+\tiles_tiles: .incbin "../assets/\tiles.tiledata"
+	      .endm
 
               tiles   trench1
               tiles   towns

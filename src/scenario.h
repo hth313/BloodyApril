@@ -4,7 +4,6 @@
 #include <stdbool.h>
 #include <time.h>
 #include "list.h"
-#include "playfield.h"
 
 // Forward declations
 struct playstate;

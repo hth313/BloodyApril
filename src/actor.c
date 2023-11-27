@@ -9,13 +9,13 @@ struct list *add_actor(coordinate pos, struct actor_visual *actor_visual) {
     init_list(list);
     sector_data[pos.q][pos.r].actors = list;
   }
-  add_tail(list, &actor_visual->node);
+  add_tail(list, (struct node*)&actor_visual->node);
   q_actor_count[pos.q]++;
   return list;
 }
 
 void unlink_actor(coordinate pos, struct actor_visual *actor_visual) {
-  remove_node(&actor_visual->node);
+  remove_node((struct node*)&actor_visual->node);
   struct list *list = sector_data[pos.q][pos.r].actors;
   if (empty_list(list)) {
     vacate_sector(pos);

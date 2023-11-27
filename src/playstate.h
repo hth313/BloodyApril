@@ -3,6 +3,7 @@
 
 #include <time.h>
 #include "actor.h"
+#include "map.h"
 #include "scenario.h"
 
 // The playstate keeps track of the map, the game actors, the scenario, time, play

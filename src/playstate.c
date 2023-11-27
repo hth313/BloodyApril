@@ -10,7 +10,7 @@ struct playstate *new_playstate(void) {
       (struct playstate *) safe_malloc(sizeof(struct playstate));
   state->map_state.visible_top_left = (coordinate) { .qr = 0 };
 #if defined(__CALYPSI_TARGET_SYSTEM_FOENIX__)
-  state->map_state.visible_bottom_right = { .q = 640 / 32 + 1, .r = 480 / 32 + 1 };
+  state->map_state.visible_bottom_right = (coordinate) { .q = 640 / 32 + 1, .r = 480 / 32 + 1 };
 #endif
   init_list(&state->aerodromes);
   init_list(&state->flights);

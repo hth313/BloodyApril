@@ -1,16 +1,19 @@
 #include "actor_visual.h"
+#include "airplane.h"
 #include "altitude.h"
 #include "coordinate.h"
 #include "flight.h"
 #include "list.h"
+#include "playstate.h"
 #include "weather.h"
 #include <stdbool.h>
+#include <stdlib.h>
 
 // Determine visible from ground
 static bool detect_visible_ground(struct flight *flight, altitude_t *alt) {
   altitude_t lowest = MAX_ALTITUDE;
   struct airplane *airplane;
-  foreach_node(*flight->airplanes, airplane) {
+  foreach_node(&flight->airplanes, airplane) {
     if (airplane->altitude < lowest)
       lowest = airplane->altitude;
   }
@@ -21,6 +24,7 @@ static bool detect_visible_ground(struct flight *flight, altitude_t *alt) {
   unsigned intensity;
   if (lowest >= global_weather.cloud_top) {
     intensity = global_weather.cloud_intensity;
+    return (rand() % 100) > intensity;
   } else {
     unsigned thickness = global_weather.cloud_top - global_weather.cloud_base;
     return (rand() % thickness) > (lowest - global_weather.cloud_base);
@@ -31,8 +35,8 @@ bool detect_from_ground(struct playstate *playstate, struct flight *flight) {
   altitude_t lowest;
   if (detect_visible_ground(flight, &lowest)) {
     int spotting_range =
-      umin(sector_data[flight->loc.main.q][flight->loc.main.r].spotting,
-           sector_data[flight->loc.secondary.q][flight->loc.secondary.r].spotting);
+      umin(sector_data[flight->loc.main.q][flight->loc.main.r].spotting_range,
+           sector_data[flight->loc.secondary.q][flight->loc.secondary.r].spotting_range);
 
     // Overall distance
     if (spotting_range > 5)

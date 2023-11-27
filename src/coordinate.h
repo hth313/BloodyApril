@@ -129,7 +129,7 @@ inline coordinate neighbor(coordinate coord, enum hex_direction direction ) {
   return (coordinate) { .qr = direction_vector[direction].qr + coord.qr };
 }
 
-inline distance(coordinate a, coordinate b) {
+inline uint_fast8_t distance(coordinate a, coordinate b) {
   coordinate vec = (coordinate) { .qr = a.qr - b.qr };
   return (abs8(vec.q) + abs8(vec.q + vec.r) + abs8(vec.r)) / 2;
 }
