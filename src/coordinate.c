@@ -1,4 +1,5 @@
 #include "coordinate.h"
+#include <stdint.h>
 
 extern bool on_hex(location loc);
 extern uint16_t pixel_x(coordinate c);
@@ -10,7 +11,8 @@ extern unsigned umax(unsigned a, unsigned b);
 extern unsigned umin(unsigned a, unsigned b);
 extern location coordinate_to_location(coordinate pos);
 extern coordinate neighbor(coordinate coord, enum hex_direction direction);
-inline distance(coordinate a, coordinate b);
+
+inline uint_fast8_t distance(coordinate a, coordinate b);
 
 // Move a flight in given direction
 location move(location loc, clock_direction heading) {

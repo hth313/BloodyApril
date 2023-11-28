@@ -2,12 +2,8 @@
 #include "list.h"
 #include "map.h"
 
-// list.h
-extern unsigned list_length(struct list *list);
-extern void add_head(struct list *list, struct node *node);
-extern void add_tail(struct list *list, struct node *node);
-extern void remove_node(struct node *node);
-extern void order_insert(struct list *list, struct typed_node *node);
+// airplane.h
+extern bool damaged(airplane *p);
 
 // map.h
 extern void add_sector_attribute(uint_fast8_t q, uint_fast8_t r,

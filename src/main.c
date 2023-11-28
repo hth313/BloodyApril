@@ -1,9 +1,9 @@
+#include <stdint.h>
 #include <string.h>
 #include <foenix/vicky.h>
 extern __far uint8_t Albatros_D2_sprite[SPRITE_SIZE];
 extern __far uint8_t Albatros_D5a_J3_sprite[SPRITE_SIZE];
 extern __far lut_t palette;
-
 
 void main () {
   Vicky.master_control = GRAPHIC_MODE_ENABLE | SPRITE_ENGINE_ENABLE

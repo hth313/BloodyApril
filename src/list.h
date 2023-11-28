@@ -55,7 +55,7 @@ inline unsigned list_length(struct list *list) {
   return len;
 }
 
-  inline void add_head(struct list *list, struct node *node) {
+inline void add_head(struct list *list, struct node *node) {
   struct node *next = list->head;
   list->head = node;
   node->succ = next;

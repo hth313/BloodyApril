@@ -5,6 +5,7 @@
 #include "flight.h"
 #include "list.h"
 #include "playstate.h"
+#include "random.h"
 #include "weather.h"
 #include <stdbool.h>
 #include <stdlib.h>

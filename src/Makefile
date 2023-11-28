@@ -4,10 +4,11 @@ DEPDIR := .deps
 # Common source files
 ASM_SRCS = assets.s
 C_SRCS = main.c ai.c actor.c actor_visual.c aerodrome.c ai.c airplane.c altitude.c \
-        combat.c detection.c dogfight.c \
-        flight.c inlines.c input.c list.c map.c movement.c \
-        pilot.c playstate.c scenario.c squadron.c \
-        ui.c unit.c weather.c
+        combat.c coordinate.c detection.c dogfight.c \
+        flight.c inlines.c input.c list.c map.c memory.c movement.c \
+        pilot.c playstate.c random.c scenario.c squadron.c \
+        ui.c weather.c \
+        scenario_dogfight.c
 
 FOENIX_C_SRCS = foenix.c
 
