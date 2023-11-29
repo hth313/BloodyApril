@@ -5,6 +5,8 @@
 #include "playstate.h"
 #include "scenario.h"
 
+struct playstate *active_playstate;
+
 struct playstate *new_playstate(void) {
   struct playstate *state =
       (struct playstate *) safe_malloc(sizeof(struct playstate));

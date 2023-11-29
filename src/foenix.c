@@ -28,12 +28,12 @@ static void draw_airplane_column(struct list *list, unsigned column) {
 
   for (airplane *p = (airplane *)list->head; p->node.succ != 0;
        p = (airplane *)p->node.succ) {
-    struct airplane_kind *k = airplane_kind(p);
+    struct airplane_kind const *k = airplane_kind(p);
     volatile struct sprite *sprite = &Sprite[p->sprite_index];
     sprite->x = 50;
     sprite->y = 50 + row * 20;
-    sprite->control = (sprite->control & 0xff) | SPRITE_ADDY_LOW(k->sprite_data) | 1;
-    sprite->addy_high = SPRITE_ADDY_HIGH(k->sprite_data);
+    sprite->control = p->visual.sprite[0].control;
+    sprite->addy_high = p->visual.sprite[0].addy_high;
     sys_txt_set_xy(Screen, row, column);
     show_airunit(p, column < 40);
     row++;

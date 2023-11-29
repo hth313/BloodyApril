@@ -9,7 +9,7 @@
 #include "dogfight.h"
 #include "flight.h"
 #include "list.h"
-#include "graphics.h"
+#include "a2560/graphics.h"
 #include "memory.h"
 #include "playstate.h"
 #include "ui.h"
@@ -23,7 +23,7 @@ static void add_visuals(struct dogfight *p, struct list *flights, bool allied) {
   foreach_node(flights, flight) {
     struct airplane *plane;
     foreach_node(&flight->airplanes, plane) {
-      add_visual_xy(&plane->visual, x, y, airplane_kind(plane)->sprite);
+      add_visual_xy(&plane->visual, x, y, &plane->visual.sprite[0]);
       y += SPRITE_HEIGHT + MARGIN;
     }
   }

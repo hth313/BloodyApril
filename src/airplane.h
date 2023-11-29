@@ -22,7 +22,6 @@ struct airplane_kind {
   distance_t speed[ALTITUDE_BANDS];
   unsigned climb_ability[ALTITUDE_BANDS]; // ft/round
   enum token token;                       // play token used
-  struct sprite *sprite;
   unsigned firepower;
   unsigned endurance;
   unsigned agility;                       // maneuverability

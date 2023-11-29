@@ -8,9 +8,8 @@ C_SRCS = main.c ai.c actor.c actor_visual.c aerodrome.c ai.c airplane.c altitude
         flight.c foenix.c inlines.c input.c list.c map.c memory.c movement.c \
         pilot.c playstate.c random.c scenario.c squadron.c \
         ui.c weather.c \
-        scenario_dogfight.c
-
-FOENIX_C_SRCS = foenix.c
+        scenario_dogfight.c \
+	foenix.c graphics.c
 
 MODEL = --code-model=large --data-model=small
 

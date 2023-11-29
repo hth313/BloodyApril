@@ -26,7 +26,7 @@ struct playstate {
 
 // **********************************************************************
 
-struct playstate *active_playstate;
+extern struct playstate *active_playstate;
 extern struct playstate *new_playstate(void);
 extern void recycle_memory(struct playstate *ps);
 
