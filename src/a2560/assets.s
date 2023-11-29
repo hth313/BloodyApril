@@ -13,11 +13,19 @@ sprite_data$: .incbin "\sprite_file"
               .section near,data
               .endm
 
-              sprite  SopwithPup_sprite, "assets/Pup.raw"
-              sprite  SopwithTriplane_sprite, "assets/Triplane.raw"
-              sprite  Albatros_D5a_J3_sprite, "assets/Albatros-D5a-J3.raw"
-              sprite  Albatros_D2_sprite, "assets/Alatros-D2.raw"
+              sprite  SopwithPup_sprite_data, "assets/Pup.raw"
+              sprite  SopwithTriplane_sprite_data, "assets/Triplane.raw"
+              sprite  Albatros_D5a_J3_sprite_data, "assets/Albatros-D5a-J3.raw"
+              sprite  Albatros_D2_sprite_data, "assets/Alatros-D2.raw"
+
+
               sprite  Albatros_D2_sprite_red_baron, "assets/Albatros-D2-Red-Baron.raw"
+
+	      sprite  right_facing_dogfight_sprite_data, "../assets/sprites-24.sprite"
+	      sprite  left_facing_dogfight_sprite, "../assets/sprites-25.sprite"
+
+	      sprite  allied_aerodrome_sprite_data, "../assets/sprites-26.sprite"
+	      sprite  central_aerodrome_sprite_data, "../assets/sprites-27.sprite"
 
               .section palette1,data
               .public palette

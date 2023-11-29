@@ -7,7 +7,7 @@
 #include <foenix/vicky.h>
 
 extern uint8_t allied_aerodrome_sprite_data[SPRITE_SIZE];
-extern uint8_t central_aerodrome_sprite_data[SPRITE_SIZE];
+extern uint8_t central_aerodrome_sprite_datao[SPRITE_SIZE];
 
 struct aerodrome Abacon;
 struct aerodrome Bersee;
@@ -59,20 +59,20 @@ static void initialize(struct aerodrome *aerodrome, char *name, bool allied,
   init_list(&aerodrome->airplanes);
   init_list(&aerodrome->squadron);
   add_visual_coord(&aerodrome->visual, pos,
-             allied ? &allied_aerodrome : &central_aerodrome);
+             allied ? &allied_aerodrome_sprite : &central_aerodrome_sprite);
   add_actor(pos, &aerodrome->visual);
 }
 
 void create_aerodromes() {
-  allied_aerodrome = (struct sprite) {
+  allied_aerodrome_sprite = (struct sprite) {
     .enable = true,
     .lut = 0,
     .depth = 1,
     .collision_enable = false,
-    .addy_low = SPRITE_ADDY_LOW(&allied_aerodrome_sprite_data),
-    .addy_high = SPRITE_ADDY_HIGH(&allied_aerodrome_sprite_data)
+    .addy_low = SPRITE_ADDY_LOW(allied_aerodrome_sprite_data),
+    .addy_high = SPRITE_ADDY_HIGH(allied_aerodrome_sprite_data)
   };
-  central_aerodrome = (struct sprite) {
+  central_aerodrome_sprite sprite) {
     .enable = true,
     .lut = 0,
     .depth = 1,

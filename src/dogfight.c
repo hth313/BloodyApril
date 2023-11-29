@@ -9,12 +9,10 @@
 #include "dogfight.h"
 #include "flight.h"
 #include "list.h"
+#include "graphics.h"
 #include "memory.h"
 #include "playstate.h"
 #include "ui.h"
-
-extern struct sprite right_facing_dogfight_sprite;
-extern struct sprite left_facing_dogfight_sprite;
 
 #define MARGIN 4
 
