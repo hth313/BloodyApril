@@ -62,12 +62,12 @@ uint16_t roll2d10(void) {
     } else {
       // 11 - 13
       if (raw > 36044) {
-	if (raw > 29491)
-	  return 11;
+	if (raw > 41942)
+	  return 13;
 	else
           return 12;
       } else {
-	return 13;
+	return 11;
       }
     }
   } else {
