@@ -4,7 +4,7 @@ sprite:       .macro sym, sprite_file
               .align  2
               .public \sym
 \sym:         .byte   .byte0 (sprite_data$ - VRAM_OFFSET)
-              .byte   1             ; control byte
+              .byte   2 + 1          ; control byte, LUT1 & enable
               .word   .word1 (sprite_data$ - VRAM_OFFSET)
               .word   0,0
               .section vram,data
@@ -29,7 +29,7 @@ sprite_data$: .incbin "\sprite_file"
 
               .section palette1,data
               .public palette
-palette:      .incbin "assets/BloodyAprilSprites.pal"
+palette:      .incbin "../assets/trench1.palette"
 
 // ----------------------------------------------------------------------
 // Tile maps
