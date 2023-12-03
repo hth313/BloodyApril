@@ -1,5 +1,11 @@
 #include "list.h"
+#ifdef __CALYPSI_TARGET_M68K__
 #include <mcp/syscalls.h>
+#endif
+#ifdef __CALYPSI_TARGET_65816__
+#include <calypsi/intrinsics65816.h>
+#endif
+
 
 extern void init_list(struct list *list);
 extern bool empty_list(struct list *list);
@@ -13,7 +19,20 @@ extern void order_insert(struct list *list, struct typed_node *node);
 extern void move_members(struct list *to, struct list *from);
 
 void remove_node_with_interrupts_blocked(struct node *node) {
+#ifdef __CALYPSI_TARGET_M68K__
   sys_int_disable_all();
+#endif
+#ifdef __CALYPSI_TARGET_65816__
+  __interrupt_state_t istate = __get_interrupt_state();
+  __disable_interrupts();
+#endif
+
   remove_node(node);
+
+  #ifdef __CALYPSI_TARGET_M68K__
   sys_int_enable_all();
+#endif
+#ifdef __CALYPSI_TARGET_65816__
+  __restore_interrupt_state(istate);
+#endif
 }

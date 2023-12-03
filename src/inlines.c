@@ -4,6 +4,7 @@
 
 // airplane.h
 extern bool damaged(airplane *p);
+extern const struct airplane_kind *airplane_kind(struct airplane *p);
 
 // map.h
 extern void add_sector_attribute(uint_fast8_t q, uint_fast8_t r,

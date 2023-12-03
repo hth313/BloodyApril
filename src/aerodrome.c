@@ -69,16 +69,24 @@ void create_aerodromes() {
     .lut = 0,
     .depth = 1,
     .collision_enable = false,
+#ifdef __CALYPSI_TARGET_M68K__
     .addy_low = SPRITE_ADDY_LOW(allied_aerodrome_sprite_data),
     .addy_high = SPRITE_ADDY_HIGH(allied_aerodrome_sprite_data)
+#else
+    .data = vicky_address(allied_aerodrome_sprite_data)
+#endif
   };
   central_aerodrome_sprite = (struct sprite) {
     .enable = true,
     .lut = 0,
     .depth = 1,
     .collision_enable = false,
+#ifdef __CALYPSI_TARGET_M68K__
     .addy_low = SPRITE_ADDY_LOW(central_aerodrome_sprite_data),
     .addy_high = SPRITE_ADDY_HIGH(central_aerodrome_sprite_data)
+#else
+    .data = vicky_address(central_aerodrome_sprite_data)
+#endif
   };
 
   // Central power aerodromes

@@ -1,6 +1,6 @@
+#ifdef __CALYPSI_TARGET_M68K__
 #define VRAM_OFFSET 0x00c00000
-
-sprite:       .macro sym, sprite_file
+sprite:	      .macro  sym, sprite_file
               .align  2
               .public \sym
 \sym:         .byte   .byte0 (sprite_data$ - VRAM_OFFSET)
@@ -12,7 +12,20 @@ sprite:       .macro sym, sprite_file
 sprite_data$: .incbin "\sprite_file"
               .section near,data
               .endm
-
+#else
+#define VRAM_OFFSET 0xb00000
+sprite:       .macro sym, sprite_file
+              .public \sym
+\sym:         .byte   2 + 1          ; control byte, LUT1 & enable
+              .word   .word0 (sprite_data$ - VRAM_OFFSET)
+              .byte   .byte2 (sprite_data$ - VRAM_OFFSET)
+              .word   0,0
+              .section vram,data
+              .align  256
+sprite_data$: .incbin "\sprite_file"
+              .section near,data
+              .endm
+#endif
               sprite  SopwithPup_sprite, "assets/Pup.raw"
               sprite  SopwithTriplane_sprite, "assets/Triplane.raw"
               sprite  Albatros_D5a_J3_sprite, "assets/Albatros-D5a-J3.raw"
@@ -21,11 +34,11 @@ sprite_data$: .incbin "\sprite_file"
 
               sprite  Albatros_D2_sprite_red_baron, "assets/Albatros-D2-Red-Baron.raw"
 
-	      sprite  right_facing_dogfight_sprite, "../assets/sprites-24.sprite"
-	      sprite  left_facing_dogfight_sprite, "../assets/sprites-25.sprite"
+              sprite  right_facing_dogfight_sprite, "../assets/sprites-24.sprite"
+              sprite  left_facing_dogfight_sprite, "../assets/sprites-25.sprite"
 
-	      sprite  allied_aerodrome_sprite_data, "../assets/sprites-26.sprite"
-	      sprite  central_aerodrome_sprite_data, "../assets/sprites-27.sprite"
+              sprite  allied_aerodrome_sprite_data, "../assets/sprites-26.sprite"
+              sprite  central_aerodrome_sprite_data, "../assets/sprites-27.sprite"
 
               .section palette1,data
               .public palette
@@ -39,7 +52,7 @@ tiles:        .macro  tiles
               .public \tiles_index, \tiles_tiles
 \tiles_index: .incbin "../assets/\tiles.index"
 \tiles_tiles: .incbin "../assets/\tiles.tiledata"
-	      .endm
+              .endm
 
               tiles   trench1
               tiles   towns

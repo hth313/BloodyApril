@@ -13,6 +13,10 @@ void initialize_tilemap(vram_ptr tile_map[4], vram_ptr tile_graphics[4]) {
     Tilemap[i].layer_enable = 1;
     Tilemap[i].width = 112;
     Tilemap[i].height = 64;
-    Tileset[i].addy = (volatile uint32_t) tile_graphics[i];
+#ifdef __CALYPSI_TARGET_M68K__
+    Tileset[i].addy = (volatile uint32_t) vicky_address(tile_graphics[i]);
+#else
+    Tileset[i].data = vicky_address(tile_graphics[i]);
+#endif
   }
 }

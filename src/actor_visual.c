@@ -7,8 +7,10 @@
 #include "scenario.h"
 #include <foenix/interrupt.h>
 #include <foenix/vicky.h>
+#ifdef __CALYPSI_TARGET_M68K__
 #include <mcp/interrupt.h>
 #include <mcp/syscalls.h>
+#endif
 #include <stdint.h>
 #include <signal.h>
 
@@ -41,7 +43,11 @@ static bool is_visible(struct actor_visual *p) {
 static void assign_sprite(unsigned index, struct actor_visual *p) {
   volatile struct sprite *sprite = &Sprite[index];
   sprite->control = next_actor->sprite[image_index].control;
+#ifdef __CALYPSI_TARGET_M68K__
   sprite->addy_high = next_actor->sprite[image_index].addy_high;
+#else
+  sprite->data = next_actor->sprite[image_index].data;
+#endif
   sprite->x = next_actor->show_x + next_actor->staggered - offset_x;
   sprite->y = next_actor->show_y + next_actor->staggered - offset_y;
   next_actor->sprite_index = index;
@@ -55,7 +61,9 @@ static void enable_sol(void) {
     if (line < minimum_skip) {
       line = minimum_skip;
     }
+#ifdef __CALYPSI_TARGET_M68K__
     Vicky.line_interrupt[0].control = 1 | (line << 4);
+#endif
     scan_line = line;
   }
 }
@@ -125,10 +133,14 @@ static void insert_actors(struct playstate *playstate) {
 
 __attribute__((interrupt)) void sof_handler(void) {
   // acknowledge interrupt
+#ifdef __CALYPSI_TARGET_M68K__
   InterruptController.pending.vicky = INT_VICKY_SOF;
+#endif
 
   // no sol interrupt
+#ifdef __CALYPSI_TARGET_M68K__
   Vicky.line_interrupt[0].control = 0;
+#endif
 
   if (rebuild_actor_visuals) {
     rebuild_actor_visuals = 0; // acknowledge
@@ -215,7 +227,9 @@ __attribute__((interrupt)) void sof_handler(void) {
 }
 
 __attribute__((interrupt)) void sol_handler(void) {
-  InterruptController.pending.vicky = INT_VICKY_SOL;  // acknowledge
+#ifdef __CALYPSI_TARGET_M68K__
+  InterruptController.pending.vicky = INT_VICKY_SOL; // acknowledge
+#endif
   while (head_actor->node.node.succ && next_actor->node.node.succ) {
     if (scan_line >= head_actor->y - offset_y + SPRITE_HEIGHT) {
       // We can reuse this one
@@ -232,18 +246,24 @@ __attribute__((interrupt)) void sol_handler(void) {
   }
 }
 
+#ifdef __CALYPSI_TARGET_M68K__
 static p_int_handler old_sof_handler;
 static p_int_handler old_sol_handler;
+#endif
 
 void install_interrupt_handlers(void) {
   init_list(&actor_visuals);
+#ifdef __CALYPSI_TARGET_M68K__
   old_sof_handler = sys_int_register(INT_SOF_A, sof_handler);
   old_sol_handler = sys_int_register(INT_SOL_A, sol_handler);
+#endif
 }
 
 void restore_interrupt_handlers(void) {
+#ifdef __CALYPSI_TARGET_M68K__
   sys_int_register(INT_SOF_A, old_sof_handler);
   sys_int_register(INT_SOL_A, old_sol_handler);
+#endif
 }
 
 void add_visual_loc(struct actor_visual *p, location loc,
