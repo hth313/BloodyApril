@@ -55,7 +55,7 @@ bloody-april-a2560.s28:  $(OBJS)
 	ln68k -o $@ $^ a2560k.scm --output-format=s28 --list-file=bloody-april-a2560-Foenix.lst --rtattr cstartup=Foenix_morfe $(LNFLAGS)
 
 bloody-april-c256.elf: $(OBJS_C256_DEBUG)
-	ln65816 --debug -o $@ $^ c256-u+-plain.scm --list-file=bloody-april-c256-debug.lst --semi-hosted --rtattr cstartup=Foenix_user --rtattr stubs=foenix $(LNFLAGS)
+	ln65816 --debug -o $@ $^ c256-u+-plain.scm --list-file=bloody-april-c256-debug.lst --semi-hosted --rtattr cstartup=Foenix_user --rtattr stubs=foenix $(LNFLAGS) --initialize-large-data --rtattr exit=simplified
 
 clean:
 	-rm $(DEPFILES)

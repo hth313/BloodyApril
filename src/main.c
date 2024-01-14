@@ -24,6 +24,8 @@ int main() {
 //  LUT[1] = palette;
 //  memcpy(&LUT[0], &palette, 200);
 
+  Vicky.background_color = (color24_t) { 0xc6, 0xe6, 0xec };
+  Vicky.border_color = (color24_t) { 0, 0, 0 };
 
 
   for (unsigned i = 0; i < 20; i++) {
@@ -34,7 +36,7 @@ int main() {
   Tilemap[3].data = vicky_address((vram_ptr)trench1_index);
   Tilemap[3].width = 112;
   Tilemap[3].height = 64;
-  Tilemap[3].x = 0;
+  Tilemap[3].x = 640;
   Tilemap[3].y = 0;
 
 #ifdef __CALYPSI_TARGET_M68K__
@@ -58,7 +60,7 @@ int main() {
     | SPRITE_ADDY_LOW(vicky_address(Albatros_D5a_J3_sprite));
   Sprite[1].addy_high = SPRITE_ADDY_HIGH(vicky_address(Albatros_D5a_J3_sprite));
 #endif
-  Sprite[1].x = 150;
+  Sprite[1].x = 120;
   Sprite[1].y = 150;
 
   while (1) {
