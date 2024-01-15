@@ -5,8 +5,10 @@
 #include "list.h"
 #include "playstate.h"
 #include "scenario.h"
+ __CALYPSI_TARGET_SYSTEM_FOENIX__
 #include <foenix/interrupt.h>
 #include <foenix/vicky.h>
+#endif
 #ifdef __CALYPSI_TARGET_M68K__
 #include <mcp/interrupt.h>
 #include <mcp/syscalls.h>

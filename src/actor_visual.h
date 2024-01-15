@@ -1,10 +1,13 @@
 #ifndef __ACTOR_VISUAL_H__
 #define __ACTOR_VISUAL_H__
 
-#include <foenix/vicky.h>
 #include "actor_kind.h"
 #include "coordinate.h"
 #include "list.h"
+
+#ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
+#include <foenix/vicky.h>
+#endif
 
 struct aerodrome;
 struct archie;

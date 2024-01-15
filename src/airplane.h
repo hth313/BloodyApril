@@ -3,7 +3,6 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include <foenix/vicky.h>
 #include "actor.h"
 #include "altitude.h"
 #include "coordinate.h"
@@ -11,6 +10,10 @@
 #include "pilot.h"
 #include "squadron.h"
 #include "list.h"
+
+#ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
+#include <foenix/vicky.h>
+#endif
 
 enum token {
   TokenAlbatros_D2, TokenAlbatros_D5a, TokenSopwithPup
