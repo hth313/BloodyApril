@@ -1,9 +1,12 @@
 #include "airplane.h"
 #include "dogfight.h"
 #include "ui.h"
+
+#ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
 #include <foenix/vicky.h>
 #ifdef __CALYPSI_TARGET_M68K__
 #include <mcp/syscalls.h>
+#endif
 #endif
 
 #define Screen 0

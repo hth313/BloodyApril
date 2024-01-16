@@ -9,6 +9,10 @@
 #include <foenix/vicky.h>
 #endif
 
+#ifdef __CALYPSI_TARGET_SYSTEM_CX16__
+#include "x16.h"
+#endif
+
 struct aerodrome;
 struct archie;
 struct artillery;

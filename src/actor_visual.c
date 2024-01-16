@@ -5,16 +5,22 @@
 #include "list.h"
 #include "playstate.h"
 #include "scenario.h"
- __CALYPSI_TARGET_SYSTEM_FOENIX__
+#include <stdint.h>
+#include <signal.h>
+
+#ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
 #include <foenix/interrupt.h>
 #include <foenix/vicky.h>
 #endif
+
 #ifdef __CALYPSI_TARGET_M68K__
 #include <mcp/interrupt.h>
 #include <mcp/syscalls.h>
 #endif
-#include <stdint.h>
-#include <signal.h>
+
+#ifdef __CALYPSI_TARGET_SYSTEM_CX16__
+#include "x16.h"
+#endif
 
 // This list holds the elements in sort order. As objects move elements
 // are pushed in that direction in the list to keep them in reasonable

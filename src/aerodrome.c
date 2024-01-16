@@ -4,7 +4,14 @@
 #include "coordinate.h"
 #include "playstate.h"
 #include <stdbool.h>
+
+#ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
 #include <foenix/vicky.h>
+#endif
+
+#ifdef __CALYPSI_TARGET_SYSTEM_CX16__
+#define SPRITE_SIZE 1024
+#endif
 
 extern uint8_t allied_aerodrome_sprite_data[SPRITE_SIZE];
 extern uint8_t central_aerodrome_sprite_data[SPRITE_SIZE];

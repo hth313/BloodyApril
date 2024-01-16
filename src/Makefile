@@ -5,13 +5,13 @@ DEPDIR := .deps
 ASM_SRCS = assets.s
 C_SRCS = ai.c actor.c actor_visual.c aerodrome.c ai.c airplane.c altitude.c \
         combat.c coordinate.c detection.c dogfight.c \
-        flight.c foenix.c inlines.c input.c list.c map.c memory.c movement.c \
+        flight.c inlines.c input.c list.c map.c memory.c movement.c \
         pilot.c playstate.c random.c scenario.c squadron.c \
         ui.c weather.c \
-        scenario_dogfight.c \
-	foenix.c graphics.c
+        scenario_dogfight.c
 
-FOENIX_SRCS = foenix_u_main.c $(C_SRCS)
+
+FOENIX_SRCS = foenix_u_main.c foenix.c graphics.c $(C_SRCS)
 
 MEGA65_SRCS = $(C_SRCS)
 CX16_SRCS = $(C_SRCS)

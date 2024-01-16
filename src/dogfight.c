@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <foenix/vicky.h>
 #include "actor.h"
 #include "actor_visual.h"
 #include "ai.h"
@@ -9,10 +8,14 @@
 #include "dogfight.h"
 #include "flight.h"
 #include "list.h"
-#include "a2560/graphics.h"
 #include "memory.h"
 #include "playstate.h"
 #include "ui.h"
+
+#ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
+#include <foenix/vicky.h>
+#include "a2560/graphics.h"
+#endif
 
 #define MARGIN 4
 

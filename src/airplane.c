@@ -1,6 +1,8 @@
 #include <stdint.h>
 #include "airplane.h"
+#ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
 #include <foenix/vicky.h>
+#endif
 
 extern struct sprite Albatros_D2_sprite;
 extern struct sprite Albatros_D5a_J3_sprite;

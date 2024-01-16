@@ -1,5 +1,8 @@
-#include <foenix/vicky.h>
 #include <stdbool.h>
+
+#ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
+#include <foenix/vicky.h>
+#endif
 
 void initialize() {
   Vicky.master_control =
