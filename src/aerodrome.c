@@ -1,4 +1,5 @@
 // -*- coding: iso-latin-1 -*-
+#include "system.h"
 #include "aerodrome.h"
 #include "actor_visual.h"
 #include "coordinate.h"
@@ -9,12 +10,8 @@
 #include <foenix/vicky.h>
 #endif
 
-#ifdef __CALYPSI_TARGET_SYSTEM_CX16__
-#define SPRITE_SIZE 1024
-#endif
-
-extern uint8_t allied_aerodrome_sprite_data[SPRITE_SIZE];
-extern uint8_t central_aerodrome_sprite_data[SPRITE_SIZE];
+extern VRAM uint8_t allied_aerodrome_sprite_data[SPRITE_SIZE];
+extern VRAM uint8_t central_aerodrome_sprite_data[SPRITE_SIZE];
 
 struct aerodrome Abacon;
 struct aerodrome Bersee;
@@ -71,16 +68,17 @@ static void initialize(struct aerodrome *aerodrome, char *name, bool allied,
 }
 
 void create_aerodromes() {
-  allied_aerodrome_sprite = (struct sprite) {
-    .enable = true,
-    .lut = 0,
-    .depth = 1,
-    .collision_enable = false,
+#ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
+  allied_aerodrome_sprite = (struct sprite){
+      .enable = true,
+      .lut = 0,
+      .depth = 1,
+      .collision_enable = false,
 #ifdef __CALYPSI_TARGET_M68K__
-    .addy_low = SPRITE_ADDY_LOW(allied_aerodrome_sprite_data),
-    .addy_high = SPRITE_ADDY_HIGH(allied_aerodrome_sprite_data)
-#else
-    .data = vicky_address(allied_aerodrome_sprite_data)
+      .addy_low = SPRITE_ADDY_LOW(allied_aerodrome_sprite_data),
+      .addy_high = SPRITE_ADDY_HIGH(allied_aerodrome_sprite_data)
+#elif defined(__CALYPSI_TARGET_65816__)
+      .data = vicky_address(allied_aerodrome_sprite_data)
 #endif
   };
   central_aerodrome_sprite = (struct sprite) {
@@ -91,10 +89,26 @@ void create_aerodromes() {
 #ifdef __CALYPSI_TARGET_M68K__
     .addy_low = SPRITE_ADDY_LOW(central_aerodrome_sprite_data),
     .addy_high = SPRITE_ADDY_HIGH(central_aerodrome_sprite_data)
-#else
+#elif defined(__CALYPSI_TARGET_65816__)
     .data = vicky_address(central_aerodrome_sprite_data)
 #endif
   };
+#endif // __CALYPSI_TARGET_SYSTEM_FOENIX__
+
+#ifdef __CALYPSI_TARGET_SYSTEM_CX16__
+  allied_aerodrome_sprite = (struct sprite){
+    .address = vera_sprite_address(allied_aerodrome_sprite_data),
+    .zdepth = SpriteAboveLayer1,
+    .width = SpriteSize32,
+    .height = SpriteSize32
+  };
+  central_aerodrome_sprite = (struct sprite) {
+      .address = vera_sprite_address(allied_aerodrome_sprite_data),
+      .zdepth = SpriteAboveLayer1,
+      .width = SpriteSize32,
+      .height = SpriteSize32
+    };
+#endif // __CALYPSI_TARGET_SYSTEM_CX16__
 
   // Central power aerodromes
   initialize(&Abacon, "Abacon", false, (coordinate) {0});

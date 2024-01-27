@@ -3,10 +3,10 @@
 #include <foenix/vicky.h>
 #include "random.h"
 
-extern __far sprite_t Albatros_D2_sprite;
-extern __far sprite_t Albatros_D5a_J3_sprite;
-extern __far uint16_t trench1_index[];
-extern __far uint8_t  trench1_tiles[];
+extern VRAM sprite_t Albatros_D2_sprite;
+extern VRAM sprite_t Albatros_D5a_J3_sprite;
+extern VRAM uint16_t trench1_index[];
+extern VRAM uint8_t  trench1_tiles[];
 
 //extern __far lut_t palette;
 

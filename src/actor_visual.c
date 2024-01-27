@@ -1,3 +1,4 @@
+#include "system.h"
 #include "actor_visual.h"
 #include "actor.h"
 #include "dogfight.h"
@@ -49,12 +50,18 @@ static bool is_visible(struct actor_visual *p) {
 }
 
 static void assign_sprite(unsigned index, struct actor_visual *p) {
-  volatile struct sprite *sprite = &Sprite[index];
+  VRAM struct sprite *sprite = &Sprite[index];
+#ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
   sprite->control = next_actor->sprite[image_index].control;
 #ifdef __CALYPSI_TARGET_M68K__
   sprite->addy_high = next_actor->sprite[image_index].addy_high;
 #else
   sprite->data = next_actor->sprite[image_index].data;
+#endif
+#endif // __CALYPSI_TARGET_SYSTEM_FOENIX__
+#ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
+  sprite->address = vera_sprite_address(next_actor->sprite[image_index].data);
+  sprite->zdepth = SpriteAboveLayer1;
 #endif
   sprite->x = next_actor->show_x + next_actor->staggered - offset_x;
   sprite->y = next_actor->show_y + next_actor->staggered - offset_y;
@@ -230,7 +237,12 @@ __attribute__((interrupt)) void sof_handler(void) {
 
   // Disable rest of sprites (if we did not use them all up)
   for (unsigned i = next_sprite; i < SPRITE_COUNT; i++) {
+#ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
     Sprite[i].control = 0;
+#endif
+#ifdef __CALYPSI_TARGET_SYSTEM_CX16__
+    Sprite[i].zdepth = SpriteDisabled;
+#endif
   }
 }
 

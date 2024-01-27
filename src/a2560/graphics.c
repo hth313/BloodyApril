@@ -1,10 +1,6 @@
-#include <stdbool.h>
+#include "graphics.h"
 
-#ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
-#include <foenix/vicky.h>
-#endif
-
-void initialize() {
+void initialize(void) {
   Vicky.master_control =
       GRAPHIC_MODE_ENABLE | TILE_ENGINE_ENABLE | SPRITE_ENGINE_ENABLE;
 

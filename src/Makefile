@@ -68,7 +68,7 @@ obj/%-cx16-debug.o: %.s
 
 obj/%-cx16-debug.o: %.c $(DEPDIR)/%-debug.d | $(DEPDIR)
 	@cc6502 --core=65c02 $(MODEL_CX16) --target=cx16 $(CFLAGS)  --debug --dependencies -MQ$@ >$(DEPDIR)/$*-debug.d $<
-	cc6502 --core=45gs02 $(MODEL_CX16) --target=cx16 $(CFLAGS)  --debug --list-file=$(@:%.o=%.lst) -o $@ $<
+	cc6502 --core=65c02 $(MODEL_CX16) --target=cx16 $(CFLAGS)  --debug --list-file=$(@:%.o=%.lst) -o $@ $<
 
 
 bloody-april-a2560.elf: $(OBJS_A2560_DEBUG)
@@ -87,7 +87,7 @@ bloody-april-mega65.elf: $(OBJS_MEGA65_DEBUG)
 	ln6502 --debug -o $@ $^ mega65-plain.scm --list-file=bloody-april-mega65-debug.lst --semi-hosted --rtattr cstartup=mega65  $(LNFLAGS_MEGA65) --rtattr exit=simplified
 
 bloody-april-cx16.elf: $(OBJS_CX16_DEBUG)
-	ln6502 --debug -o $@ $^ cx16-banked.scm --list-file=bloody-april-cx16-debug.lst --semi-hosted --rtattr cstartup=cx16  $(LNFLAGS_CX16) --rtattr exit=simplified
+	ln6502 --debug -o $@ $^ cx16-banked.scm --list-file=bloody-april-cx16-debug.lst --semi-hosted --rtattr cstartup=cx16  $(LNFLAGS_CX16) --rtattr exit=simplified --no-copy-initialize=vram
 
 clean:
 	-rm $(DEPFILES)

@@ -36,7 +36,7 @@ static void draw_airplane_column(struct list *list, unsigned column) {
   for (airplane *p = (airplane *)list->head; p->node.succ != 0;
        p = (airplane *)p->node.succ) {
     struct airplane_kind const *k = airplane_kind(p);
-    volatile struct sprite *sprite = &Sprite[p->sprite_index];
+    VRAM struct sprite *sprite = &Sprite[p->sprite_index];
     sprite->x = 50;
     sprite->y = 50 + row * 20;
     sprite->control = p->visual.sprite[0].control;

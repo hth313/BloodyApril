@@ -38,5 +38,24 @@ typedef struct sprite {
   };
 } sprite_t;
 
+inline uint16_t vera_sprite_address(__vram void *p) {
+  return (uint16_t) (((uint32_t) p) >> 5);
+}
+
+// ----------------------------------------------------------------------
+//
+// Complete Vera video RAM (except for data part)
+//
+// ----------------------------------------------------------------------
+
+struct CompleteVera {
+  char psg[40];
+  char palette[0x200];
+  struct sprite sprite[128];
+};
+
+#define _CompleteVera (* (struct CompleteVera __vram *)0x1f9c0)
+
+#define Sprite     _CompleteVera.sprite
 
 #endif // __X16_H__

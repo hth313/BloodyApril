@@ -3,6 +3,7 @@
 
 #include "actor_kind.h"
 #include "coordinate.h"
+#include "system.h"
 #include "list.h"
 
 #ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
@@ -60,5 +61,8 @@ extern void add_visual_xy(struct actor_visual *, uint16_t x, uint16_t y, struct 
 extern void install_interrupt_handlers(void);
 extern void restore_interrupt_handlers(void);
 extern void rebuild_actor_visual_list(struct playstate *ps);
+
+extern struct sprite right_facing_dogfight_sprite;
+extern struct sprite left_facing_dogfight_sprite;
 
 #endif // __ACTOR_VISUAL_H__

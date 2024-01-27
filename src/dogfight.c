@@ -14,7 +14,6 @@
 
 #ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
 #include <foenix/vicky.h>
-#include "a2560/graphics.h"
 #endif
 
 #define MARGIN 4
