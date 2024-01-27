@@ -11,7 +11,8 @@ C_SRCS = ai.c actor.c actor_visual.c aerodrome.c ai.c airplane.c altitude.c \
         scenario_dogfight.c
 
 
-FOENIX_SRCS = foenix_u_main.c foenix.c graphics.c $(C_SRCS)
+FOENIX_SRCS = foenix_u_main.c foenix_ui.c graphics.c $(C_SRCS)
+CX16_SRCS = cx16_main.c cx16_ui.c
 
 MEGA65_SRCS = $(C_SRCS)
 CX16_SRCS = $(C_SRCS)
