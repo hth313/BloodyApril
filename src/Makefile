@@ -10,12 +10,9 @@ C_SRCS = ai.c actor.c actor_visual.c aerodrome.c ai.c airplane.c altitude.c \
         ui.c weather.c \
         scenario_dogfight.c
 
-
 FOENIX_SRCS = foenix_u_main.c foenix_ui.c graphics.c $(C_SRCS)
-CX16_SRCS = cx16_main.c cx16_ui.c
-
 MEGA65_SRCS = $(C_SRCS)
-CX16_SRCS = $(C_SRCS)
+CX16_SRCS = cx16_main.c cx16_ui.c $(C_SRCS)
 
 MODEL_A2560 = --code-model=large --data-model=small
 MODEL_C256 = --code-model=large --data-model=medium
@@ -30,7 +27,6 @@ LNFLAGS_CX16 = --stack-size=2000 --target=cx16
 CFLAGS = -Wno-invalid-source-encoding --always-inline
 
 # Object files
-OBJS = $(ASM_SRCS:%.s=obj/%.o) $(C_SRCS:%.c=obj/%.o)
 OBJS_A2560_DEBUG = $(ASM_SRCS:%.s=obj/%-a2560-debug.o) $(FOENIX_SRCS:%.c=obj/%-a2560-debug.o)
 OBJS_C256_DEBUG = $(ASM_SRCS:%.s=obj/%-c256-debug.o) $(FOENIX_SRCS:%.c=obj/%-c256-debug.o)
 OBJS_MEGA65_DEBUG = $(ASM_SRCS:%.s=obj/%-mega65-debug.o) $(MEGA65_SRCS:%.c=obj/%-mega65-debug.o)
@@ -94,7 +90,10 @@ clean:
 	-rm $(DEPFILES)
 	-rm $(OBJS) $(OBJS:%.o=%.lst) $(OBJS_A2560_DEBUG) $(OBJS_A2560_DEBUG:%.o=%.lst)
 	-rm $(OBJS) $(OBJS:%.o=%.lst) $(OBJS_C256_DEBUG) $(OBJS_C256_DEBUG:%.o=%.lst)
+	-rm $(OBJS) $(OBJS:%.o=%.lst) $(OBJS_CX16_DEBUG) $(OBJS_CX16_DEBUG:%.o=%.lst)
+	-rm $(OBJS) $(OBJS:%.o=%.lst) $(OBJS_MEGA65_DEBUG) $(OBJS_MEGA65_DEBUG:%.o=%.lst)
 	-rm bloody-april.elf bloody-april.pgz bloody-april-debug.lst
+	-rm bloody-april-cx16.elf bloody-april-mega65.elf bloody-april-c256.elf bloody-april-a2560.elf
 
 $(DEPDIR): ; @mkdir -p $@
 

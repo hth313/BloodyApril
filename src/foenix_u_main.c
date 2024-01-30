@@ -2,6 +2,7 @@
 #include <string.h>
 #include <foenix/vicky.h>
 #include "random.h"
+#include "system.h"
 
 extern VRAM sprite_t Albatros_D2_sprite;
 extern VRAM sprite_t Albatros_D5a_J3_sprite;

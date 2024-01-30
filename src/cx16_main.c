@@ -8,4 +8,5 @@ int main() {
   for (unsigned i = 0; i < 20; i++) {
     values[i] = roll2d10();
   }
+  return 0;
 }

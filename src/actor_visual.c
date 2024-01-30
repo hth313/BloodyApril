@@ -20,7 +20,7 @@
 #endif
 
 #ifdef __CALYPSI_TARGET_SYSTEM_CX16__
-#include "x16.h"
+#include "cx16.h"
 #endif
 
 // This list holds the elements in sort order. As objects move elements
@@ -50,7 +50,7 @@ static bool is_visible(struct actor_visual *p) {
 }
 
 static void assign_sprite(unsigned index, struct actor_visual *p) {
-  VRAM struct sprite *sprite = &Sprite[index];
+  volatile VRAM struct sprite *sprite = &Sprite[index];
 #ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
   sprite->control = next_actor->sprite[image_index].control;
 #ifdef __CALYPSI_TARGET_M68K__
@@ -59,10 +59,12 @@ static void assign_sprite(unsigned index, struct actor_visual *p) {
   sprite->data = next_actor->sprite[image_index].data;
 #endif
 #endif // __CALYPSI_TARGET_SYSTEM_FOENIX__
-#ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
-  sprite->address = vera_sprite_address(next_actor->sprite[image_index].data);
+
+#ifdef __CALYPSI_TARGET_SYSTEM_CX16__
+  sprite->address_4bpp = next_actor->sprite[image_index].address_4bpp;
   sprite->zdepth = SpriteAboveLayer1;
 #endif
+
   sprite->x = next_actor->show_x + next_actor->staggered - offset_x;
   sprite->y = next_actor->show_y + next_actor->staggered - offset_y;
   next_actor->sprite_index = index;
