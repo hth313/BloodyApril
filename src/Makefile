@@ -1,8 +1,7 @@
-VPATH = .:scenario:a2560
+VPATH = .:scenario
 DEPDIR := .deps
 
 # Common source files
-ASM_SRCS = assets.s
 C_SRCS = ai.c actor.c actor_visual.c aerodrome.c ai.c airplane.c altitude.c \
         combat.c coordinate.c detection.c dogfight.c \
         flight.c inlines.c input.c list.c map.c memory.c movement.c \
@@ -10,7 +9,11 @@ C_SRCS = ai.c actor.c actor_visual.c aerodrome.c ai.c airplane.c altitude.c \
         ui.c weather.c \
         scenario_dogfight.c
 
-FOENIX_SRCS = foenix_u_main.c foenix_ui.c graphics.c $(C_SRCS)
+FOENIX_ASM_SRCS = foenix_assets.s
+MEGA65_ASM_SRCS =
+CX16_ASM_SRCS =
+
+FOENIX_SRCS = $(C_SRCS) foenix_u_main.c foenix_ui.c foenix_graphics.c
 MEGA65_SRCS = $(C_SRCS)
 CX16_SRCS = cx16_main.c cx16_ui.c $(C_SRCS)
 
@@ -27,10 +30,10 @@ LNFLAGS_CX16 = --stack-size=2000 --target=cx16
 CFLAGS = -Wno-invalid-source-encoding --always-inline
 
 # Object files
-OBJS_A2560_DEBUG = $(ASM_SRCS:%.s=obj/%-a2560-debug.o) $(FOENIX_SRCS:%.c=obj/%-a2560-debug.o)
-OBJS_C256_DEBUG = $(ASM_SRCS:%.s=obj/%-c256-debug.o) $(FOENIX_SRCS:%.c=obj/%-c256-debug.o)
-OBJS_MEGA65_DEBUG = $(ASM_SRCS:%.s=obj/%-mega65-debug.o) $(MEGA65_SRCS:%.c=obj/%-mega65-debug.o)
-OBJS_CX16_DEBUG = $(ASM_SRCS:%.s=obj/%-cx16-debug.o) $(CX16_SRCS:%.c=obj/%-cx16-debug.o)
+OBJS_A2560_DEBUG = $(FOENIX_ASM_SRCS:%.s=obj/%-a2560-debug.o) $(FOENIX_SRCS:%.c=obj/%-a2560-debug.o)
+OBJS_C256_DEBUG = $(FOENIX_ASM_SRCS:%.s=obj/%-c256-debug.o) $(FOENIX_SRCS:%.c=obj/%-c256-debug.o)
+OBJS_MEGA65_DEBUG = $(MEGA65_ASM_SRCS:%.s=obj/%-mega65-debug.o) $(MEGA65_SRCS:%.c=obj/%-mega65-debug.o)
+OBJS_CX16_DEBUG = $(CX16_ASM_SRCS:%.s=obj/%-cx16-debug.o) $(CX16_SRCS:%.c=obj/%-cx16-debug.o)
 
 obj/%.o: %.s
 	as68k --core=68000 $(MODEL_A2560) --target=Foenix --debug --list-file=$(@:%.o=%.lst) -o $@ $<

@@ -1,4 +1,4 @@
-#include "graphics.h"
+#include "foenix_graphics.h"
 
 void initialize(void) {
   Vicky.master_control =
