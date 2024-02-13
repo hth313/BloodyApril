@@ -1,6 +1,6 @@
 #include "scenario_dogfight.h"
-#include "../dogfight.h"
-#include "../playstate.h"
+#include "dogfight.h"
+#include "playstate.h"
 
 void basic_dogfight_setup(struct playstate *playstate) {
 }

@@ -1,4 +1,4 @@
-VPATH = .:scenario
+VPATH = .:scenario:mcp
 DEPDIR := .deps
 
 # Common source files
@@ -7,9 +7,10 @@ C_SRCS = ai.c actor.c actor_visual.c aerodrome.c ai.c airplane.c altitude.c \
         flight.c inlines.c input.c list.c map.c memory.c movement.c \
         pilot.c playstate.c random.c scenario.c squadron.c \
         ui.c weather.c \
-        scenario_dogfight.c
+        scenario_dogfight.c scenario_explore_map.c \
+        open.c write.c read.c
 
-FOENIX_ASM_SRCS = foenix_assets.s
+FOENIX_ASM_SRCS = foenix_assets.s syscalls.s
 MEGA65_ASM_SRCS =
 CX16_ASM_SRCS =
 
@@ -35,40 +36,42 @@ OBJS_C256_DEBUG = $(FOENIX_ASM_SRCS:%.s=obj/%-c256-debug.o) $(FOENIX_SRCS:%.c=ob
 OBJS_MEGA65_DEBUG = $(MEGA65_ASM_SRCS:%.s=obj/%-mega65-debug.o) $(MEGA65_SRCS:%.c=obj/%-mega65-debug.o)
 OBJS_CX16_DEBUG = $(CX16_ASM_SRCS:%.s=obj/%-cx16-debug.o) $(CX16_SRCS:%.c=obj/%-cx16-debug.o)
 
+INCLUDE = -I. -Iscenario
+
 obj/%.o: %.s
 	as68k --core=68000 $(MODEL_A2560) --target=Foenix --debug --list-file=$(@:%.o=%.lst) -o $@ $<
 
 obj/%.o: %.c $(DEPDIR)/%.d | $(DEPDIR)
-	@cc68k --core=68000 $(MODEL_A2560) --target=Foenix --always-inline --debug --dependencies -MQ$@ >$(DEPDIR)/$*.d $<
-	cc68k --core=68000 $(MODEL_A2560) --target=Foenix --always-inline --debug --list-file=$(@:%.o=%.lst) -o $@ $<
+	@cc68k $(INCLUDE) --core=68000 $(MODEL_A2560) --target=Foenix --always-inline --debug --dependencies -MQ$@ >$(DEPDIR)/$*.d $<
+	cc68k $(INCLUDE) --core=68000 $(MODEL_A2560) --target=Foenix --always-inline --debug --list-file=$(@:%.o=%.lst) -o $@ $<
 
 obj/%-a2560-debug.o: %.s
 	as68k --core=68000 $(MODEL_A2560) --debug --list-file=$(@:%.o=%.lst) -o $@ $<
 
 obj/%-a2560-debug.o: %.c $(DEPDIR)/%-debug.d | $(DEPDIR)
-	@cc68k --core=68000 $(MODEL_A2560) --target=Foenix $(CFLAGS) -D__FOENIX_A2560_REGISTER_SIZE__=16 --debug --dependencies -MQ$@ >$(DEPDIR)/$*-debug.d $<
-	cc68k --core=68000 $(MODEL_A2560) --target=Foenix $(CFLAGS) -D__FOENIX_A2560_REGISTER_SIZE__=16 --debug --list-file=$(@:%.o=%.lst) -o $@ $<
+	@cc68k $(INCLUDE) --core=68000 $(MODEL_A2560) --target=Foenix $(CFLAGS) -D__FOENIX_A2560_REGISTER_SIZE__=16 --debug --dependencies -MQ$@ >$(DEPDIR)/$*-debug.d $<
+	cc68k $(INCLUDE) --core=68000 $(MODEL_A2560) --target=Foenix $(CFLAGS) -D__FOENIX_A2560_REGISTER_SIZE__=16 --debug --list-file=$(@:%.o=%.lst) -o $@ $<
 
 obj/%-c256-debug.o: %.s
 	as65816  $(MODEL_C256) --debug --list-file=$(@:%.o=%.lst) -o $@ $<
 
 obj/%-c256-debug.o: %.c $(DEPDIR)/%-debug.d | $(DEPDIR)
-	@cc65816 --core=65816 $(MODEL_C256) --target=Foenix $(CFLAGS)  --debug --dependencies -MQ$@ >$(DEPDIR)/$*-debug.d $<
-	cc65816 --core=65816 $(MODEL_C256) --target=Foenix $(CFLAGS)  --debug --list-file=$(@:%.o=%.lst) -o $@ $<
+	@cc65816 $(INCLUDE) --core=65816 $(MODEL_C256) --target=Foenix $(CFLAGS)  --debug --dependencies -MQ$@ >$(DEPDIR)/$*-debug.d $<
+	cc65816 $(INCLUDE) --core=65816 $(MODEL_C256) --target=Foenix $(CFLAGS)  --debug --list-file=$(@:%.o=%.lst) -o $@ $<
 
 obj/%-mega65-debug.o: %.s
 	as6502 --core=45gs02 --target=mega65 $(MODEL_MEGA65) --debug --list-file=$(@:%.o=%.lst) -o $@ $<
 
 obj/%-mega65-debug.o: %.c $(DEPDIR)/%-debug.d | $(DEPDIR)
-	@cc6502 --core=45gs02 $(MODEL_MEGA65) --target=mega65 $(CFLAGS)  --debug --dependencies -MQ$@ >$(DEPDIR)/$*-debug.d $<
-	cc6502 --core=45gs02 $(MODEL_MEGA65) --target=mega65 $(CFLAGS)  --debug --list-file=$(@:%.o=%.lst) -o $@ $<
+	@cc6502 $(INCLUDE) --core=45gs02 $(MODEL_MEGA65) --target=mega65 $(CFLAGS)  --debug --dependencies -MQ$@ >$(DEPDIR)/$*-debug.d $<
+	cc6502 $(INCLUDE) --core=45gs02 $(MODEL_MEGA65) --target=mega65 $(CFLAGS)  --debug --list-file=$(@:%.o=%.lst) -o $@ $<
 
 obj/%-cx16-debug.o: %.s
 	as6502 --core=65c02 --target=cx16 $(MODEL_CX16) --debug --list-file=$(@:%.o=%.lst) -o $@ $<
 
 obj/%-cx16-debug.o: %.c $(DEPDIR)/%-debug.d | $(DEPDIR)
-	@cc6502 --core=65c02 $(MODEL_CX16) --target=cx16 $(CFLAGS)  --debug --dependencies -MQ$@ >$(DEPDIR)/$*-debug.d $<
-	cc6502 --core=65c02 $(MODEL_CX16) --target=cx16 $(CFLAGS)  --debug --list-file=$(@:%.o=%.lst) -o $@ $<
+	@cc6502 $(INCLUDE) --core=65c02 $(MODEL_CX16) --target=cx16 $(CFLAGS)  --debug --dependencies -MQ$@ >$(DEPDIR)/$*-debug.d $<
+	cc6502 $(INCLUDE) --core=65c02 $(MODEL_CX16) --target=cx16 $(CFLAGS)  --debug --list-file=$(@:%.o=%.lst) -o $@ $<
 
 
 bloody-april-a2560.elf: $(OBJS_A2560_DEBUG)
