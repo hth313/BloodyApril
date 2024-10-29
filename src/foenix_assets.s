@@ -26,13 +26,13 @@ sprite_data$: .incbin "\sprite_file"
               .section near,data
               .endm
 #endif
-              sprite  SopwithPup_sprite, "assets/Pup.raw"
-              sprite  SopwithTriplane_sprite, "assets/Triplane.raw"
-              sprite  Albatros_D5a_J3_sprite, "assets/Albatros-D5a-J3.raw"
-              sprite  Albatros_D2_sprite, "assets/Alatros-D2.raw"
+              sprite  SopwithPup_sprite, "../assets/sprites-17.sprite"
+              sprite  SopwithTriplane_sprite, "../assets/sprites-19.sprite"
+              sprite  Albatros_D5a_J3_sprite, "../assets/sprites-16.sprite"
+              sprite  Albatros_D2_sprite, "../assets/sprites-18.sprite"
 
 
-              sprite  Albatros_D2_sprite_red_baron, "assets/Albatros-D2-Red-Baron.raw"
+              sprite  Albatros_D2_sprite_red_baron, "../assets/sprites-20.sprite"
 
               sprite  right_facing_dogfight_sprite, "../assets/sprites-24.sprite"
               sprite  left_facing_dogfight_sprite, "../assets/sprites-25.sprite"
