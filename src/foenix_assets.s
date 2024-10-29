@@ -50,7 +50,11 @@ palette:      .incbin "../assets/trench1.palette"
 tiles:        .macro  tiles
               .section vram,data
               .public \tiles_index, \tiles_tiles
-\tiles_index: .incbin "../assets/\tiles.index"
+#ifdef __BIG_ENDIAN__
+\tiles_index: .incbin "../assets/\tiles-big-endian.index"
+#else
+\tiles_index: .incbin "../assets/\tiles-little-endian.index"
+#endif
 \tiles_tiles: .incbin "../assets/\tiles.tiledata"
               .endm
 
