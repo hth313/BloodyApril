@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <foenix/vicky.h>
+#include "color.h"
 #include "random.h"
 #include "system.h"
 
@@ -25,8 +26,8 @@ int main() {
 //  LUT[1] = palette;
 //  memcpy(&LUT[0], &palette, 200);
 
-  Vicky.background_color = (color24_t) { 0xc6, 0xe6, 0xec };
-  Vicky.border_color = (color24_t) { 0, 0, 0 };
+  Vicky.background_color = BACKGROUND_COLOR;
+  Vicky.border_color = BORDER_COLOR;
 
 
   for (unsigned i = 0; i < 20; i++) {

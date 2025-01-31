@@ -12,6 +12,7 @@
 #ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
 #include <foenix/interrupt.h>
 #include <foenix/vicky.h>
+#include <mcp/syscalls.h>
 #endif
 
 #ifdef __CALYPSI_TARGET_M68K__
@@ -268,21 +269,21 @@ __attribute__((interrupt)) void sol_handler(void) {
   }
 }
 
-#ifdef __CALYPSI_TARGET_M68K__
+#if defined(__CALYPSI_TARGET_M68K__) || defined(__CALYPSI_TARGET_65816__)
 static p_int_handler old_sof_handler;
 static p_int_handler old_sol_handler;
 #endif
 
 void install_interrupt_handlers(void) {
   init_list(&actor_visuals);
-#ifdef __CALYPSI_TARGET_M68K__
+#if defined(__CALYPSI_TARGET_M68K__) || defined(__CALYPSI_TARGET_65816__)
   old_sof_handler = sys_int_register(INT_SOF_A, sof_handler);
   old_sol_handler = sys_int_register(INT_SOL_A, sol_handler);
 #endif
 }
 
 void restore_interrupt_handlers(void) {
-#ifdef __CALYPSI_TARGET_M68K__
+#if defined(__CALYPSI_TARGET_M68K__) || defined(__CALYPSI_TARGET_65816__)
   sys_int_register(INT_SOF_A, old_sof_handler);
   sys_int_register(INT_SOL_A, old_sol_handler);
 #endif
