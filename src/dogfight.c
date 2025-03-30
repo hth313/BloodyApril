@@ -25,8 +25,8 @@ static void add_visuals(struct dogfight *p, struct list *flights, bool allied) {
   foreach_node(flights, flight) {
     struct airplane *plane;
     foreach_node(&flight->airplanes, plane) {
-      add_visual_xy(&plane->visual, x, y, &plane->visual.sprite[0]);
-      y += SPRITE_HEIGHT + MARGIN;
+      add_visual_xy(&plane->visual, x, y, plane->visual.actor_tile[0]);
+      y += ACTOR_TILE_HEIGHT + MARGIN;
     }
   }
 }
@@ -44,10 +44,10 @@ struct dogfight *new_dogfight(location loc, struct list *allied_powers,
   move_members(&p->allied_powers, allied_powers);
   move_members(&p->central_powers, central_powers);
 
-  struct sprite *sprite =
-    allied_attacker ? &right_facing_dogfight_sprite : &left_facing_dogfight_sprite;
+  actor_tile_t *actor_tile =
+    allied_attacker ? right_facing_dogfight_actor_tile : left_facing_dogfight_actor_tile;
 
-  add_visual_loc(&p->visual, loc, sprite);
+  add_visual_loc(&p->visual, loc, actor_tile);
   p->visual.node.kind = DogFight;
   p->visual.dogfight = p;
 

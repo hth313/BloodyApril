@@ -3,7 +3,7 @@
 
 #include "list.h"
 
-enum squadron_ident { Jasta1, Jasta2, Jasta19 };
+enum squadron_ident { Jasta1, Jasta2, Jasta3, Jasta4, Jasta19 };
 
 struct squadron {
   struct node node; // squadrons are linked to an aerodrome

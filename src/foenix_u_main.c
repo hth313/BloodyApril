@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <string.h>
+#include <stdio.h>
 #include <foenix/vicky.h>
 #include "random.h"
 #include "system.h"
@@ -64,8 +65,15 @@ int main() {
   Sprite[1].x = 120;
   Sprite[1].y = 150;
 
+  initialize_scenarios();
+
   while (1) {
     static int xx;
+    static char last_char;
     xx = values[5];
+    if (fread(&last_char, 1, 1, stdin) == 1) {
+      // got a char.
+      int dice = roll2d10();
+    }
   }
 }

@@ -21,7 +21,7 @@ static int sequence;
 
 // Create a new flight. This will initialize most fields except for
 // that it should be immediately linked into its owning list.
-struct flight *new_flight(location loc, direction heading, struct sprite *sprite) {
+struct flight *new_flight(location loc, direction heading, actor_tile_t *actor_tile) {
   struct flight *p = (struct flight*) safe_malloc(sizeof(struct flight));
   p->node.kind = Flight;
   p->node.order = sequence++;
@@ -30,7 +30,7 @@ struct flight *new_flight(location loc, direction heading, struct sprite *sprite
   p->heading = heading;
   p->move_order = MOVE_ORDER_LEVEL;
   p->detection = Undetected;
-  add_visual_loc(&p->visual, loc, sprite);
+  add_visual_loc(&p->visual, loc, actor_tile);
   p->visual.node.kind = Flight;
   p->visual.flight = p;
   return p;

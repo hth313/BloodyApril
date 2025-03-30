@@ -134,4 +134,8 @@ inline uint_fast8_t distance(coordinate a, coordinate b) {
   return (abs8(vec.q) + abs8(vec.q + vec.r) + abs8(vec.r)) / 2;
 }
 
+inline bool location_equal(location *loc1, location *loc2) {
+  return loc1->main.qr == loc2->main.qr && loc1->secondary.qr == loc2->secondary.qr;
+}
+
 #endif //  __COORDINATE_H__

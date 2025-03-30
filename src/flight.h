@@ -43,12 +43,13 @@ struct flight {
 #define MOVE_ORDER_TURN_LEFT      0x0008
 #define MOVE_ORDER_TURN_RIGHT 0x0010
   enum detection detection;
+  bool drawn;
 };
 
 // **********************************************************************
 
 extern struct flight *new_flight(location position, direction heading,
-				 struct sprite *sprite);
+				 actor_tile_t *actor_tile);
 extern void drop_flight(struct playstate *ps, struct flight *p);
 extern bool prune_downed(struct playstate *ps, struct flight *flight);
 

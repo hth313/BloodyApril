@@ -8,10 +8,15 @@
 
 #ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
 #include <foenix/vicky.h>
-#endif
-
 extern VRAM uint8_t allied_aerodrome_sprite_data[SPRITE_SIZE];
 extern VRAM uint8_t central_aerodrome_sprite_data[SPRITE_SIZE];
+#endif
+
+#ifdef __CALYPSI_TARGET_SYSTEM_AMIGA__
+#include <ace/managers/bob.h>
+extern tBob *allied_aerodrome_bob;
+extern tBob *central_aerodrome_bob;
+#endif
 
 struct aerodrome Abacon;
 struct aerodrome Bersee;
@@ -52,8 +57,10 @@ struct aerodrome Soncamp;
 struct aerodrome Treizennes;
 struct aerodrome Vert_Galand;
 
+#ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
 struct sprite allied_aerodrome_sprite;
 struct sprite central_aerodrome_sprite;
+#endif
 
 static void initialize(struct aerodrome *aerodrome, char *name, bool allied,
                        coordinate pos) {
@@ -62,8 +69,17 @@ static void initialize(struct aerodrome *aerodrome, char *name, bool allied,
   init_list(&aerodrome->flights);
   init_list(&aerodrome->airplanes);
   init_list(&aerodrome->squadron);
+#if defined(__CALYPSI_TARGET_SYSTEM_FOENIX__)
   add_visual_coord(&aerodrome->visual, pos,
-             allied ? &allied_aerodrome_sprite : &central_aerodrome_sprite);
+                   allied ? &allied_aerodrome_sprite
+                          : &central_aerodrome_sprite);
+#elif defined(__CALYPSI_TARGET_SYSTEM_AMIGA__)
+  add_visual_coord(&aerodrome->visual, pos,
+                   allied ? allied_aerodrome_bob
+                          : central_aerodrome_bob);
+#else
+#error "non supported systen"
+#endif
   add_actor(pos, &aerodrome->visual);
 }
 

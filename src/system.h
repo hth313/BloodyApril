@@ -6,10 +6,14 @@
 #endif
 
 #ifdef __CALYPSI_TARGET_SYSTEM_CX16__
-#define SPRITE_SIZE 1024
+#define ACTOR_TILE_SIZE 1024
 #define VRAM __attribute__((vram))
-#define SPRITE_HEIGHT 32
-#define SPRITE_COUNT 128
+#define ACTOR_TILE_HEIGHT 32
+#define ACTOR_TILE_COUNT 128
+#endif
+
+#if defined(__CALYPSI_TARGET_SYSTEM_AMIGA__)
+#define ACTOR_TILE_HEIGHT 32
 #endif
 
 #ifndef VRAM

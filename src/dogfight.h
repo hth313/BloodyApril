@@ -26,7 +26,8 @@ struct dogfight {
   unsigned round;            // counter
   bool attacker_disengage;   // overall order
   bool defender_disengage;   // overall order
-  coordinate pos;            // map position
+  location loc;            // map position
+  bool drawn;
 };
 
 // **********************************************************************

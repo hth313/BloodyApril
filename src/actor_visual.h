@@ -6,13 +6,8 @@
 #include "system.h"
 #include "list.h"
 
-#ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
-#include <foenix/vicky.h>
-#endif
-
-#ifdef __CALYPSI_TARGET_SYSTEM_CX16__
-#include "cx16.h"
-#endif
+#include <ace/managers/bob.h>
+typedef tBob actor_tile_t;
 
 struct aerodrome;
 struct archie;
@@ -31,13 +26,13 @@ struct actor_visual {
   // based on the kind/order of the node.
   // The 'node.kind' is also used to point back to the owning rich record.
   struct typed_node node; // sorted on kind/order and show_y
-  uint16_t show_x;        // position for this frame
-  uint16_t show_y;
-  uint16_t staggered;     // used to adjust x/y when placed on top
-  struct sprite sprite[2]; // actual sprite data to be used
+  actor_tile_t* actor_tile[2]; // point to bob
   unsigned sprite_index;  // the physical sprite (index) assigned to
+  uint16_t prio; // display priority index, 0 is highest, used to ensure order
+                 // when staggering
   uint16_t x;             // position is updated here
   uint16_t y;
+  uint16_t staggered; // adjustment to adjust x/y when stacking, 0/2/4..
   // Pointer to rich data record
   union {
     struct aerodrome *aerodrome;
@@ -55,14 +50,20 @@ struct actor_visual {
 
 // **********************************************************************
 
-extern void add_visual_loc(struct actor_visual *, location, struct sprite *);
-extern void add_visual_coord(struct actor_visual *, coordinate, struct sprite *);
-extern void add_visual_xy(struct actor_visual *, uint16_t x, uint16_t y, struct sprite *);
+#ifdef __CALYPSI_AMIGA__
+void insert_actors(tTileBufferManager *p, struct playstate *playstate,
+		   unsigned start_q, unsigned max_q, unsigned start_r,
+		   unsigned max_r) {
+#else
+extern void add_visual_loc(struct actor_visual *, location, actor_tile_t *);
+extern void add_visual_coord(struct actor_visual *, coordinate, actor_tile_t *);
+extern void add_visual_xy(struct actor_visual *, uint16_t x, uint16_t y, actor_tile_t *);
 extern void install_interrupt_handlers(void);
 extern void restore_interrupt_handlers(void);
 extern void rebuild_actor_visual_list(struct playstate *ps);
+#endif
 
-extern struct sprite right_facing_dogfight_sprite;
-extern struct sprite left_facing_dogfight_sprite;
+extern actor_tile_t *right_facing_dogfight_actor_tile;
+extern actor_tile_t *left_facing_dogfight_actor_tile;
 
 #endif // __ACTOR_VISUAL_H__

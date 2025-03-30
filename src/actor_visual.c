@@ -14,7 +14,7 @@
 #include <foenix/vicky.h>
 #endif
 
-#ifdef __CALYPSI_TARGET_M68K__
+#if defined(__CALYPSI_TARGET_M68K__) && defined(__CALYPSI_TARGET_SYSTEM_FOENIX__)
 #include <mcp/interrupt.h>
 #include <mcp/syscalls.h>
 #endif
@@ -130,18 +130,14 @@ static void insert_actor(struct actor_visual *p) {
   adjust_stagger(p);
 }
 
-static void insert_actors(struct playstate *playstate) {
-  unsigned start_q = playstate->map_state.visible_top_left.q;
-  unsigned max_q = start_q + playstate->map_state.visible_bottom_right.q;
-  unsigned start_r = playstate->map_state.visible_top_left.r;
-  unsigned max_r = start_r + playstate->map_state.visible_bottom_right.r;
-
+static void insert_actors(struct playstate *playstate, unsigned start_q,
+                          unsigned max_q, unsigned start_r, unsigned max_r) {
   for (unsigned q = start_q; q < max_q; q++) {
     if (q_actor_count[q] == 0) continue;
     for (unsigned r = start_r; r < max_r; r++) {
       struct list *p = sector_data[q][r].actors;
       if (p != 0) {
-	struct actor_visual *item;
+        struct actor_visual *item;
         foreach_node(p, item) { insert_actor(item); }
       }
     }
@@ -163,13 +159,23 @@ __attribute__((interrupt)) void sof_handler(void) {
     rebuild_actor_visuals = 0; // acknowledge
     init_list(&actor_visuals); // clear list
 
+    unsigned start_q = playstate->map_state.visible_top_left.q;
+    unsigned max_q = start_q + playstate->map_state.visible_bottom_right.q;
+    unsigned start_r = playstate->map_state.visible_top_left.r;
+    unsigned max_r = start_r + playstate->map_state.visible_bottom_right.r;
+
     // Add actors from map
-    insert_actors(active_playstate);
+    insert_actors(active_playstate, start_q, max_q, start_r, max_r);
 
     // Add flights
     struct flight *flight;
     foreach_node(&active_playstate->flights, flight) {
-      insert_actor(&flight->visual);
+      if (start_q <= umin(flight.loc.main.q, flight.loc.secondary.q) &&
+          qmax >= umax(flight.loc.main.q, flight.loc.secondary.q) &&
+          start_r <= umin(flight.loc.main.rq, flight.loc.secondary.r) &&
+          rmax >= umax(flight.loc.main.r, flight.loc.secondary.r)) {
+        insert_actor(&flight->visual);
+      }
     }
 
     // Add dogfights
@@ -201,13 +207,13 @@ __attribute__((interrupt)) void sof_handler(void) {
       current->show_y = current->y;
       if (current->show_y < y) {
         // Move the node back one step
-	struct node *pred = current->node.node.pred;
+        struct node *pred = current->node.node.pred;
         remove_node((struct node*)current);
-	insert_before(pred, current);
+        insert_before(pred, current);
       } else if (next->y < y) {
         // Move the current node forward
         remove_node(&current->node.node);
-	insert_after(&next->node.node, &current->node.node);
+        insert_after(&next->node.node, &current->node.node);
       }
       y = current->show_y;
     }
@@ -220,18 +226,18 @@ __attribute__((interrupt)) void sof_handler(void) {
       if (is_visible(next_actor)) {
         if (count == 0) {
           enable_sol();
-	  break;
-	}
+          break;
+        }
         next_sprite++;
-	count--;
-	if (next_sprite == SPRITE_COUNT) {
-	  next_sprite = 0;
+        count--;
+        if (next_sprite == SPRITE_COUNT) {
+          next_sprite = 0;
         }
         assign_sprite(next_sprite, next_actor);
         if (next_sprite == 0) {
-	  // Set the first one assigned.
+          // Set the first one assigned.
           head_actor = next_actor;
-	}
+        }
       }
       next_actor = (struct actor_visual *) next_actor->node.node.succ;
     }
@@ -289,24 +295,24 @@ void restore_interrupt_handlers(void) {
 }
 
 void add_visual_loc(struct actor_visual *p, location loc,
-                struct sprite *sprite) {
+                actor_tile_t *actor_tile) {
   uint16_t x = loc_pixel_x(loc);
   uint16_t y = loc_pixel_y(loc);
-  add_visual_xy(p, x, y, sprite);
+  add_visual_xy(p, x, y, actor_tile);
 }
 
 void add_visual_coord(struct actor_visual *p, coordinate coord,
-                struct sprite *sprite) {
+                      actor_tile_t *actor_tile) {
   uint16_t x = pixel_x(coord);
   uint16_t y = pixel_y(coord);
-  add_visual_xy(p, x, y, sprite);
+  add_visual_xy(p, x, y, actor_tile);
 }
 
 void add_visual_xy(struct actor_visual *p, uint16_t x,
-                   uint16_t y, struct sprite *sprite) {
+                   uint16_t y, actor_tile_t *actor_tile) {
   p->x = x;
   p->y = y;
-  p->sprite[0] = *sprite;
+  p->actor_tile[0] = actor_tile;
 }
 
 // Inform interrupt to rebuild the display list of actors.
