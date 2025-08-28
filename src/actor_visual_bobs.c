@@ -12,7 +12,7 @@
 #include "scenario.h"
 #include <stdint.h>
 #include <signal.h>
-#include <ACE/managers/viewport/tilebuffer.h>
+#include <ace/managers/viewport/tilebuffer.h>
 
 #define ActorWIdth 32
 
