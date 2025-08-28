@@ -5,6 +5,10 @@
 #define VRAM __attribute__((far))
 #endif
 
+#if defined(__CALYPSI_TARGET_SYSTEM_FOENIX__) && defined(__CALYPSI_TARGET_68000__)
+#define VRAM __attribute__((far))
+#endif
+
 #ifdef __CALYPSI_TARGET_SYSTEM_CX16__
 #define ACTOR_TILE_SIZE 1024
 #define VRAM __attribute__((vram))
