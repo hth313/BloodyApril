@@ -1,5 +1,5 @@
 #include "list.h"
-#ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
+#ifdef __CALYPSI_TARGET_SYSTEM_A2560U__
 #include <mcp/syscalls.h>
 #endif
 #ifdef __CALYPSI_TARGET_65816__
@@ -19,7 +19,7 @@ extern void order_insert(struct list *list, struct typed_node *node);
 extern void move_members(struct list *to, struct list *from);
 
 void remove_node_with_interrupts_blocked(struct node *node) {
-#ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
+#ifdef __CALYPSI_TARGET_SYSTEM_A2560U__
   sys_int_disable_all();
 #endif
 #ifdef __CALYPSI_TARGET_65816__
@@ -29,7 +29,7 @@ void remove_node_with_interrupts_blocked(struct node *node) {
 
   remove_node(node);
 
-#ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
+#ifdef __CALYPSI_TARGET_SYSTEM_A2560U__
   sys_int_enable_all();
 #endif
 #ifdef __CALYPSI_TARGET_65816__

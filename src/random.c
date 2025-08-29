@@ -1,11 +1,11 @@
 #include <stdlib.h>
 #include "random.h"
 
-#ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
+#ifdef __CALYPSI_TARGET_SYSTEM_A2560U__
 #include <foenix/gavin.h>
 #endif
 
-#ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
+#ifdef __CALYPSI_TARGET_SYSTEM_A2560U__
 void init_seed(void) { SystemControl.lfsr_enable = 1; }
 #else
 void init_seed(void) { srand(4711); }
@@ -34,7 +34,7 @@ void init_seed(void) { srand(4711); }
 // 19 > 2%   99   63569
 // 20 > 1%   100  64880
 uint16_t roll2d10(void) {
-#ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
+#ifdef __CALYPSI_TARGET_SYSTEM_A2560U__
   uint16_t raw = SystemControl.random;
 #else
   uint16_t raw = rand();

@@ -6,8 +6,11 @@
 #include "system.h"
 #include "list.h"
 
-#include <ace/managers/bob.h>
-typedef tBob actor_tile_t;
+#ifdef __CALYPSI_TARGET_SYSTEM_A2560U__
+#include <foenix/vicky.h>
+typedef struct sprite actor_tile_t;
+#define ACTOR_TILE_HEIGHT 32
+#endif
 
 struct aerodrome;
 struct archie;
@@ -26,12 +29,14 @@ struct actor_visual {
   // based on the kind/order of the node.
   // The 'node.kind' is also used to point back to the owning rich record.
   struct typed_node node; // sorted on kind/order and show_y
-  actor_tile_t* actor_tile[2]; // point to bob
+  actor_tile_t actor_tile[2]; // actual sprite data to use
   unsigned sprite_index;  // the physical sprite (index) assigned to
   uint16_t prio; // display priority index, 0 is highest, used to ensure order
                  // when staggering
   uint16_t x;             // position is updated here
   uint16_t y;
+  uint16_t show_x;        // position for this frame
+  uint16_t show_y;
   uint16_t staggered; // adjustment to adjust x/y when stacking, 0/2/4..
   // Pointer to rich data record
   union {
@@ -50,18 +55,12 @@ struct actor_visual {
 
 // **********************************************************************
 
-#ifdef __CALYPSI_AMIGA__
-void insert_actors(tTileBufferManager *p, struct playstate *playstate,
-		   unsigned start_q, unsigned max_q, unsigned start_r,
-		   unsigned max_r) {
-#else
 extern void add_visual_loc(struct actor_visual *, location, actor_tile_t *);
 extern void add_visual_coord(struct actor_visual *, coordinate, actor_tile_t *);
 extern void add_visual_xy(struct actor_visual *, uint16_t x, uint16_t y, actor_tile_t *);
 extern void install_interrupt_handlers(void);
 extern void restore_interrupt_handlers(void);
 extern void rebuild_actor_visual_list(struct playstate *ps);
-#endif
 
 extern actor_tile_t *right_facing_dogfight_actor_tile;
 extern actor_tile_t *left_facing_dogfight_actor_tile;

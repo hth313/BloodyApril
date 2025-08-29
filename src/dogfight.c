@@ -12,7 +12,7 @@
 #include "playstate.h"
 #include "ui.h"
 
-#ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
+#ifdef __CALYPSI_TARGET_SYSTEM_A2560U__
 #include <foenix/vicky.h>
 #endif
 
@@ -25,7 +25,7 @@ static void add_visuals(struct dogfight *p, struct list *flights, bool allied) {
   foreach_node(flights, flight) {
     struct airplane *plane;
     foreach_node(&flight->airplanes, plane) {
-      add_visual_xy(&plane->visual, x, y, plane->visual.actor_tile[0]);
+      add_visual_xy(&plane->visual, x, y, &plane->visual.actor_tile[0]);
       y += ACTOR_TILE_HEIGHT + MARGIN;
     }
   }

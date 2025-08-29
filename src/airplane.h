@@ -11,7 +11,7 @@
 #include "squadron.h"
 #include "list.h"
 
-#ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
+#ifdef __CALYPSI_TARGET_SYSTEM_A2560U__
 #include <foenix/vicky.h>
 #endif
 

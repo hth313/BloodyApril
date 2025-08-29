@@ -9,19 +9,11 @@
 #include <stdint.h>
 #include <signal.h>
 
-#ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
+#ifdef __CALYPSI_TARGET_SYSTEM_A2560U__
 #include <foenix/interrupt.h>
 #include <foenix/vicky.h>
-#include <mcp/syscalls.h>
-#endif
-
-#if defined(__CALYPSI_TARGET_M68K__) && defined(__CALYPSI_TARGET_SYSTEM_FOENIX__)
 #include <mcp/interrupt.h>
 #include <mcp/syscalls.h>
-#endif
-
-#ifdef __CALYPSI_TARGET_SYSTEM_CX16__
-#include "cx16.h"
 #endif
 
 // This list holds the elements in sort order. As objects move elements
@@ -52,19 +44,14 @@ static bool is_visible(struct actor_visual *p) {
 
 static void assign_sprite(unsigned index, struct actor_visual *p) {
   volatile VRAM struct sprite *sprite = &Sprite[index];
-#ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
-  sprite->control = next_actor->sprite[image_index].control;
+#ifdef __CALYPSI_TARGET_SYSTEM_A2560U__
+  sprite->control = next_actor->actor_tile[image_index].control;
 #ifdef __CALYPSI_TARGET_M68K__
-  sprite->addy_high = next_actor->sprite[image_index].addy_high;
+  sprite->addy_high = next_actor->actor_tile[image_index].addy_high;
 #else
   sprite->data = next_actor->sprite[image_index].data;
 #endif
-#endif // __CALYPSI_TARGET_SYSTEM_FOENIX__
-
-#ifdef __CALYPSI_TARGET_SYSTEM_CX16__
-  sprite->address_4bpp = next_actor->sprite[image_index].address_4bpp;
-  sprite->zdepth = SpriteAboveLayer1;
-#endif
+#endif // __CALYPSI_TARGET_SYSTEM_A2560U__
 
   sprite->x = next_actor->show_x + next_actor->staggered - offset_x;
   sprite->y = next_actor->show_y + next_actor->staggered - offset_y;
@@ -79,7 +66,7 @@ static void enable_sol(void) {
     if (line < minimum_skip) {
       line = minimum_skip;
     }
-#ifdef __CALYPSI_TARGET_M68K__
+#ifdef __CALYPSI_TARGET_SYSTEM_A2560U__
     Vicky.line_interrupt[0].control = 1 | (line << 4);
 #endif
     scan_line = line;
@@ -160,10 +147,10 @@ __attribute__((interrupt)) void sof_handler(void) {
     rebuild_actor_visuals = 0; // acknowledge
     init_list(&actor_visuals); // clear list
 
-    unsigned start_q = playstate->map_state.visible_top_left.q;
-    unsigned max_q = start_q + playstate->map_state.visible_bottom_right.q;
-    unsigned start_r = playstate->map_state.visible_top_left.r;
-    unsigned max_r = start_r + playstate->map_state.visible_bottom_right.r;
+    unsigned start_q = active_playstate->map_state.visible_top_left.q;
+    unsigned max_q = start_q + active_playstate->map_state.visible_bottom_right.q;
+    unsigned start_r = active_playstate->map_state.visible_top_left.r;
+    unsigned max_r = start_r + active_playstate->map_state.visible_bottom_right.r;
 
     // Add actors from map
     insert_actors(active_playstate, start_q, max_q, start_r, max_r);
@@ -171,10 +158,10 @@ __attribute__((interrupt)) void sof_handler(void) {
     // Add flights
     struct flight *flight;
     foreach_node(&active_playstate->flights, flight) {
-      if (start_q <= umin(flight.loc.main.q, flight.loc.secondary.q) &&
-          qmax >= umax(flight.loc.main.q, flight.loc.secondary.q) &&
-          start_r <= umin(flight.loc.main.rq, flight.loc.secondary.r) &&
-          rmax >= umax(flight.loc.main.r, flight.loc.secondary.r)) {
+      if (start_q <= umin(flight->loc.main.q, flight->loc.secondary.q) &&
+          max_q >= umax(flight->loc.main.q, flight->loc.secondary.q) &&
+          start_r <= umin(flight->loc.main.qr, flight->loc.secondary.r) &&
+          max_r >= umax(flight->loc.main.r, flight->loc.secondary.r)) {
         insert_actor(&flight->visual);
       }
     }
@@ -246,11 +233,8 @@ __attribute__((interrupt)) void sof_handler(void) {
 
   // Disable rest of sprites (if we did not use them all up)
   for (unsigned i = next_sprite; i < SPRITE_COUNT; i++) {
-#ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
+#ifdef __CALYPSI_TARGET_SYSTEM_A2560U__
     Sprite[i].control = 0;
-#endif
-#ifdef __CALYPSI_TARGET_SYSTEM_CX16__
-    Sprite[i].zdepth = SpriteDisabled;
 #endif
   }
 }
@@ -313,7 +297,7 @@ void add_visual_xy(struct actor_visual *p, uint16_t x,
                    uint16_t y, actor_tile_t *actor_tile) {
   p->x = x;
   p->y = y;
-  p->actor_tile[0] = actor_tile;
+  p->actor_tile[0] = *actor_tile;
 }
 
 // Inform interrupt to rebuild the display list of actors.

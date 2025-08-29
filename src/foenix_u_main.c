@@ -4,6 +4,7 @@
 #include <foenix/vicky.h>
 #include "color.h"
 #include "random.h"
+#include "scenario.h"
 #include "system.h"
 
 extern VRAM sprite_t Albatros_D2_sprite;

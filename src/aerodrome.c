@@ -6,16 +6,10 @@
 #include "playstate.h"
 #include <stdbool.h>
 
-#ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
+#ifdef __CALYPSI_TARGET_SYSTEM_A2560U__
 #include <foenix/vicky.h>
 extern VRAM uint8_t allied_aerodrome_sprite_data[SPRITE_SIZE];
 extern VRAM uint8_t central_aerodrome_sprite_data[SPRITE_SIZE];
-#endif
-
-#ifdef __CALYPSI_TARGET_SYSTEM_AMIGA__
-#include <ace/managers/bob.h>
-extern tBob *allied_aerodrome_bob;
-extern tBob *central_aerodrome_bob;
 #endif
 
 struct aerodrome Abacon;
@@ -57,9 +51,9 @@ struct aerodrome Soncamp;
 struct aerodrome Treizennes;
 struct aerodrome Vert_Galand;
 
-#ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
-struct sprite allied_aerodrome_sprite;
-struct sprite central_aerodrome_sprite;
+#ifdef __CALYPSI_TARGET_SYSTEM_A2560U__
+actor_tile_t allied_aerodrome_sprite;
+actor_tile_t central_aerodrome_sprite;
 #endif
 
 static void initialize(struct aerodrome *aerodrome, char *name, bool allied,
@@ -69,14 +63,10 @@ static void initialize(struct aerodrome *aerodrome, char *name, bool allied,
   init_list(&aerodrome->flights);
   init_list(&aerodrome->airplanes);
   init_list(&aerodrome->squadron);
-#if defined(__CALYPSI_TARGET_SYSTEM_FOENIX__)
+#if defined(__CALYPSI_TARGET_SYSTEM_A2560U__)
   add_visual_coord(&aerodrome->visual, pos,
                    allied ? &allied_aerodrome_sprite
                           : &central_aerodrome_sprite);
-#elif defined(__CALYPSI_TARGET_SYSTEM_AMIGA__)
-  add_visual_coord(&aerodrome->visual, pos,
-                   allied ? allied_aerodrome_bob
-                          : central_aerodrome_bob);
 #else
 #error "non supported systen"
 #endif
@@ -84,7 +74,7 @@ static void initialize(struct aerodrome *aerodrome, char *name, bool allied,
 }
 
 void create_aerodromes() {
-#ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
+#ifdef __CALYPSI_TARGET_SYSTEM_A2560U__
   allied_aerodrome_sprite = (struct sprite){
       .enable = true,
       .lut = 0,
@@ -109,7 +99,7 @@ void create_aerodromes() {
     .data = vicky_address(central_aerodrome_sprite_data)
 #endif
   };
-#endif // __CALYPSI_TARGET_SYSTEM_FOENIX__
+#endif // __CALYPSI_TARGET_SYSTEM_A2560U__
 
 #ifdef __CALYPSI_TARGET_SYSTEM_CX16__
   allied_aerodrome_sprite = (struct sprite){
