@@ -62,7 +62,7 @@ extern void install_interrupt_handlers(void);
 extern void restore_interrupt_handlers(void);
 extern void rebuild_actor_visual_list(struct playstate *ps);
 
-extern actor_tile_t *right_facing_dogfight_actor_tile;
-extern actor_tile_t *left_facing_dogfight_actor_tile;
+extern actor_tile_t *right_facing_dogfight_sprite;
+extern actor_tile_t *left_facing_dogfight_sprite;
 
 #endif // __ACTOR_VISUAL_H__

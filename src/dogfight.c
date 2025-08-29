@@ -45,7 +45,7 @@ struct dogfight *new_dogfight(location loc, struct list *allied_powers,
   move_members(&p->central_powers, central_powers);
 
   actor_tile_t *actor_tile =
-    allied_attacker ? right_facing_dogfight_actor_tile : left_facing_dogfight_actor_tile;
+    allied_attacker ? right_facing_dogfight_sprite : left_facing_dogfight_sprite;
 
   add_visual_loc(&p->visual, loc, actor_tile);
   p->visual.node.kind = DogFight;
