@@ -1,7 +1,7 @@
 #ifndef __COLOR_H__
 #define __COLOR_H__
 
-#ifdef __CALYPSI_TARGET_SYSTEM_FOENIX__
+#ifdef __CALYPSI_TARGET_SYSTEM_A2560U__
 #include <foenix/vicky.h>
 
 #ifdef __CALYPSI_TARGET_65816__
@@ -14,6 +14,6 @@
 #define BORDER_COLOR 0
 #endif // __CALYPSI_TARGET_68000__
 
-#endif // __CALYPSI_TARGET_SYSTEM_FOENIX__
+#endif // __CALYPSI_TARGET_SYSTEM_A2560U__
 
 #endif // __COLOR_H__
