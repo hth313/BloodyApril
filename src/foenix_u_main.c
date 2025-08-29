@@ -7,8 +7,8 @@
 #include "scenario.h"
 #include "system.h"
 
-extern VRAM sprite_t Albatros_D2_sprite;
-extern VRAM sprite_t Albatros_D5a_J3_sprite;
+extern sprite_t Albatros_D2_sprite;
+extern sprite_t Albatros_D5a_J3_sprite;
 extern VRAM uint16_t trench1_index[];
 extern VRAM uint8_t  trench1_tiles[];
 

@@ -62,7 +62,18 @@ extern void install_interrupt_handlers(void);
 extern void restore_interrupt_handlers(void);
 extern void rebuild_actor_visual_list(struct playstate *ps);
 
-extern actor_tile_t *right_facing_dogfight_sprite;
-extern actor_tile_t *left_facing_dogfight_sprite;
+extern VRAM uint8_t allied_aerodrome_sprite_data[SPRITE_SIZE];
+extern VRAM uint8_t central_aerodrome_sprite_data[SPRITE_SIZE];
+
+extern actor_tile_t allied_aerodrome_sprite;
+extern actor_tile_t central_aerodrome_sprite;
+extern actor_tile_t right_facing_dogfight_sprite;
+extern actor_tile_t left_facing_dogfight_sprite;
+
+extern actor_tile_t SopwithPup_sprite;
+extern actor_tile_t SopwithTriplane_sprite;
+extern actor_tile_t Albatros_D5a_J3_sprite;
+extern actor_tile_t Albatros_D2_sprite;
+extern actor_tile_t Albatros_D2_sprite_red_baron;
 
 #endif // __ACTOR_VISUAL_H__

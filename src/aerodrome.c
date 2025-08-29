@@ -8,8 +8,6 @@
 
 #ifdef __CALYPSI_TARGET_SYSTEM_A2560U__
 #include <foenix/vicky.h>
-extern VRAM uint8_t allied_aerodrome_sprite_data[SPRITE_SIZE];
-extern VRAM uint8_t central_aerodrome_sprite_data[SPRITE_SIZE];
 #endif
 
 struct aerodrome Abacon;
@@ -50,11 +48,6 @@ struct aerodrome Savy;
 struct aerodrome Soncamp;
 struct aerodrome Treizennes;
 struct aerodrome Vert_Galand;
-
-#ifdef __CALYPSI_TARGET_SYSTEM_A2560U__
-actor_tile_t allied_aerodrome_sprite;
-actor_tile_t central_aerodrome_sprite;
-#endif
 
 static void initialize(struct aerodrome *aerodrome, char *name, bool allied,
                        coordinate pos) {

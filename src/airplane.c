@@ -4,11 +4,6 @@
 #include <foenix/vicky.h>
 #endif
 
-extern VRAM struct sprite Albatros_D2_sprite;
-extern VRAM struct sprite Albatros_D5a_J3_sprite;
-extern VRAM struct sprite SopwithPup_sprite;
-extern VRAM struct sprite Albatros_D5a_J3_sprite;
-
 // Top speed 170 km/h, time to 3281 feet in 4:30 mins,
 // time to 6562 7 mins, time to 9843 12:30 mins
 const struct airplane_kind Albatros_D2 = {
