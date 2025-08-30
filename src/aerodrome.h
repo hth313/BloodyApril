@@ -11,7 +11,7 @@
 // Airplanes on the ground are either kept in a flights (group of airplanes)
 // plus a flat list of airplanes that may be added to a flight.
 typedef struct aerodrome {
-  struct typed_node node;     // Belongs to a list of existing aerodromes
+  struct node node;     // Belongs to a list of existing aerodromes in playstate
   struct actor_visual visual;
   const char *name;           // Name of the aerodrome
   coordinate pos;             // The sector of this aerodrome
@@ -23,6 +23,6 @@ typedef struct aerodrome {
 
 // **********************************************************************
 
-extern void create_aerodromes();
+extern void create_aerodromes(struct playstate *playstate);
 
 #endif // __AERODROME_H__

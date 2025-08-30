@@ -62,9 +62,6 @@ extern void install_interrupt_handlers(void);
 extern void restore_interrupt_handlers(void);
 extern void rebuild_actor_visual_list(struct playstate *ps);
 
-extern VRAM uint8_t allied_aerodrome_sprite_data[SPRITE_SIZE];
-extern VRAM uint8_t central_aerodrome_sprite_data[SPRITE_SIZE];
-
 extern actor_tile_t allied_aerodrome_sprite;
 extern actor_tile_t central_aerodrome_sprite;
 extern actor_tile_t right_facing_dogfight_sprite;

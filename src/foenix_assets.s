@@ -37,8 +37,8 @@ sprite_data$: .incbin "\sprite_file"
               sprite  right_facing_dogfight_sprite, "../assets/sprites-24.sprite"
               sprite  left_facing_dogfight_sprite, "../assets/sprites-25.sprite"
 
-              sprite  allied_aerodrome_sprite_data, "../assets/sprites-26.sprite"
-              sprite  central_aerodrome_sprite_data, "../assets/sprites-27.sprite"
+              sprite  allied_aerodrome_sprite, "../assets/sprites-26.sprite"
+              sprite  central_aerodrome_sprite, "../assets/sprites-27.sprite"
 
               .section palette1,data
               .public palette
