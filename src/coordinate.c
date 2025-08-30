@@ -10,12 +10,12 @@ extern uint8_t abs8(int8_t a);
 extern unsigned umax(unsigned a, unsigned b);
 extern unsigned umin(unsigned a, unsigned b);
 extern location coordinate_to_location(coordinate pos);
-extern coordinate neighbor(coordinate coord, enum hex_direction direction);
+extern coordinate neighbor(coordinate coord, direction direction);
 
 inline uint_fast8_t distance(coordinate a, coordinate b);
 
 // Move a flight in given direction
-location move(location loc, clock_direction heading) {
+location move(location loc, direction heading) {
   switch (heading) {
   case 0:
     if (loc.main.qr == loc.secondary.qr) {

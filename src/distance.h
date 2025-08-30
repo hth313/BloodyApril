@@ -3,9 +3,9 @@
 
 #include <stdint.h>
 
-// Distance is in number of hexes, scale by 16 to allow for simple
+// Distance is in number of hexes, scaled by 16 to allow for simple
 // fraction. It is used for speed and movement short distance.
-typedef uint8_t distance_t;
+typedef unsigned distance_t;
 
 inline distance_t scale_distance_to_hex(distance_t distance) {
   return (distance + 8) >> 4;

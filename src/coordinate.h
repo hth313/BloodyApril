@@ -4,19 +4,16 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-// Hex directions. This goes clockwise from 1 o'clock, 3, 5, 7, 9, 11.
-// Odd hours are goes between hexes every second time, flights can move
-// like this, but ground units has to be inside a hex and are not allowed
-// to position themseleves between hexes.
-// Flights are allowed to double the number of angles (30 degrees compared
-// to 60 with normal inside hex moves).
-typedef enum hex_direction {
-  NorthEast, East, SouthEast, SouthWest, West, NortWest,
-} direction;
+// Directions. 0 being north going clockwise.
+// Airplane movements are in 30 degree increments as they can be on the border
+// between two hexes.
+// Ground units follow 60 degree increments staying inside hexes.
+// We implement this using a value 0-11 stored inside a suitable small integer.
+typedef uint_fast8_t direction;
 
-// Clock direction (this is what flight) do, 0-11.
-// Value 0 means toward north, we use pointy top orientation.
-typedef uint_fast8_t clock_direction;
+#define NorthWest 10
+#define SouthWest 4
+#define NorthEast 2
 
 typedef enum turn { Left, Right } turn;
 
@@ -122,10 +119,10 @@ inline location coordinate_to_location(coordinate pos) {
   return (location) { .main = pos, .secondary = pos };
 }
 
-extern location move(location loc, clock_direction heading);
+extern location move(location loc, direction heading);
 
 // Find the coordinate neighbor of a hex.
-inline coordinate neighbor(coordinate coord, enum hex_direction direction ) {
+inline coordinate neighbor(coordinate coord, direction direction) {
   return (coordinate) { .qr = direction_vector[direction].qr + coord.qr };
 }
 

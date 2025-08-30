@@ -4,6 +4,7 @@
 
 void practice_flying_setup(struct playstate *playstate) {
   create_aerodromes(playstate);
+  create_weather(playstate);
 }
 
 void practice_flying_summarize(struct playstate *playstate) {

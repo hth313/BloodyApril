@@ -1,9 +1,8 @@
 #include <stdlib.h>
 #include "random.h"
 
-#ifdef __CALYPSI_TARGET_SYSTEM_A2560U__
-#include <foenix/gavin.h>
-#endif
+// Provide a definition of the random_u16() inline function if needed.
+extern uint16_t random_u16();
 
 #ifdef __CALYPSI_TARGET_SYSTEM_A2560U__
 void init_seed(void) { SystemControl.lfsr_enable = 1; }
@@ -34,11 +33,7 @@ void init_seed(void) { srand(4711); }
 // 19 > 2%   99   63569
 // 20 > 1%   100  64880
 uint16_t roll2d10(void) {
-#ifdef __CALYPSI_TARGET_SYSTEM_A2560U__
-  uint16_t raw = SystemControl.random;
-#else
-  uint16_t raw = rand();
-#endif
+  uint16_t raw = random_u16();
   if (raw > 29491) {
     // 11 - 20
     if (raw > 47185) {
@@ -111,4 +106,12 @@ uint16_t roll2d10(void) {
       }
     }
   }
+}
+
+uint16_t rolld10(void) {
+  static uint16_t table[] = { 6553, 13106, 19660, 26213, 32767, 39320, 45874, 52428, 58981, 65535 };
+  uint16_t raw = random_u16();
+  uint16_t *p = table;
+  while (raw > *p++);
+  return p - table;
 }

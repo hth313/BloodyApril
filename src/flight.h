@@ -30,7 +30,7 @@ struct flight {
   location loc;
   int16_t fraction;        // tenths of a hex movement kept or borrowed
   altitude_t desired_altitude;
-  clock_direction heading;
+  direction heading;
   uint8_t free_turn;
   uint8_t max_turn;
   bool movement_marked;   // set when scattered out of combat, costs one MP to remove
