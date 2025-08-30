@@ -1,8 +1,18 @@
 #include "memory.h"
 #include "scenario.h"
+#include "practice_flying.h"
 #include "scenario_dogfight.h"
 #include "scenario_explore_map.h"
 #include <time.h>
+
+static struct scenario practice_flying = (struct scenario) {
+    .title = "Practice takeoff and landing",
+    .description = "Take off from one aerodrme, fly to another one and land successfully",
+    .start = { .tm_year = 17, .tm_mon = 3, .tm_mday = 10, .tm_hour = 12, .tm_wday = 2 },
+    .setup = practice_flying_setup,
+    .playturn = playturn_dogfight_only,
+    .summarize = practice_flying_summarize
+};
 
 static struct scenario basic_dogfight = (struct scenario) {
     .title = "Try a dogfight",
@@ -30,6 +40,7 @@ struct scenarios *initialize_scenarios(void) {
   init_list(&p->trainer_scenarios);
   init_list(&p->normal_scenarios);
 
+  add_tail(&p->trainer_scenarios, &practice_flying.node);
   add_tail(&p->trainer_scenarios, &basic_dogfight.node);
   add_tail(&p->trainer_scenarios, &explore_map.node);
 
