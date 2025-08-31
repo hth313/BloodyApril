@@ -135,9 +135,22 @@ inline bool location_equal(location *loc1, location *loc2) {
   return loc1->main.qr == loc2->main.qr && loc1->secondary.qr == loc2->secondary.qr;
 }
 
+// After adjust direction arbitrarily, bring it in.
 inline direction normalize_direction(direction heading) {
-  if (heading < 0) heading += 12;
+  while (heading < 0) heading += 12;
+  while (heading > 11) heading -= 12;
+  return heading;
+}
+
+/// These are more efficient if you know the direction you turned (and keep
+// keep it within one full circle).
+inline direction normalize_direction_clockwise_turn(direction heading) {
   if (heading > 11) heading -= 12;
+  return heading;
+}
+
+inline direction normalize_direction_counter_clockwise_turn(direction heading) {
+  if (heading < 0) heading += 12;
   return heading;
 }
 

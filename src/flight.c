@@ -69,16 +69,16 @@ void wind_drift(struct playstate *playstate) {
   foreach_node (&playstate->flights, flight) {
     direction drift;
     distance_t step = 0;
-    direction perpendicular1 = normalize_direction(flight->heading + 3);
-    direction perpendicular2 = normalize_direction(flight->heading - 3);
+    direction perpendicular1 = normalize_direction_clockwise_turn(flight->heading + 3);
+    direction perpendicular2 = normalize_direction_counter_clockwise_turn(flight->heading - 3);
     if (perpendicular1 == global_weather.wind || perpendicular2 == global_weather.wind) {
       step = (flight->fraction + global_weather.wind_speed) & ~15; // only full hex drift
-      drift = normalize_direction(global_weather.wind + 6);
+      drift = normalize_direction_clockwise_turn(global_weather.wind + 6);
       flight->fraction = 0;
     }
     else {
       // Opposite direction of movement
-      drift = normalize_direction(flight->heading + 6);
+      drift = normalize_direction_clockwise_turn(flight->heading + 6);
       step = global_weather.wind_speed;
     }
     if (step > 0) {
