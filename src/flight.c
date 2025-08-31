@@ -74,17 +74,16 @@ void wind_drift(struct playstate *playstate) {
     if (perpendicular1 == global_weather.wind || perpendicular2 == global_weather.wind) {
       step = (flight->fraction + global_weather.wind_speed) & ~15; // only full hex drift
       drift = normalize_direction_clockwise_turn(global_weather.wind + 6);
-      flight->fraction = 0;
+      flight->fraction = 0; // no keep fraction
     }
     else {
       // Opposite direction of movement
       drift = normalize_direction_clockwise_turn(flight->heading + 6);
-      step = global_weather.wind_speed;
+      step = flight->fraction + global_weather.wind_speed;
+      flight->fraction = step & 15; // keep fraction
     }
     if (step > 0) {
-      distance_t dist = flight->fraction + step;
-      flight->fraction = dist & 15;
-      step = dist >> 4;
+      step >>= 4;
       while (step--) {
         flight->loc = move(flight->loc, drift);
       }
