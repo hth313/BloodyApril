@@ -72,8 +72,9 @@ void wind_drift(struct playstate *playstate) {
     direction perpendicular1 = normalize_direction(flight->heading + 3);
     direction perpendicular2 = normalize_direction(flight->heading - 3);
     if (perpendicular1 == global_weather.wind || perpendicular2 == global_weather.wind) {
-      step = global_weather.wind_speed & ~15; // only full hex drift
+      step = (flight->fraction + global_weather.wind_speed) & ~15; // only full hex drift
       drift = normalize_direction(global_weather.wind + 6);
+      flight->fraction = 0;
     }
     else {
       // Opposite direction of movement
