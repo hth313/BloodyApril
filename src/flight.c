@@ -14,6 +14,7 @@
 #include "list.h"
 #include "memory.h"
 #include "playstate.h"
+#include "weather.h"
 
 // A sequence number, mainly to ensure the order in a list is kept consistent
 // even when a node is removed and later added again.
@@ -49,9 +50,9 @@ bool prune_downed(struct playstate *ps, struct flight *flight) {
     if ((p->property & AIRPLANE_DOWNED)) {
       remove_node( (struct node*) p);
       if (flight->allied) {
-	add_tail(&ps->downed_allied, (struct node*) p);
+        add_tail(&ps->downed_allied, (struct node*) p);
       } else {
-	add_tail(&ps->downed_central, (struct node*) p);
+        add_tail(&ps->downed_central, (struct node*) p);
       }
     }
   }
@@ -60,5 +61,32 @@ bool prune_downed(struct playstate *ps, struct flight *flight) {
     return true;   // all dropped
   } else {
     return false;
+  }
+}
+
+void wind_drift(struct playstate *playstate) {
+  struct flight *flight;
+  foreach_node (&playstate->flights, flight) {
+    direction drift;
+    distance_t step = 0;
+    direction perpendicular1 = normalize_direction(flight->heading + 3);
+    direction perpendicular2 = normalize_direction(flight->heading - 3);
+    if (perpendicular1 == global_weather.wind || perpendicular2 == global_weather.wind) {
+      step = global_weather.wind_speed & ~15; // only full hex drift
+      drift = normalize_direction(global_weather.wind + 6);
+    }
+    else {
+      // Opposite direction of movement
+      drift = normalize_direction(flight->heading + 6);
+      step = global_weather.wind_speed;
+    }
+    if (step > 0) {
+      distance_t dist = flight->fraction + step;
+      flight->fraction = dist & 15;
+      step = dist >> 4;
+      while (step--) {
+        flight->loc = move(flight->loc, drift);
+      }
+    }
   }
 }

@@ -9,11 +9,11 @@
 // between two hexes.
 // Ground units follow 60 degree increments staying inside hexes.
 // We implement this using a value 0-11 stored inside a suitable small integer.
-typedef uint_fast8_t direction;
+typedef int_fast8_t direction;
 
 #define NorthWest 10
-#define SouthWest 4
-#define NorthEast 2
+#define SouthWest  8
+#define NorthEast  2
 
 typedef enum turn { Left, Right } turn;
 
@@ -133,6 +133,12 @@ inline uint_fast8_t distance(coordinate a, coordinate b) {
 
 inline bool location_equal(location *loc1, location *loc2) {
   return loc1->main.qr == loc2->main.qr && loc1->secondary.qr == loc2->secondary.qr;
+}
+
+inline direction normalize_direction(direction heading) {
+  if (heading < 0) heading += 12;
+  if (heading > 11) heading -= 12;
+  return heading;
 }
 
 #endif //  __COORDINATE_H__

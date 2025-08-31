@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include "altitude.h"
 #include "coordinate.h"
+#include "distance.h"
 #include "list.h"
 #include "actor_visual.h"
 
@@ -28,7 +29,7 @@ struct flight {
   struct list airplanes;   // Airplanes in this flight
   struct actor_visual visual;
   location loc;
-  int16_t fraction;        // tenths of a hex movement kept or borrowed
+  distance_t fraction;        // tenths of a hex movement kept or borrowed
   altitude_t desired_altitude;
   direction heading;
   uint8_t free_turn;
@@ -52,5 +53,6 @@ extern struct flight *new_flight(location position, direction heading,
 				 actor_tile_t *actor_tile);
 extern void drop_flight(struct playstate *ps, struct flight *p);
 extern bool prune_downed(struct playstate *ps, struct flight *flight);
+extern void wind_drift(struct playstate *ps);
 
 #endif // __FLIGHT_H__

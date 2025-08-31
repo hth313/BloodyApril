@@ -1,6 +1,8 @@
 #include "aerodrome.h"
+#include "flight.h"
 #include "practice_flying.h"
 #include "playstate.h"
+#include "weather.h"
 
 void practice_flying_setup(struct playstate *playstate) {
   create_aerodromes(playstate);
@@ -15,7 +17,7 @@ bool practice_flying_playturn(struct playstate *playstate) {
   playstate->game_ended = false;
   while (!playstate->game_ended) {
     weather_phase(playstate);
-
+    wind_drift(playstate);
 
     playstate->turn++;
   }
