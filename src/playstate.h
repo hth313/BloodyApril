@@ -22,6 +22,7 @@ struct playstate {
   struct tm current_time;
   struct list downed_allied;      // Downed allied airplanes
   struct list downed_central;     // Downed central powers airplanes
+  bool game_ended;
 };
 
 // **********************************************************************

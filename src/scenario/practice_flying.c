@@ -12,5 +12,12 @@ void practice_flying_summarize(struct playstate *playstate) {
 }
 
 bool practice_flying_playturn(struct playstate *playstate) {
+  playstate->game_ended = false;
+  while (!playstate->game_ended) {
+    weather_phase(playstate);
+
+
+    playstate->turn++;
+  }
   return true;
 }

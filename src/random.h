@@ -14,6 +14,8 @@ inline uint16_t random_u16() {
 #endif
 }
 
+#define D10_RANGE(n) (65536ul * (n) / 10)
+
 extern void init_seed(void);
 extern uint16_t roll2d10(void);
 extern uint16_t rolld10(void);

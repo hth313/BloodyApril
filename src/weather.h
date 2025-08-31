@@ -7,7 +7,7 @@
 #include "playstate.h"
 
 typedef enum weather_kind {
-  Clear, MostlySunny, Cloudy, Rain, Snow, Fog
+  Clear, MostlySunny, Cloudy, Rain, Fog, Snow,
 } weather_kind;
 
 struct weather {
@@ -22,5 +22,6 @@ struct weather {
 extern struct weather global_weather;
 
 extern void create_weather(struct playstate *playstate);
+extern void weather_phase(struct playstate *playstate);
 
 #endif // __WEATHER_H__
