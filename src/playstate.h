@@ -11,6 +11,8 @@
 struct playstate {
   struct map_state map_state;     // The map as shown
   struct list aerodromes;         // List of all aerodromes
+  struct list ground_units;
+  struct list air_units;          // ballons etc
   struct list flights;            // Fligths in motion
   struct list dogfights;          // Active dogfights
   struct list free_memory;        // List of memory to be recycled

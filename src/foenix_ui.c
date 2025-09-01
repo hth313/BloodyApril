@@ -39,9 +39,9 @@ static void draw_airplane_column(struct list *list, unsigned column) {
     volatile VRAM struct sprite *sprite = &Sprite[p->sprite_index];
     sprite->x = 50;
     sprite->y = 50 + row * 20;
-    sprite->control = p->visual.actor_tile[0].control;
+    sprite->control = p->visual.actor_tile.control;
 #ifdef __CALYPSI_TARGET_M68K__
-    sprite->addy_high = p->visual.actor_tile[0].addy_high;
+    sprite->addy_high = p->visual.actor_tile.addy_high;
     sys_txt_set_xy(Screen, row, column);
 #else
     sprite->data = p->visual.sprite[0].data;

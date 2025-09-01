@@ -10,7 +10,7 @@
 // when they are active.
 // Airplanes on the ground are either kept in a flights (group of airplanes)
 // plus a flat list of airplanes that may be added to a flight.
-typedef struct aerodrome {
+struct aerodrome {
   struct node node;     // Belongs to a list of existing aerodromes in playstate
   struct actor_visual visual;
   const char *name;           // Name of the aerodrome
@@ -19,7 +19,7 @@ typedef struct aerodrome {
   struct list flights;        // All the flights parked here.
   struct list airplanes;      // Airplanes on the ground not currently part of a flight
   struct list squadron;       // The squadrons stationed at this aerodrome
-} aerodrome;
+};
 
 // **********************************************************************
 

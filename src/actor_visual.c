@@ -1,6 +1,7 @@
 #include "system.h"
 #include "actor_visual.h"
 #include "actor.h"
+#include "aerodrome.h"
 #include "dogfight.h"
 #include "flight.h"
 #include "list.h"
@@ -16,267 +17,104 @@
 #include <mcp/syscalls.h>
 #endif
 
-// This list holds the elements in sort order. As objects move elements
-// are pushed in that direction in the list to keep them in reasonable
-// sort order. In reality, as we expect there are a decent amount of
-// sprites the order does not need to be perfect, trickling should suffice.
-// Note that this list can either be map items or a list of dogfight
-// particpants, it is meant to point to the list that is shown in the display.
-static struct list actor_visuals;
+// Visual actors are sprites placed on a backdrop (game map).
+// The map is partially shown, so not every actor that exists may be visible.
+// We assign hardware sprites to visible actors in a priority order to control
+// how they overlap in a way from the ground up.
+//
+// From the bottom we have:
+// - Aerodromes (these could be drawn on the map, but for now we use sprites)
+// - ground actors, like AA units
+// - flights, a single one is drawn from a group for now
+// - dogfight markers
+// - AA fire effects
+// - annotations, like texts if we overlay such
+//
 
-static uint16_t offset_x;
-static uint16_t offset_y;
-static struct actor_visual *head_actor;
-static struct actor_visual *next_actor;
-static unsigned scan_line;
-static unsigned image_index;  // used for blinking/animated sprites
+#define SPRITE_COUNT 64
 
-// This flag is set when the main loop is waiting for the
-// sof_handler to rebuild the actor list. The sof_handler
-// acknowledge it by clearing it.
-static sig_atomic_t rebuild_actor_visuals;
+int sprite_limit_used = SPRITE_COUNT;
 
-#define SCAN_LINE_MARGIN (SPRITE_HEIGHT >> 1)
+struct actor_visual *actor_cache[SPRITE_COUNT];
 
-static bool is_visible(struct actor_visual *p) {
-  return p->y > offset_y;
+static bool visible(struct viewport *vp, struct actor_visual *actor_visual) {
+  int x = actor_visual->x;
+  int y = actor_visual->y;
+  return x >= 0 && y >= 0 && x < vp->width && y < vp->height;
 }
 
-static void assign_sprite(unsigned index, struct actor_visual *p) {
-  volatile VRAM struct sprite *sprite = &Sprite[index];
-#ifdef __CALYPSI_TARGET_SYSTEM_A2560U__
-  sprite->control = next_actor->actor_tile[image_index].control;
-#ifdef __CALYPSI_TARGET_M68K__
-  sprite->addy_high = next_actor->actor_tile[image_index].addy_high;
-#else
-  sprite->data = next_actor->sprite[image_index].data;
-#endif
-#endif // __CALYPSI_TARGET_SYSTEM_A2560U__
-
-  sprite->x = next_actor->show_x + next_actor->staggered - offset_x;
-  sprite->y = next_actor->show_y + next_actor->staggered - offset_y;
-  next_actor->sprite_index = index;
-}
-
-static void enable_sol(void) {
-  if (head_actor->node.node.succ) {
-    struct actor_visual *pred = (struct actor_visual*) next_actor->node.node.pred;
-    unsigned line = pred->y - SCAN_LINE_MARGIN;
-    unsigned minimum_skip = scan_line + SCAN_LINE_MARGIN * 2;
-    if (line < minimum_skip) {
-      line = minimum_skip;
-    }
-#ifdef __CALYPSI_TARGET_SYSTEM_A2560U__
-    Vicky.line_interrupt[0].control = 1 | (line << 4);
-#endif
-    scan_line = line;
-  }
-}
-
-static bool y_pred(struct node *current_node,
-                   struct node *next,
-                   struct node *new_item) {
-  struct actor_visual *next_node = (struct actor_visual *) next;
-  struct actor_visual *new_node = (struct actor_visual *) new_item;
-
-  if (next_node->y == new_node->y) {
-    // Same vertical location, use node priority (ignore x location)
-    if (next_node->node.kind == new_node->node.kind) {
-      return next_node->node.order >= new_node->node.order;
-    } else {
-      return next_node->node.kind >= new_node->node.kind;
+static int place(struct playstate *playstate, struct actor_visual *visual, int index) {
+  if (visible(&playstate->map_state.viewport, visual)) {
+    if (actor_cache[index] != visual) {
+      actor_cache[index] = visual;
+      volatile VRAM struct sprite *sprite = &Sprite[index];
+      *sprite = visual->actor_tile;
+      sprite->x = visual->x - playstate->map_state.viewport.x;
+      sprite->y = visual->y - playstate->map_state.viewport.y;
+      --index;
     }
   }
-
-  return next_node->y >= new_node->y;
+  return index;
 }
 
-// After adjust the visual list, examine nodes before and after to see if
-// they have the same location, in the case stagger them.
-static void adjust_stagger(struct actor_visual *p) {
-  struct actor_visual *pred = (struct actor_visual *)p->node.node.pred;
-  // Recursively step back to the first node at this location
-  if (pred->node.node.pred != 0 && pred->show_y == p->show_y &&
-      pred->show_x == p->show_x) {
-    adjust_stagger(pred);
-  } else {
-    unsigned staggered = 0;
-    struct actor_visual *next;
-    while ((next = (struct actor_visual *)p->node.node.succ) &&
-           next->node.node.succ &&
-           p->show_y == next->show_y &&
-           p->show_x == next->show_x) {
-      p->staggered = staggered;
-      staggered += 4;
-      p = next;
-    }
+void render(struct playstate *playstate) {
+  int index = SPRITE_COUNT - 1;
+
+  // Place visible aerodromes
+  struct aerodrome *aerodrome;
+  foreach_node(&playstate->aerodromes, aerodrome) {
+    index = place(playstate, &aerodrome->visual, index);
+    if (index < 0) goto out_of_sprites;
   }
-}
 
-static void insert_actor(struct actor_visual *p) {
-  predicate_insert(&actor_visuals, &p->node.node, y_pred);
-  adjust_stagger(p);
-}
-
-static void insert_actors(struct playstate *playstate, unsigned start_q,
-                          unsigned max_q, unsigned start_r, unsigned max_r) {
-  for (unsigned q = start_q; q < max_q; q++) {
-    if (q_actor_count[q] == 0) continue;
-    for (unsigned r = start_r; r < max_r; r++) {
-      struct list *p = sector_data[q][r].actors;
-      if (p != 0) {
-        struct actor_visual *item;
-        foreach_node(p, item) { insert_actor(item); }
-      }
-    }
+  // Place ground actors
+  struct generic_actor *actor;
+  foreach_node(&playstate->ground_units, actor) {
+    index = place(playstate, &actor->visual, index);
+    if (index < 0) goto out_of_sprites;
   }
-}
 
-__attribute__((interrupt)) void sof_handler(void) {
-  // acknowledge interrupt
-#ifdef __CALYPSI_TARGET_M68K__
-  InterruptController.pending.vicky = INT_VICKY_SOF;
-#endif
+  // Place airborne actors
+  foreach_node(&playstate->air_units, actor) {
+    index = place(playstate, &actor->visual, index);
+    if (index < 0) goto out_of_sprites;
+  }
 
-  // no sol interrupt
-#ifdef __CALYPSI_TARGET_M68K__
-  Vicky.line_interrupt[0].control = 0;
-#endif
-
-  if (rebuild_actor_visuals) {
-    rebuild_actor_visuals = 0; // acknowledge
-    init_list(&actor_visuals); // clear list
-
-    unsigned start_q = active_playstate->map_state.visible_top_left.q;
-    unsigned max_q = start_q + active_playstate->map_state.visible_bottom_right.q;
-    unsigned start_r = active_playstate->map_state.visible_top_left.r;
-    unsigned max_r = start_r + active_playstate->map_state.visible_bottom_right.r;
-
-    // Add actors from map
-    insert_actors(active_playstate, start_q, max_q, start_r, max_r);
-
-    // Add flights
-    struct flight *flight;
-    foreach_node(&active_playstate->flights, flight) {
-      if (start_q <= umin(flight->loc.main.q, flight->loc.secondary.q) &&
-          max_q >= umax(flight->loc.main.q, flight->loc.secondary.q) &&
-          start_r <= umin(flight->loc.main.qr, flight->loc.secondary.r) &&
-          max_r >= umax(flight->loc.main.r, flight->loc.secondary.r)) {
-        insert_actor(&flight->visual);
-      }
-    }
-
-    // Add dogfights
-    struct dogfight *dogfight;
-    foreach_node(&active_playstate->dogfights, dogfight) {
-      insert_actor(&dogfight->visual);
+  // Flights on ground level
+  struct flight *flight;
+  foreach_node(&playstate->flights, flight) {
+    if (flight->altitude == 0) {
+      index = place(playstate, &flight->visual, index);
+      if (index < 0) goto out_of_sprites;
     }
   }
 
-  scan_line = 0;
-  unsigned next_sprite = SPRITE_COUNT - 1;
-  next_actor = (struct actor_visual *)actor_visuals.head;
-
-  if (!empty_list(&actor_visuals)) {
-
-  // The follow code attempts to readjust list if actors
-  // were moved. This is not needed if we regenerate the map.
-  // Keep the code for now in case the way of laying them
-  // out does not work, then this can be considered again.
-
-#if 0
-    // Update positions and allow actors to trickle position in the list.
-    unsigned y = next_actor->y;
-
-    struct actor_visual *current;
-    struct actor_visual *next;
-    foreach_node_safe(&actor_visuals, current, next) {
-      current->show_x = current->x;
-      current->show_y = current->y;
-      if (current->show_y < y) {
-        // Move the node back one step
-        struct node *pred = current->node.node.pred;
-        remove_node((struct node*)current);
-        insert_before(pred, current);
-      } else if (next->y < y) {
-        // Move the current node forward
-        remove_node(&current->node.node);
-        insert_after(&next->node.node, &current->node.node);
-      }
-      y = current->show_y;
-    }
-#endif
-
-    // Skip over initial sprites that are not visible, then allocate sprites
-    // until we have no more or we run out of actors.
-    unsigned count = SPRITE_COUNT;
-    while (next_actor->node.node.succ) {
-      if (is_visible(next_actor)) {
-        if (count == 0) {
-          enable_sol();
-          break;
-        }
-        next_sprite++;
-        count--;
-        if (next_sprite == SPRITE_COUNT) {
-          next_sprite = 0;
-        }
-        assign_sprite(next_sprite, next_actor);
-        if (next_sprite == 0) {
-          // Set the first one assigned.
-          head_actor = next_actor;
-        }
-      }
-      next_actor = (struct actor_visual *) next_actor->node.node.succ;
+  // Flights at fairly low level
+  foreach_node(&playstate->flights, flight) {
+    if (flight->altitude > 0 && flight->altitude < 8) {
+      index = place(playstate, &flight->visual, index);
+      if (index < 0) goto out_of_sprites;
     }
   }
 
-  // Disable rest of sprites (if we did not use them all up)
-  for (unsigned i = next_sprite; i < SPRITE_COUNT; i++) {
-#ifdef __CALYPSI_TARGET_SYSTEM_A2560U__
-    Sprite[i].control = 0;
-#endif
-  }
-}
-
-__attribute__((interrupt)) void sol_handler(void) {
-#ifdef __CALYPSI_TARGET_M68K__
-  InterruptController.pending.vicky = INT_VICKY_SOL; // acknowledge
-#endif
-  while (head_actor->node.node.succ && next_actor->node.node.succ) {
-    if (scan_line >= head_actor->y - offset_y + SPRITE_HEIGHT) {
-      // We can reuse this one
-      unsigned index = head_actor->sprite_index;
-      head_actor = (struct actor_visual *) head_actor->node.node.succ;
-      assign_sprite(index, next_actor);
-      next_actor = (struct actor_visual *) next_actor->node.node.succ;
-    } else {
-      break;
+  // Remaining flights
+  foreach_node(&playstate->flights, flight) {
+    if (flight->altitude > 8) {
+      index = place(playstate, &flight->visual, index);
+      if (index < 0) goto out_of_sprites;
     }
   }
-  if (next_actor->node.node.succ) {
-    enable_sol();
+
+  struct dogfight *dogfight;
+  foreach_node(&playstate->dogfights, dogfight) {
+    index = place(playstate, &dogfight->visual, index);
+    if (index < 0) goto out_of_sprites;
   }
-}
 
-#if defined(__CALYPSI_TARGET_M68K__) || defined(__CALYPSI_TARGET_65816__)
-static p_int_handler old_sof_handler;
-static p_int_handler old_sol_handler;
-#endif
-
-void install_interrupt_handlers(void) {
-  init_list(&actor_visuals);
-#if defined(__CALYPSI_TARGET_M68K__) || defined(__CALYPSI_TARGET_65816__)
-  old_sof_handler = sys_int_register(INT_SOF_A, sof_handler);
-  old_sol_handler = sys_int_register(INT_SOL_A, sol_handler);
-#endif
-}
-
-void restore_interrupt_handlers(void) {
-#if defined(__CALYPSI_TARGET_M68K__) || defined(__CALYPSI_TARGET_65816__)
-  sys_int_register(INT_SOF_A, old_sof_handler);
-  sys_int_register(INT_SOL_A, old_sol_handler);
-#endif
+out_of_sprites:
+  if (index < sprite_limit_used) {
+    sprite_limit_used = index;
+  }
 }
 
 void add_visual_loc(struct actor_visual *p, location loc,
@@ -297,16 +135,5 @@ void add_visual_xy(struct actor_visual *p, uint16_t x,
                    uint16_t y, actor_tile_t *actor_tile) {
   p->x = x;
   p->y = y;
-  p->actor_tile[0] = *actor_tile;
-}
-
-// Inform interrupt to rebuild the display list of actors.
-// Will wait until the interrupt has reinitialized the list which should
-// take at most one frame (1/50 - 1/70) of a second.
-// At this point we can reclaim memory waiting to be freed.
-void rebuild_actor_visual_list(struct playstate *ps) {
-  rebuild_actor_visuals = 1;
-  while (rebuild_actor_visuals)
-    ;
-  recycle_memory(ps);
+  p->actor_tile = *actor_tile;
 }

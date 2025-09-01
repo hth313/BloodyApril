@@ -30,6 +30,7 @@ struct flight {
   struct actor_visual visual;
   location loc;
   distance_t fraction;        // tenths of a hex movement kept or borrowed
+  altitude_t altitude;
   altitude_t desired_altitude;
   direction heading;
   uint8_t free_turn;

@@ -35,7 +35,15 @@ struct sector {
   struct list *actors;           // actors in this sector (not including flights)
 };
 
+struct viewport {
+  unsigned x;                    // offset x position
+  unsigned y;                    // offset y position
+  unsigned width;                // visible pixel width
+  unsigned height;               // visible pixel height
+};
+
 struct map_state {
+  struct viewport viewport;      // visible map in pixels
   coordinate visible_top_left;   // upper top left sector shown, potentially partial
   coordinate visible_bottom_right;
 };

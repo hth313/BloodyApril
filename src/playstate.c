@@ -15,6 +15,8 @@ struct playstate *new_playstate(void) {
   state->map_state.visible_bottom_right = (coordinate) { .q = 640 / 32 + 1, .r = 480 / 32 + 1 };
 #endif
   init_list(&state->aerodromes);
+  init_list(&state->ground_units);
+  init_list(&state->air_units);
   init_list(&state->flights);
   init_list(&state->dogfights);
   init_list(&state->free_memory);

@@ -29,8 +29,8 @@ struct actor_visual {
   // based on the kind/order of the node.
   // The 'node.kind' is also used to point back to the owning rich record.
   struct typed_node node; // sorted on kind/order and show_y
-  actor_tile_t actor_tile[2]; // actual sprite data to use
-  unsigned sprite_index;  // the physical sprite (index) assigned to
+  actor_tile_t actor_tile; // actual sprite data to use
+  int sprite_index;  // the physical sprite (index) assigned to
   uint16_t prio; // display priority index, 0 is highest, used to ensure order
                  // when staggering
   uint16_t x;             // position is updated here
@@ -58,9 +58,9 @@ struct actor_visual {
 extern void add_visual_loc(struct actor_visual *, location, actor_tile_t *);
 extern void add_visual_coord(struct actor_visual *, coordinate, actor_tile_t *);
 extern void add_visual_xy(struct actor_visual *, uint16_t x, uint16_t y, actor_tile_t *);
-extern void install_interrupt_handlers(void);
-extern void restore_interrupt_handlers(void);
-extern void rebuild_actor_visual_list(struct playstate *ps);
+//extern void install_interrupt_handlers(void);
+//extern void restore_interrupt_handlers(void);
+//extern void rebuild_actor_visual_list(struct playstate *ps);
 
 extern actor_tile_t allied_aerodrome_sprite;
 extern actor_tile_t central_aerodrome_sprite;
