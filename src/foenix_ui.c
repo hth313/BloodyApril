@@ -30,13 +30,13 @@ void cursor_to(enum cursor_position to) {
   }
 }
 
-static void draw_airplane_column(struct list *list, unsigned column) {
+static int draw_airplane_column(int sprite_index, struct list *list, unsigned column) {
   int row = 0;
 
   for (airplane *p = (airplane *)list->head; p->node.succ != 0;
        p = (airplane *)p->node.succ) {
-    struct airplane_kind const *k = airplane_kind(p);
-    volatile VRAM struct sprite *sprite = &Sprite[p->sprite_index];
+    volatile VRAM struct sprite *sprite = &Sprite[sprite_index];
+    *sprite = *p->actor_tile;
     sprite->x = 50;
     sprite->y = 50 + row * 20;
     sprite->control = p->visual.actor_tile.control;
@@ -48,10 +48,12 @@ static void draw_airplane_column(struct list *list, unsigned column) {
 #endif
     show_airunit(p, column < 40);
     row++;
+    sprite_index++;
   }
+  return sprite_index;
 }
 
 void draw_dogfight(struct dogfight* df) {
-  draw_airplane_column(&df->allied_powers, 0);
-  draw_airplane_column(&df->central_powers, 40);
+  int index  = draw_airplane_column(0, &df->allied_powers, 0);
+  draw_airplane_column(index, &df->central_powers, 40);
 }

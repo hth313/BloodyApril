@@ -57,9 +57,9 @@ static void initialize(struct playstate *playstate, struct aerodrome *aerodrome,
   init_list(&aerodrome->airplanes);
   init_list(&aerodrome->squadron);
 #if defined(__CALYPSI_TARGET_SYSTEM_A2560U__)
-  add_visual_coord(&aerodrome->visual, pos,
-                   allied ? &allied_aerodrome_sprite
-                          : &central_aerodrome_sprite);
+  set_visual_coord(&aerodrome->visual, pos);
+  aerodrome->visual.actor_tile = allied ? allied_aerodrome_sprite
+                                        : central_aerodrome_sprite;
 #else
 #error "non supported systen"
 #endif

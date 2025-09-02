@@ -35,9 +35,6 @@ struct actor_visual {
                  // when staggering
   uint16_t x;             // position is updated here
   uint16_t y;
-  uint16_t show_x;        // position for this frame
-  uint16_t show_y;
-  uint16_t staggered; // adjustment to adjust x/y when stacking, 0/2/4..
   // Pointer to rich data record
   union {
     struct aerodrome *aerodrome;
@@ -55,12 +52,24 @@ struct actor_visual {
 
 // **********************************************************************
 
-extern void add_visual_loc(struct actor_visual *, location, actor_tile_t *);
-extern void add_visual_coord(struct actor_visual *, coordinate, actor_tile_t *);
-extern void add_visual_xy(struct actor_visual *, uint16_t x, uint16_t y, actor_tile_t *);
-//extern void install_interrupt_handlers(void);
-//extern void restore_interrupt_handlers(void);
-//extern void rebuild_actor_visual_list(struct playstate *ps);
+inline void set_visual_xy(struct actor_visual *p, uint16_t x, uint16_t y) {
+  p->x = x;
+  p->y = y;
+}
+
+inline void set_visual_coord(struct actor_visual *p, coordinate coord) {
+  uint16_t x = pixel_x(coord);
+  uint16_t y = pixel_y(coord);
+  set_visual_xy(p, x, y);
+}
+
+inline void set_visual_loc(struct actor_visual *p, location loc) {
+  uint16_t x = loc_pixel_x(loc);
+  uint16_t y = loc_pixel_y(loc);
+  set_visual_xy(p, x, y);
+}
+
+extern void invalidate_actor_placement_cache();
 
 extern actor_tile_t allied_aerodrome_sprite;
 extern actor_tile_t central_aerodrome_sprite;

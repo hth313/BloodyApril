@@ -11,9 +11,15 @@
 // We implement this using a value 0-11 stored inside a suitable small integer.
 typedef int_fast8_t direction;
 
+// Weather directions
 #define NorthWest 10
 #define SouthWest  8
 #define NorthEast  2
+
+#define North      0
+#define East       3
+#define South      6
+#define West       9
 
 typedef enum turn { Left, Right } turn;
 

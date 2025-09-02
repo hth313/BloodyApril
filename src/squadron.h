@@ -3,12 +3,15 @@
 
 #include "list.h"
 
-enum squadron_ident { Jasta1, Jasta2, Jasta3, Jasta4, Jasta19 };
-
 struct squadron {
   struct node node; // squadrons are linked to an aerodrome
-  enum squadron_ident ident;
   const char *name;
 };
+
+extern struct squadron squadron3;
+
+extern struct squadron Jasta1;
+extern struct squadron Jasta2;
+struct squadron Jasta19;
 
 #endif // __UNIT_H__

@@ -25,15 +25,15 @@ static void add_visuals(struct dogfight *p, struct list *flights, bool allied) {
   foreach_node(flights, flight) {
     struct airplane *plane;
     foreach_node(&flight->airplanes, plane) {
-      add_visual_xy(&plane->visual, x, y, &plane->visual.actor_tile);
+      set_visual_xy(&plane->visual, x, y);
       y += ACTOR_TILE_HEIGHT + MARGIN;
     }
   }
 }
 
-// Allocate a new dogfight dynamically. The caller should link the created
-// node into actors of the sector it occurs in.
-struct dogfight *new_dogfight(location loc, struct list *allied_powers,
+// Allocate a new dogfight dynamically.
+struct dogfight *new_dogfight(struct playstate *playstate,
+                              location loc, struct list *allied_powers,
                               struct list *central_powers,
                               bool allied_attacker) {
   struct dogfight *p = safe_malloc(sizeof(struct dogfight));
@@ -44,16 +44,16 @@ struct dogfight *new_dogfight(location loc, struct list *allied_powers,
   move_members(&p->allied_powers, allied_powers);
   move_members(&p->central_powers, central_powers);
 
-  actor_tile_t *actor_tile =
-    allied_attacker ? &right_facing_dogfight_sprite : &left_facing_dogfight_sprite;
-
-  add_visual_loc(&p->visual, loc, actor_tile);
+  p->visual.actor_tile = allied_attacker ? right_facing_dogfight_sprite : left_facing_dogfight_sprite;
+  set_visual_loc(&p->visual, loc);
   p->visual.node.kind = DogFight;
   p->visual.dogfight = p;
 
   init_list(&p->visuals);
   add_visuals(p, allied_powers, true);
   add_visuals(p, central_powers, false);
+
+  add_tail(&playstate->dogfights, &p->node);
 
   return p;
 }
@@ -73,8 +73,8 @@ static void move_downed(struct playstate *ps, struct list *flights) {
 void drop_dogfight(struct playstate *ps, struct dogfight *df) {
   move_downed(ps, &df->allied_powers);
   move_downed(ps, &df->central_powers);
-  remove_node(&df->node.node);
-  add_tail(&ps->free_memory, &df->node.node);
+  remove_node(&df->node);
+  add_tail(&ps->free_memory, &df->node);
 }
 
 static void dogfight_reset_orders(struct dogfight *df) {

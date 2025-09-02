@@ -14,7 +14,7 @@ struct playstate;
 // others until the maxim=um turns are up or some other ending
 // criteria occurs.
 struct dogfight {
-  struct typed_node node;
+  struct node node;
   struct actor_visual visual;
   struct list allied_powers;
   struct list central_powers;
@@ -33,7 +33,8 @@ struct dogfight {
 // **********************************************************************
 
 extern bool dogfight(struct dogfight *df);
-extern struct dogfight *new_dogfight(location pos,
+extern struct dogfight *new_dogfight(struct playstate *playstate,
+                                     location pos,
                                      struct list *allied_powers,
                                      struct list *central_powers,
                                      bool allied_attacker);

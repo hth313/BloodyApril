@@ -35,14 +35,12 @@ struct airplane_kind {
 #define AIRPLANE_REAR_GUN     0x0004
 };
 
-// We have an array of airplane data we can look up in.
-extern const struct airplane_kind *airplane_data[];
-
 // Airplane desribes an actual airplane player
 typedef struct airplane {
   struct node   node;
-  int           airplane;
-  int           pilot;
+  struct airplane_kind const *kind;
+  struct pilot  pilot;
+  actor_tile_t *actor_tile;
   struct squadron *squadron;
   struct actor_visual visual;   // Used in dogfight displays
   altitude_t    altitude;
@@ -60,8 +58,9 @@ typedef struct airplane {
 #define AIRPLANE_DISENGAGE            0x0040
 #define AIRPLANE_SPIN                 0x0080
   uint16_t added_property;
-  unsigned sprite_index;
 } airplane;
+
+extern struct airplane Airplane_Pup;
 
 #define GUN_MASK (AIRPLANE_FRONT_GUN_JAMMED | AIRPLANE_FRONT_GUNx2_JAMMED | AIRPLANE_REAR_GUN_JAMMED)
 #define OUT_MASK (AIRPLANE_ENGINE_FAILURE | AIRPLANE_CRIPPLED | AIRPLANE_DOWNED | AIRPLANE_SPIN)
@@ -70,11 +69,7 @@ typedef struct airplane {
 // Return true if airplane is too damaged to fight
 inline bool damaged(airplane* p) {
   return (p->property & (AIRPLANE_DOWNED | AIRPLANE_CRIPPLED | AIRPLANE_ENGINE_FAILURE))
-          || (p->property & GUN_MASK) == (airplane_data[p->airplane]->property & GUN_MASK);
-}
-
-inline const struct airplane_kind *airplane_kind(struct airplane *p) {
-  return airplane_data[p->airplane];
+          || (p->property & GUN_MASK) == (p->kind->property & GUN_MASK);
 }
 
 #endif // __AIRPLANE_H__

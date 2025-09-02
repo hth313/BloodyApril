@@ -17,6 +17,11 @@
 #include <mcp/syscalls.h>
 #endif
 
+// Real definitions of inline functions
+extern void set_visual_xy(struct actor_visual *p, uint16_t x, uint16_t y);
+extern void set_visual_coord(struct actor_visual *p, coordinate coord);
+extern void set_visual_loc(struct actor_visual *p, location loc);
+
 // Visual actors are sprites placed on a backdrop (game map).
 // The map is partially shown, so not every actor that exists may be visible.
 // We assign hardware sprites to visible actors in a priority order to control
@@ -36,6 +41,14 @@
 int sprite_limit_used = SPRITE_COUNT;
 
 struct actor_visual *actor_cache[SPRITE_COUNT];
+
+void invalidate_actor_placement_cache() {
+  int i = SPRITE_COUNT;
+  struct actor_visual **p = actor_cache;
+  while (--i) {
+    *p++ = 0;
+  }
+}
 
 static bool visible(struct viewport *vp, struct actor_visual *actor_visual) {
   int x = actor_visual->x;
@@ -83,7 +96,8 @@ void render(struct playstate *playstate) {
   // Flights on ground level
   struct flight *flight;
   foreach_node(&playstate->flights, flight) {
-    if (flight->altitude == 0) {
+    struct airplane *airplane = head_airplane(flight);
+    if (airplane && airplane->altitude == 0) {
       index = place(playstate, &flight->visual, index);
       if (index < 0) goto out_of_sprites;
     }
@@ -91,7 +105,8 @@ void render(struct playstate *playstate) {
 
   // Flights at fairly low level
   foreach_node(&playstate->flights, flight) {
-    if (flight->altitude > 0 && flight->altitude < 8) {
+    struct airplane *airplane = head_airplane(flight);
+    if (airplane && airplane->altitude > 0 && airplane->altitude < 8) {
       index = place(playstate, &flight->visual, index);
       if (index < 0) goto out_of_sprites;
     }
@@ -99,7 +114,8 @@ void render(struct playstate *playstate) {
 
   // Remaining flights
   foreach_node(&playstate->flights, flight) {
-    if (flight->altitude > 8) {
+    struct airplane *airplane = head_airplane(flight);
+    if (airplane && airplane->altitude > 8) {
       index = place(playstate, &flight->visual, index);
       if (index < 0) goto out_of_sprites;
     }
@@ -115,25 +131,4 @@ out_of_sprites:
   if (index < sprite_limit_used) {
     sprite_limit_used = index;
   }
-}
-
-void add_visual_loc(struct actor_visual *p, location loc,
-                actor_tile_t *actor_tile) {
-  uint16_t x = loc_pixel_x(loc);
-  uint16_t y = loc_pixel_y(loc);
-  add_visual_xy(p, x, y, actor_tile);
-}
-
-void add_visual_coord(struct actor_visual *p, coordinate coord,
-                      actor_tile_t *actor_tile) {
-  uint16_t x = pixel_x(coord);
-  uint16_t y = pixel_y(coord);
-  add_visual_xy(p, x, y, actor_tile);
-}
-
-void add_visual_xy(struct actor_visual *p, uint16_t x,
-                   uint16_t y, actor_tile_t *actor_tile) {
-  p->x = x;
-  p->y = y;
-  p->actor_tile = *actor_tile;
 }

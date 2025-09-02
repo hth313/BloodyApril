@@ -16,22 +16,40 @@
 #include "playstate.h"
 #include "weather.h"
 
+// Real defintion of inline functions, if needed.
+extern struct flight *new_allied_flight(location position, direction heading,
+                                        struct airplane *airplanes[]);
+extern struct flight *new_centrl_flight(location position, direction heading,
+                                        struct airplane *airplanes[]);
+
 // A sequence number, mainly to ensure the order in a list is kept consistent
 // even when a node is removed and later added again.
 static int sequence;
 
 // Create a new flight. This will initialize most fields except for
 // that it should be immediately linked into its owning list.
-struct flight *new_flight(location loc, direction heading, actor_tile_t *actor_tile) {
+struct flight *new_flight(bool allied, location loc, direction heading,
+                          struct airplane *airplanes[]) {
   struct flight *p = (struct flight*) safe_malloc(sizeof(struct flight));
   p->node.kind = Flight;
   p->node.order = sequence++;
   init_list(&p->airplanes);
   p->loc = loc;
+  p->fraction = 0;
+  p->desired_altitude = 0;
   p->heading = heading;
-  p->move_order = MOVE_ORDER_LEVEL;
+  p->movement_marked = 0;
+  p->allied = allied;
+  p->move_order = (union move_order) { Landed };
   p->detection = Undetected;
-  add_visual_loc(&p->visual, loc, actor_tile);
+
+  // Flight is visualized as the first airplane, set location and then link in all airplanes
+  p->visual.actor_tile = (*airplanes)->visual.actor_tile;
+  while (*airplanes) {
+    add_tail(&p->airplanes, &((*airplanes)->node));
+    airplanes++;
+  }
+
   p->visual.node.kind = Flight;
   p->visual.flight = p;
   return p;

@@ -48,6 +48,12 @@ const struct airplane_kind SopwithPup = {
   AIRPLANE_FRONT_GUN
 };
 
-const struct airplane_kind *airplane_data[] = {
-  &Albatros_D2, &Albatros_D5a, &SopwithPup
+struct airplane Airplane_Pup = {
+  { 0 },
+  &SopwithPup,
+  { "Capt Harold Kerby", 0, 0, 0 },
+  &SopwithPup_sprite,
+  &squadron3,
+  { 0 },
+  0,
 };

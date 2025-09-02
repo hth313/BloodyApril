@@ -21,6 +21,45 @@ struct aerodrome {
   struct list squadron;       // The squadrons stationed at this aerodrome
 };
 
+extern struct aerodrome Abacon;
+extern struct aerodrome Bersee;
+extern struct aerodrome Boistrancourt;
+extern struct aerodrome Cantin;
+extern struct aerodrome Corbehem;
+extern struct aerodrome Cuincy;
+extern struct aerodrome Emerchicourt;
+extern struct aerodrome Epinoy;
+extern struct aerodrome Eswars;
+extern struct aerodrome Faumont;
+extern struct aerodrome Gonnelieu;
+extern struct aerodrome Guesnain;
+extern struct aerodrome LaBrayelle;
+extern struct aerodrome Phalempin;
+extern struct aerodrome Pont_a_Marcq;
+extern struct aerodrome Pronville;
+extern struct aerodrome Proville;
+extern struct aerodrome Provin;
+extern struct aerodrome Roucourt;
+extern struct aerodrome Villers_au_Tetre;
+
+extern struct aerodrome Auchel;
+extern struct aerodrome Avesnes_le_Comte;
+extern struct aerodrome Bellevue;
+extern struct aerodrome Bruay;
+extern struct aerodrome Chocques;
+extern struct aerodrome Fienvillers;
+extern struct aerodrome Fienvilliers;
+extern struct aerodrome Filescamp;
+extern struct aerodrome Hesdigneul;
+extern struct aerodrome LeHameau;
+extern struct aerodrome Lealvillers;
+extern struct aerodrome Lozingham;
+extern struct aerodrome Marieux;
+extern struct aerodrome Savy;
+extern struct aerodrome Soncamp;
+extern struct aerodrome Treizennes;
+extern struct aerodrome Vert_Galand;
+
 // **********************************************************************
 
 extern void create_aerodromes(struct playstate *playstate);

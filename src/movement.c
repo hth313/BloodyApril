@@ -3,8 +3,7 @@
 #include "flight.h"
 
 uint8_t allowed_turn(struct flight *flight, struct airplane *airplane) {
-  struct airplane_kind const *kind = airplane_kind(airplane);
-  if (scale_distance_to_hex(kind->speed[airplane->altitude]) >= 5) {
+  if (scale_distance_to_hex(airplane->kind->speed[airplane->altitude]) >= 5) {
     return 2;
   } else {
     return 3;
