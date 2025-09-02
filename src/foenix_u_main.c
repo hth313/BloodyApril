@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <foenix/vicky.h>
 #include "color.h"
+#include "playstate.h"
 #include "random.h"
 #include "scenario.h"
 #include "system.h"
@@ -67,7 +68,14 @@ int main() {
   Sprite[1].x = 120;
   Sprite[1].y = 150;
 
-  initialize_scenarios();
+  struct scenarios *scenarios = initialize_scenarios();
+  struct playstate *playstate = new_playstate();
+
+  // For now, play with the first scenario
+  playstate->scenario = (struct scenario*) scenarios->trainer_scenarios.head;
+  playstate->scenario->setup(playstate);
+  playstate->scenario->playturn(playstate);
+  playstate->scenario->summarize(playstate);
 
   while (1) {
     static int xx;

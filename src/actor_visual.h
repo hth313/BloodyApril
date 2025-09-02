@@ -70,6 +70,7 @@ inline void set_visual_loc(struct actor_visual *p, location loc) {
 }
 
 extern void invalidate_actor_placement_cache();
+extern void render(struct playstate *playstate);
 
 extern actor_tile_t allied_aerodrome_sprite;
 extern actor_tile_t central_aerodrome_sprite;
