@@ -12,6 +12,7 @@ struct playstate *new_playstate(void) {
 #if defined(__CALYPSI_TARGET_SYSTEM_A2560U__)
   state->map_state.visible_bottom_right = (coordinate) { .q = 640 / 32 + 1, .r = 480 / 32 + 1 };
 #endif
+  state->map_state.viewport = (struct viewport) { 50, 50, 50 + 640, 50 + 480 };
   init_list(&state->aerodromes);
   init_list(&state->ground_units);
   init_list(&state->air_units);

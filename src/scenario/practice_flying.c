@@ -27,7 +27,7 @@ bool practice_flying_playturn(struct playstate *playstate) {
     weather_phase(playstate);
     wind_drift(playstate);
     render(playstate);
-
+    while (true);   // wait for command here
     playstate->turn++;
   }
   return true;

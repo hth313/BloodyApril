@@ -102,7 +102,7 @@ void create_aerodromes(struct playstate *playstate) {
   initialize(playstate, &Hesdigneul, "Hesdigneul", true, (coordinate) {0});
   initialize(playstate, &LeHameau, "Le Hameau", true, (coordinate) {0});
   initialize(playstate, &Lealvillers, "Léalvillers", true, (coordinate) {0});
-  initialize(playstate, &Lozingham, "Lozingham", true, (coordinate) {0});
+  initialize(playstate, &Lozingham, "Lozingham", true, (coordinate) {14,0});
   initialize(playstate, &Marieux, "Marieux", true, (coordinate) {0});
   initialize(playstate, &Savy, "Savy", true, (coordinate) {0});
   initialize(playstate, &Soncamp, "Soncamp", true, (coordinate) {0});
