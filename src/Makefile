@@ -31,7 +31,7 @@ obj/%.o: %.c $(DEPDIR)/%.d | $(DEPDIR)
 	cc68k $(INCLUDE) $(CFLAGS) --list-file=$(@:%.o=%.lst) -o $@ $<
 
 BloodyApril.elf:  $(OBJS)
-	ln68k -o $@ $^ --list-file=bloody-april.lst $(LNFLAGS) a2560u.scm
+	ln68k -o $@ $^ --cstartup=Foenix_user --list-file=bloody-april.lst $(LNFLAGS) a2560u.scm
 
 clean:
 	-rm $(DEPFILES)
