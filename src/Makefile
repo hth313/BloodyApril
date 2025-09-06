@@ -18,7 +18,7 @@ ASM_SRCS = foenix_assets.s
 AFLAGS = --target=a2560u --debug --code-model=large --data-model=small
 CFLAGS = $(AFLAGS) -Wno-invalid-source-encoding --always-inline -I. -Iscenario
 
-LNFLAGS = --stack-size=2000 --target=a2560u
+LNFLAGS = --stack-size=2000 --target=a2560u --debug
 
 # Object files
 OBJS = $(ASM_SRCS:%.s=obj/%.o) $(C_SRCS:%.c=obj/%.o)
