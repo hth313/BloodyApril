@@ -1,6 +1,7 @@
 #ifdef __CALYPSI_TARGET_M68K__
 #define VRAM_OFFSET 0x00c00000
 sprite:	      .macro  sym, sprite_file
+              .section near,data
               .align  2
               .public \sym
 \sym:         .byte   .byte0 (sprite_data$ - VRAM_OFFSET)
@@ -10,20 +11,19 @@ sprite:	      .macro  sym, sprite_file
               .section vram,data
               .align  256
 sprite_data$: .incbin "\sprite_file"
-              .section near,data
               .endm
 #else
 #define VRAM_OFFSET 0xb00000
 sprite:       .macro sym, sprite_file
               .public \sym
-\sym:         .byte   2 + 1          ; control byte, LUT1 & enable
+              .section near,data
+\sym:         .byte   0x70 + 2 + 1     ; control byte, depth 7, LUT1 & enable
               .word   .word0 (sprite_data$ - VRAM_OFFSET)
               .byte   .byte2 (sprite_data$ - VRAM_OFFSET)
               .word   0,0
               .section vram,data
               .align  256
 sprite_data$: .incbin "\sprite_file"
-              .section near,data
               .endm
 #endif
               sprite  SopwithPup_sprite, "../assets/sprites-17.sprite"
@@ -40,7 +40,7 @@ sprite_data$: .incbin "\sprite_file"
               sprite  allied_aerodrome_sprite, "../assets/sprites-26.sprite"
               sprite  central_aerodrome_sprite, "../assets/sprites-27.sprite"
 
-              .section palette1,data
+              .section palette1,data,root
               .public palette
 palette:      .incbin "../assets/trench1.palette"
 
@@ -50,11 +50,7 @@ palette:      .incbin "../assets/trench1.palette"
 tiles:        .macro  tiles
               .section vram,data
               .public \tiles_index, \tiles_tiles
-#ifdef __BIG_ENDIAN__
-\tiles_index: .incbin "../assets/\tiles-big-endian.index"
-#else
 \tiles_index: .incbin "../assets/\tiles-little-endian.index"
-#endif
 \tiles_tiles: .incbin "../assets/\tiles.tiledata"
               .endm
 
