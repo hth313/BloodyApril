@@ -69,6 +69,7 @@ extern bool overflowed_hex_actor_left;
 extern void clear_sectors(void);
 extern void vacate_sector(coordinate coord);
 extern struct list *alloc_actor_list(void);
+extern void set_map_position_by_pixel(struct map_state *map_state, unsigned x, unsigned y);
 
 inline void add_sector_attribute(uint_fast8_t q, uint_fast8_t r,
                                  enum terrain_attribute attr) {

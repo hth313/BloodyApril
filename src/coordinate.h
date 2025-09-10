@@ -117,6 +117,13 @@ inline unsigned umin(unsigned a, unsigned b) {
   }
 }
 
+inline coordinate pixel_to_coordiate(unsigned x, unsigned y) {
+  return (coordinate) {
+    .q = (x >> 5) - ((y & 1) << 16),
+    .r = y >> 5
+  };
+}
+
 // **********************************************************************
 
 extern coordinate direction_vector[6];

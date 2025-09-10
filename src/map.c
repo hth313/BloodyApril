@@ -64,3 +64,13 @@ struct list *alloc_actor_list() {
     return safe_malloc(sizeof(struct list));
   }
 }
+
+// Set a new position in the viewport.
+// This updates the corresponding visible hex position.
+void set_map_position_by_pixel(struct map_state *map_state, unsigned x, unsigned y) {
+  map_state->viewport.x = x;
+  map_state->viewport.y = y;
+  map_state->visible_top_left = pixel_to_coordiate(x - 31, y - 31);
+  map_state->visible_bottom_right =
+    pixel_to_coordiate(x + map_state->viewport.width - 1, y + map_state->viewport.height - 1);
+}
